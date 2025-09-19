@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+/* Custom Fonts */
+@font-face {
+  font-family: 'FCIconic';
+  src: url('/fonts/FCIconic-Regular.woff2') format('woff2'),
+       url('/fonts/FCIconic-Regular.woff') format('woff'),
+       url('/fonts/FCIconic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FCIconic';
+  src: url('/fonts/FCIconic-Bold.woff2') format('woff2'),
+       url('/fonts/FCIconic-Bold.woff') format('woff'),
+       url('/fonts/FCIconic-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FCIconic';
+  src: url('/fonts/FCIconic-Italic.woff2') format('woff2'),
+       url('/fonts/FCIconic-Italic.woff') format('woff'),
+       url('/fonts/FCIconic-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FCIconic';
+  src: url('/fonts/FCIconic-BoldItalic.woff2') format('woff2'),
+       url('/fonts/FCIconic-BoldItalic.woff') format('woff'),
+       url('/fonts/FCIconic-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sarabun';
+  src: url('/fonts/Sarabun-Regular.woff2') format('woff2'),
+       url('/fonts/Sarabun-Regular.woff') format('woff'),
+       url('/fonts/Sarabun-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sarabun';
+  src: url('/fonts/Sarabun-Bold.woff2') format('woff2'),
+       url('/fonts/Sarabun-Bold.woff') format('woff'),
+       url('/fonts/Sarabun-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sarabun';
+  src: url('/fonts/Sarabun-Italic.woff2') format('woff2'),
+       url('/fonts/Sarabun-Italic.woff') format('woff'),
+       url('/fonts/Sarabun-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sarabun';
+  src: url('/fonts/Sarabun-BoldItalic.woff2') format('woff2'),
+       url('/fonts/Sarabun-BoldItalic.woff') format('woff'),
+       url('/fonts/Sarabun-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --breakpoint-tablet: 820px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'FCIconic', Sarabun, sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Custom animation for banner entrance */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom animation for mobile dropdown slide-up */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Custom animation for search input fade-in slide-right */
+@keyframes fadeInSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom animation for sort box and locale switch fade-in slide-left */
+@keyframes fadeInSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom animation for article cards fade-in slide-up */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

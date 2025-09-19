@@ -1,0 +1,327 @@
+:root {
+  --ck-color-image-caption-background: hsl(0, 0%, 97%);
+  --ck-color-image-caption-text: hsl(0, 0%, 20%);
+  --ck-color-mention-background: hsla(341, 100%, 30%, 0.1);
+  --ck-color-mention-text: hsl(341, 100%, 30%);
+  --ck-color-table-caption-background: hsl(0, 0%, 97%);
+  --ck-color-table-caption-text: hsl(0, 0%, 20%);
+  --ck-highlight-marker-blue: hsl(201, 97%, 72%);
+  --ck-highlight-marker-green: hsl(120, 93%, 68%);
+  --ck-highlight-marker-pink: hsl(345, 96%, 73%);
+  --ck-highlight-marker-yellow: hsl(60, 97%, 73%);
+  --ck-highlight-pen-green: hsl(112, 100%, 27%);
+  --ck-highlight-pen-red: hsl(0, 85%, 49%);
+  --ck-image-style-spacing: 1.5em;
+  --ck-inline-image-style-spacing: calc(var(--ck-image-style-spacing) / 2);
+  --ck-todo-list-checkmark-size: 16px;
+}
+
+.ck-content {
+  line-height: 1.5;
+}
+
+.ck-content p,
+.ck-content li,
+.ck-content ul,
+.ck-content ol,
+.ck-content dd,
+.ck-content div,
+.ck-content td {
+  line-height: 1.5 !important;
+}
+
+.ck-content p {
+  margin: 0.5em 0;
+}
+
+.ck-content h1,
+.ck-content h2,
+.ck-content h3,
+.ck-content h4,
+.ck-content h5,
+.ck-content h6 {
+  font-weight: bold;
+  line-height: 1.2;
+  margin-top: 0.5em;
+}
+
+.ck-content h1 { font-size: 2em; margin: 0.67em 0; }
+.ck-content h2 { font-size: 1.5em; margin: 0.75em 0; }
+.ck-content h3 { font-size: 1.17em; margin: 0.83em 0; }
+.ck-content h4 { font-size: 1em; margin: 1.12em 0; }
+.ck-content h5 { font-size: 0.83em; margin: 1.5em 0; }
+.ck-content h6 { font-size: 0.75em; margin: 1.67em 0; }
+
+.ck-content span {
+  font-size: inherit;
+}
+
+.ck-content strong {
+  font-weight: 600;
+}
+
+.ck-content a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 500;
+  text-decoration-color: var(--primary_blue);
+}
+
+.ck-content ul,
+.ck-content ol,
+.ck-content dd {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left: 1rem;
+}
+
+.ck-content ul {
+  list-style-type: disc;
+}
+
+.ck-content ol {
+  list-style-type: decimal;
+}
+
+.ck-content ul li::marker {
+  font-size: 0.6em !important;
+}
+
+.ck-content ol li::marker {
+  font-size: 1em !important;
+}
+
+.ck-content li {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+
+.ck-content img {
+  max-width: 100%;
+  height: auto;
+  display: initial;
+}
+
+.ck-content figure {
+  margin: 1em 0;
+}
+
+.ck-content figure.image,
+.ck-content figure.table,
+.ck-content figure.media,
+.ck-content figure.code-block,
+.ck-content figure.page-break {
+  display: block;
+}
+
+.ck-content figure > figcaption {
+  font-size: 0.75em;
+  color: #555;
+  text-align: center;
+  padding-top: 0.5em;
+}
+
+.ck-content .image {
+  display: table;
+  clear: both;
+  text-align: center;
+  margin: 0.9em auto;
+  min-width: 50px;
+}
+
+.ck-content .image img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  min-width: 100%;
+}
+
+.ck-content .image-style-align-left {
+  float: left;
+  margin-right: var(--ck-image-style-spacing);
+}
+
+.ck-content .image-style-align-right {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+}
+
+.ck-content .image-style-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ck-content .image-style-side {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+  max-width: 50%;
+}
+
+.ck-content p + .image-style-align-left,
+.ck-content p + .image-style-align-right,
+.ck-content p + .image-style-side {
+  margin-top: 0;
+}
+
+.ck-content .image-inline {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: flex-start;
+}
+
+.ck-content .image-inline img,
+.ck-content .image-inline picture {
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-width: 100%;
+}
+
+.ck-content .image-inline.image-style-align-left {
+  margin-right: var(--ck-inline-image-style-spacing);
+  margin-top: var(--ck-inline-image-style-spacing);
+  margin-bottom: var(--ck-inline-image-style-spacing);
+}
+
+.ck-content .image-inline.image-style-align-right {
+  margin-left: var(--ck-inline-image-style-spacing);
+  margin-top: var(--ck-inline-image-style-spacing);
+  margin-bottom: var(--ck-inline-image-style-spacing);
+}
+
+.ck-content .image > figcaption {
+  display: table-caption;
+  caption-side: bottom;
+  word-break: break-word;
+  color: var(--ck-color-image-caption-text);
+  background-color: var(--ck-color-image-caption-background);
+  padding: .6em;
+  font-size: .75em;
+  outline-offset: -1px;
+}
+
+.ck-content table {
+  width: 100%;
+  border-collapse: collapse;
+  text-indent: initial;
+  border-spacing: 0px;
+}
+
+.ck-content th,
+.ck-content td {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  text-align: left;
+  min-width: 2em;
+  overflow-wrap: break-word;
+  position: relative;
+}
+
+.ck-content table p {
+  padding: 0;
+  margin: 0;
+  padding-top: 0.6em;
+  margin-bottom: calc(0.6rem * 1.5);
+  line-height: 1.5 !important;
+}
+
+.ck-content blockquote {
+  overflow: hidden;
+  padding-right: 1.5em;
+  padding-left: 1.5em;
+  margin: 1em 0;
+  font-style: italic;
+  border-left: solid 5px hsl(0, 0%, 80%);
+}
+
+.ck-content[dir="rtl"] blockquote {
+  border-left: 0;
+  border-right: solid 5px hsl(0, 0%, 80%);
+}
+
+.ck-content code {
+  background-color: hsla(0, 0%, 78%, 0.3);
+  padding: .15em;
+  border-radius: 2px;
+}
+
+.ck-content pre {
+  padding: 1em;
+  color: hsl(0, 0%, 20.8%);
+  background: hsla(0, 0%, 78%, 0.3);
+  border: 1px solid hsl(0, 0%, 77%);
+  border-radius: 2px;
+  text-align: left;
+  direction: ltr;
+  tab-size: 4;
+  white-space: pre-wrap;
+  font-style: normal;
+  min-width: 200px;
+}
+
+.ck-content pre code {
+  background: unset;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ck-content .marker-yellow { background-color: var(--ck-highlight-marker-yellow); }
+.ck-content .marker-green { background-color: var(--ck-highlight-marker-green); }
+.ck-content .marker-pink { background-color: var(--ck-highlight-marker-pink); }
+.ck-content .marker-blue { background-color: var(--ck-highlight-marker-blue); }
+.ck-content .pen-red { color: var(--ck-highlight-pen-red); background-color: transparent; }
+.ck-content .pen-green { color: var(--ck-highlight-pen-green); background-color: transparent; }
+
+.ck-content .mention {
+  background: var(--ck-color-mention-background);
+  color: var(--ck-color-mention-text);
+}
+
+.ck-content .ck-comment {
+  background-color: #f9f9f9;
+  border-left: 3px solid #ccc;
+  padding: 0.5em;
+  margin: 1em 0;
+}
+
+.ck-content .ck-comment__author {
+  font-weight: bold;
+  margin-bottom: 0.25em;
+}
+
+.ck-content .ck-comment__text {
+  font-style: italic;
+  color: #555;
+}
+
+.ck-content .ck-track-changes {
+  background-color: #fffbe6;
+  border-bottom: 1px dotted #d9d9d9;
+}
+
+.ck-content .ck-suggestion {
+  background-color: #e6f7ff;
+  border: 1px dashed #91d5ff;
+  padding: 0.25em;
+}
+
+.ck-content .ck-suggestion--accepted {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.ck-content .ck-suggestion--rejected {
+  background-color: #fff1f0;
+  border-color: #ffa39e;
+}
+
+.ck-content .ck-revision-marker {
+  background-color: #e6f7ff;
+  border-left: 2px solid #1890ff;
+  padding-left: 0.5em;
+  margin-left: -0.5em;
+}
+
+@media print {
+  .ck-content .page-break { padding: 0; }
+  .ck-content .page-break::after { display: none; }
+}

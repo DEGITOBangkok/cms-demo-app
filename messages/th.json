@@ -1,0 +1,51 @@
+{
+  "Navigation": {
+    "home": "หน้าแรก",
+    "categories": "หมวดหมู่",
+    "news": "ห้องข่าวและบทความ",
+    "contact": "ติดต่อ",
+    "locale" : "ไทย"
+  },
+  "Footer": {
+    "newsArticle": "ห้องข่าวและบทความ",
+    "contactUs": "ติดต่อเรา",
+    "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+    "followUs": "ติดตามเรา",
+    "top": "ด้านบน"
+  },
+   "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, th {Thai} en {English} other {Unknown}}"
+  },
+  "HomePage": {
+    "readmore": "อ่านเพิ่มเติม ",
+    "newslist": "ห้องข่าวและบทความ",
+    "latestnew": "ใหม่ล่าสุด",
+    "searchbar": "ค้นหาข่าวสารและบทความ",
+    "sort1": "ค่าเริ่มต้น",
+    "sort2": "ใหม่ที่สุด",
+    "sort3": "เก่าที่สุด",
+    "sort4": "เรียงจาก ก-ฮ",
+    "sort5": "เรียงจาก ฮ-ก",
+    "mostpop": "ยอดนิยมที่สุด",
+    "sortplaceholder": "เรียงตาม...",
+    "nocategory": "ไม่มีหมวดหมู่",
+    "unknownauthor": "ผู้เขียนไม่ระบุ",
+    "allbt": "ทั้งหมด",
+    "healthbt": "สุขภาพ",
+    "geographybt": "ภูมิศาสตร์",
+    "eventbt": "กิจกรรมและอัพเดท",
+    "categorisebt": "หมวดหมู่",
+    "noarticlesfound": "ไม่พบบทความ",
+    "articlesfound": "บทความที่พบ",
+    "articlefound": "บทความที่พบ",
+    "noarticleswithtag": "ไม่พบบทความในหมวดหมู่",
+    "noarticlesforsearch": "ไม่พบบทความสำหรับ",
+    "share": "แชร์:",
+    "linkcopied": "คัดลอกลิงก์แล้ว!",
+    "next": "ถัดไป",
+    "previous": "ก่อนหน้า",
+    "of": "จาก"
+
+  }
+}

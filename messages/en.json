@@ -1,0 +1,50 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "categories": "Categories",
+    "news": "News & Articles",
+    "contact": "Contact",
+    "locale" : "Eng"
+  },
+  "Footer": {
+    "newsArticle": "News & Article",
+    "contactUs": "Contact Us",
+    "privacyPolicy": "Privacy Policy",
+    "followUs": "Follow Us",
+    "top": "Top"
+  },
+   "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, th {Thai} en {English} other {Unknown}}"
+  },
+  "HomePage": {
+    "readmore": "Read More",
+    "latestnew": "Latest News",
+    "newslist": "News & Articles",
+    "searchbar": "Search News & Articles",
+    "sort1": "Default",
+    "sort2": "Newest First",
+    "sort3": "Oldest First",
+    "sort4": "Title A-Z",
+    "sort5": "Title Z-A",
+    "mostpop": "Most Popular",
+    "sortplaceholder": "Sort by...",
+    "nocategory": "No category",
+    "unknownauthor": "Unknown Author",
+    "allbt": "All",
+    "healthbt": "Health",
+    "geographybt": "Geography",
+    "eventbt": "Events & Updates",
+    "categorisebt": "Categories",
+    "noarticlesfound": "No articles found",
+    "articlesfound": "articles found",
+    "articlefound": "article found",
+    "noarticleswithtag": "No articles found with tag",
+    "noarticlesforsearch": "No articles found for",
+    "share": "Share:",
+    "linkcopied": "Link copied to clipboard!",
+    "next": "Next",
+    "previous": "Prev",
+    "of": "of"
+  }
+}
