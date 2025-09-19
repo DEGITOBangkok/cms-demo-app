@@ -198,7 +198,7 @@ export async function getFacebook() {
     const response = await fetchAPI('/api/social?populate=*');
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching Facebook data:', error);
+    console.warn('Facebook data not available:', error.message);
     return null;
   }
 }
@@ -209,7 +209,22 @@ export async function getInstagram() {
     const response = await fetchAPI('/api/instagram?populate=*');
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching Instagram data:', error);
+    console.warn('Instagram data not available:', error.message);
+    return null;
+  }
+}
+
+// Fetch Home single type
+export async function getHome(locale = 'en') {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append('populate[banners][populate]', '*');
+    queryParams.append('locale', locale);
+    
+    const response = await fetchAPI(`/api/home?${queryParams}`);
+    return response.data || null;
+  } catch (error) {
+    console.error('Error fetching Home data:', error);
     return null;
   }
 }

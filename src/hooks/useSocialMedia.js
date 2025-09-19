@@ -18,11 +18,15 @@ export function useSocialMedia() {
         setLoading(true);
         setError(null);
         
-        // Fetch both Facebook and Instagram data in parallel
-        const [facebookData, instagramData] = await Promise.all([
+        // Fetch both Facebook and Instagram data in parallel with error handling
+        const [facebookResult, instagramResult] = await Promise.allSettled([
           getFacebook(),
           getInstagram()
         ]);
+
+        // Handle results - use null if failed
+        const facebookData = facebookResult.status === 'fulfilled' ? facebookResult.value : null;
+        const instagramData = instagramResult.status === 'fulfilled' ? instagramResult.value : null;
 
         // Debug logging
         console.log('Facebook data:', facebookData);

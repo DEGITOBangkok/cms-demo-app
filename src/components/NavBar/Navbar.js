@@ -2,12 +2,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { MENUS } from "@/lib/const";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import LocaleSwitcher from "../LocaleSwitch";
 import Hamburger from "./Hamburger";
 
 export default function Navbar() {
+  const router = useRouter();
   const { locale } = useParams();
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="flex items-center justify-between p-4 bg-white h-[96px] w-full px-4 tablet:px-16 fixed top-0 left-0 z-50"
+        className="flex items-center justify-between p-4 bg-white h-[96px] w-full px-4 tablet:px-16 fixed top-0 left-0 z-50 cursor-pointer"
       >
         {/* Logo */}
         <div>
@@ -45,6 +46,7 @@ export default function Navbar() {
             width={266}
             height={30}
             className="object-contain"
+            onClick={() => router.push(`/${locale}/`)}
           />
         </div>
 

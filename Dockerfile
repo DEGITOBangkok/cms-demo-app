@@ -12,22 +12,14 @@ RUN npm ci
 COPY . .
 
 # Build-time ARG
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_IMAGE_URL
-ARG NEXT_PUBLIC_API_POLICY
-ARG NEXT_PUBLIC_SITE_URL
-ARG NEXT_PUBLIC_RECAPTCHA_SITE_KEY
-ARG RECAPTCHA_SECRET_KEY
-ARG PREVIEW_SECRET
+ARG NEXT_PUBLIC_STRAPI_URL
+ARG NEXT_PUBLIC_FRONTEND_PATH
+ARG NEXT_PUBLIC_STRAPI_API_TOKEN
 
 # Inject into ENV for build step
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_IMAGE_URL=$NEXT_PUBLIC_IMAGE_URL
-ENV NEXT_PUBLIC_API_POLICY=$NEXT_PUBLIC_API_POLICY
-ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
-ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=$NEXT_PUBLIC_RECAPTCHA_SITE_KEY
-ENV RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY
-ENV PREVIEW_SECRET=$PREVIEW_SECRET
+ENV NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL
+ENV NEXT_PUBLIC_FRONTEND_PATH=$NEXT_PUBLIC_FRONTEND_PATH
+ENV NEXT_PUBLIC_STRAPI_API_TOKEN=$NEXT_PUBLIC_STRAPI_API_TOKEN
 
 # Build the Next.js app
 RUN npm run build
@@ -41,8 +33,7 @@ COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/.next ./.next
 COPY --from=builder /usr/src/app/public ./public
 COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/next.config.ts ./next.config.ts
-COPY --from=builder /usr/src/app/next-i18next.config.js ./next-i18next.config.js
+COPY --from=builder /usr/src/app/next.config.mjs ./next.config.mjs
 
 # Set environment variables
 ENV NODE_ENV=production

@@ -8,6 +8,7 @@ import { getStrapiMediaURL } from '@/lib/api';
 import { formatDate } from '@/lib/day';
 import ShareBar from '@/components/ShareBar';
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useArticles } from '@/hooks/useArticles';
 import ArticlesCard from '@/components/ArticlesCard';
 import ScrollShareBar from '@/components/ScrollShareBar';

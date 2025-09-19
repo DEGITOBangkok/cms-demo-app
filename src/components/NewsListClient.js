@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '../../../components';
-import { useArticles, useSearch, useArticlesWithSort, useCategories } from '../../../hooks/useArticles';
+import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '@/components';
+import { useArticles, useSearch, useArticlesWithSort, useCategories } from '@/hooks/useArticles';
 import { useLocale } from 'next-intl';
-import { getStrapiMediaURL } from '../../../lib/api';
+import { getStrapiMediaURL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import { formatDate } from '@/lib/day';
 import { Swiper, SwiperSlide } from 'swiper/react';

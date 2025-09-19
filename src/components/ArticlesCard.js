@@ -28,10 +28,10 @@ const ArticlesCard = ({
   disableAnimation = false,
   ...props
 }) => {
-  if (!article) return null;
-
   const t = useTranslations('HomePage');
   const router = useRouter();
+  
+  if (!article) return null;
 
   // Function to get translated category name
   const getTranslatedCategoryName = (categoryName) => {
@@ -55,7 +55,7 @@ const ArticlesCard = ({
 
 
   const handleClick = () => {
-    window.location.href = `/${locale}/newsdesc/${article.slug}`;
+    router.push(`/${locale}/newsdesc/${article.slug}`);
   };
 
   const handleCategoryClick = (e) => {
