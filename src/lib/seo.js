@@ -9,7 +9,7 @@ import { getStrapiMediaURL } from './api';
 export function generateArticleSEO(article, options = {}) {
   const {
     siteName = 'News Portal',
-    siteUrl = 'http://localhost:3000',
+    siteUrl = process.env.NEXT_PUBLIC_FRONTEND_PATH,
     defaultImage = '/default-og-image.jpg'
   } = options;
 
@@ -28,6 +28,7 @@ export function generateArticleSEO(article, options = {}) {
   const url = `${siteUrl}/newsdesc/${article?.slug}`;
 
   return {
+    metadataBase: new URL(siteUrl),
     title: `${title} | ${siteName}`,
     description: description,
     openGraph: {
@@ -70,14 +71,40 @@ export function generateArticleSEO(article, options = {}) {
  * @param {Object} options - SEO options
  * @returns {Object} SEO metadata object
  */
+export function generateHomeSEO(homeData, options = {}) {
+  // SEO is an array, get the first item
+  const seo = Array.isArray(homeData?.SEO) ? homeData.SEO[0] : homeData?.SEO;
+  
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH),
+    title: seo?.metaTitle || homeData?.homeTitle || 'Home',
+    description: seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+    keywords: seo?.keywords || '',
+    openGraph: {
+      title: seo?.ogTitle || seo?.metaTitle || homeData?.homeTitle || 'Home',
+      description: seo?.ogDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+      images: seo?.ogImage ? [{ url: seo.ogImage.url }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seo?.twitterTitle || seo?.metaTitle || homeData?.homeTitle || 'Home',
+      description: seo?.twitterDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+      images: seo?.twitterImage ? [seo.twitterImage.url] : [],
+    },
+    ...options,
+  };
+}
+
 export function generateNewsListSEO(options = {}) {
   const {
     siteName = 'News Portal',
-    siteUrl = 'http://localhost:3000',
+    siteUrl = process.env.NEXT_PUBLIC_FRONTEND_PATH,
     defaultImage = '/default-og-image.jpg'
   } = options;
 
   return {
+    metadataBase: new URL(siteUrl),
     title: `Latest News | ${siteName}`,
     description: 'Stay updated with the latest news, articles, and insights from our news portal.',
     openGraph: {
@@ -135,12 +162,12 @@ export function generateArticleStructuredData(article) {
       name: 'News Portal',
       logo: {
         '@type': 'ImageObject',
-        url: 'http://localhost:3000/logo.png',
+        url: `${process.env.NEXT_PUBLIC_FRONTEND_PATH}/logo.png`,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `http://localhost:3000/newsdesc/${article?.slug}`,
+      '@id': `${process.env.NEXT_PUBLIC_FRONTEND_PATH}/newsdesc/${article?.slug}`,
     },
   };
 }

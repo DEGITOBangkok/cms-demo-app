@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getArticles, getFeaturedArticles, searchArticles, getCategories } from '../lib/api';
+import { getArticles, getFeaturedArticles, searchArticles, getCategories, getHome } from '../lib/api';
 
 // Custom hook for fetching articles
 export function useArticles(params = {}) {
@@ -175,4 +175,31 @@ export function useCategories(locale = 'en') {
   }, [locale]);
 
   return { categories, loading, error };
+}
+
+// Custom hook for fetching Home single type
+export function useHome(locale = 'en') {
+  const [homeData, setHomeData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHome = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getHome(locale);
+        setHomeData(response);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching Home data hook:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHome();
+  }, [locale]);
+
+  return { homeData, loading, error };
 }

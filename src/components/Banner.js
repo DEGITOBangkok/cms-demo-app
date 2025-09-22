@@ -40,14 +40,17 @@ const Banner = ({
       }
     : {};
 
+  const baseClasses = "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
+  const combinedClassName = className ? `${baseClasses} ${className}` : baseClasses;
+
   return (
     <div
-      className={`flex w-full h-[950px] sm:h-[450px] md:h-[500px] lg:h-[600px] xl:h-[720px] justify-center items-center flex-shrink-0 relative ${className}`}
+      className={combinedClassName}
       style={backgroundStyle}
       {...rest}
     >
       {displayImage && <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0" />}
-      <div className="relative z-10 w-full h-full">{children}</div>
+      <div className="relative z-10 w-full h-full overflow-visible">{children}</div>
     </div>
   );
 };

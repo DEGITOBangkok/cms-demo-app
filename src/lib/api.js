@@ -72,10 +72,34 @@ export async function getArticles(params = {}) {
   });
 
   try {
-  const result = await fetchAPI(`/api/articles?${queryParams}`);
-    return result;
+    const result = await fetchAPI(`/api/articles?${queryParams}`);
+    
+    // If we got data, return it
+    if (result?.data && result.data.length > 0) {
+      return result;
+    }
+    
+    // If no data and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`No articles found for locale '${locale}', falling back to English`);
+      return await getArticles({ ...params, locale: 'en' });
+    }
+    
+    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
   } catch (error) {
-    console.error('Error fetching articles:', error);
+    console.error(`Error fetching articles for locale '${locale}':`, error);
+    
+    // If error and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`Error with locale '${locale}', falling back to English`);
+      try {
+        return await getArticles({ ...params, locale: 'en' });
+      } catch (fallbackError) {
+        console.error('Error fetching articles with English fallback:', fallbackError);
+        return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+      }
+    }
+    
     return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
   }
 }
@@ -92,9 +116,33 @@ export async function getArticle(slug, locale = 'en') {
 
   try {
     const response = await fetchAPI(`/api/articles?${queryParams}`);
-    return response.data?.[0] || null;
+    
+    // If we got data, return it
+    if (response.data?.[0]) {
+      return response.data[0];
+    }
+    
+    // If no data and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`Article '${slug}' not found for locale '${locale}', falling back to English`);
+      return await getArticle(slug, 'en');
+    }
+    
+    return null;
   } catch (error) {
-    console.error('Error fetching article:', error);
+    console.error(`Error fetching article '${slug}' for locale '${locale}':`, error);
+    
+    // If error and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`Error with locale '${locale}', falling back to English`);
+      try {
+        return await getArticle(slug, 'en');
+      } catch (fallbackError) {
+        console.error('Error fetching article with English fallback:', fallbackError);
+        return null;
+      }
+    }
+    
     return null;
   }
 }
@@ -185,9 +233,33 @@ export async function getCategories(locale = 'en') {
     queryParams.append('locale', locale);
     
     const result = await fetchAPI(`/api/categories?${queryParams}`);
-    return result;
+    
+    // If we got data, return it
+    if (result?.data && result.data.length > 0) {
+      return result;
+    }
+    
+    // If no data and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`No categories found for locale '${locale}', falling back to English`);
+      return await getCategories('en');
+    }
+    
+    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error(`Error fetching categories for locale '${locale}':`, error);
+    
+    // If error and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`Error with locale '${locale}', falling back to English`);
+      try {
+        return await getCategories('en');
+      } catch (fallbackError) {
+        console.error('Error fetching categories with English fallback:', fallbackError);
+        return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+      }
+    }
+    
     return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
   }
 }
@@ -198,7 +270,7 @@ export async function getFacebook() {
     const response = await fetchAPI('/api/social?populate=*');
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching Facebook data:', error);
+    console.warn('Facebook data not available:', error.message);
     return null;
   }
 }
@@ -209,7 +281,49 @@ export async function getInstagram() {
     const response = await fetchAPI('/api/instagram?populate=*');
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching Instagram data:', error);
+    console.warn('Instagram data not available:', error.message);
+    return null;
+  }
+}
+
+// Fetch Home single type with fallback to English
+export async function getHome(locale = 'en') {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append('populate[banners][populate]', '*');
+    queryParams.append('populate[homeDetails][populate]', '*');
+    queryParams.append('populate[SEO][populate]', '*');
+    queryParams.append('populate', 'homeImg');
+    queryParams.append('locale', locale);
+    
+    const response = await fetchAPI(`/api/home?${queryParams}`);
+    
+    // If we got data, return it
+    if (response?.data) {
+      return response.data;
+    }
+    
+    // If no data and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`No data found for locale '${locale}', falling back to English`);
+      return await getHome('en');
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error fetching Home data for locale '${locale}':`, error);
+    
+    // If error and locale is not English, try fallback to English
+    if (locale !== 'en') {
+      console.log(`Error with locale '${locale}', falling back to English`);
+      try {
+        return await getHome('en');
+      } catch (fallbackError) {
+        console.error('Error fetching Home data with English fallback:', fallbackError);
+        return null;
+      }
+    }
+    
     return null;
   }
 }

@@ -8,6 +8,7 @@ import { getStrapiMediaURL } from '@/lib/api';
 import { formatDate } from '@/lib/day';
 import ShareBar from '@/components/ShareBar';
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useArticles } from '@/hooks/useArticles';
 import ArticlesCard from '@/components/ArticlesCard';
 import ScrollShareBar from '@/components/ScrollShareBar';
@@ -565,7 +566,7 @@ export default function NewsDescClient({ article }) {
              {/* Close button */}
              <button
                onClick={() => setSelectedImage(null)}
-               className="absolute top-4 right-4 z-10 w-10 h-10 bg-transparent rounded-lg flex items-center justify-center text-white hover:bg-white hover:border-white hover:text-[#D7A048] transition-all"
+               className="absolute top-4 right-4 z-10 w-10 h-10 bg-transparent rounded-lg flex items-center justify-center text-white hover:bg-white hover:border-white hover:text-[#E60000] transition-all"
              >
                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -594,7 +595,7 @@ export default function NewsDescClient({ article }) {
                  }}
                  className={`absolute left-4 z-10 w-14 h-14 bg-transparent border-2 border-white rounded-full flex items-center justify-center text-white transition-all group hidden sm:flex ${
                    currentImageIndex > 0 
-                     ? 'hover:bg-[#D7A048] hover:border-white hover:w-15 hover:h-15 cursor-pointer' 
+                     ? 'hover:bg-[#E60000] hover:border-white hover:w-15 hover:h-15 cursor-pointer' 
                      : 'opacity-30 cursor-not-allowed'
                  }`}
                >
@@ -626,7 +627,7 @@ export default function NewsDescClient({ article }) {
                  }}
                  className={`absolute right-4 z-10 w-14 h-14 bg-transparent border-2 border-white rounded-full flex items-center justify-center text-white transition-all group hidden sm:flex ${
                    currentImageIndex < article.gallery.length - 1 
-                     ? 'hover:bg-[#D7A048] hover:border-white hover:w-15 hover:h-15 cursor-pointer' 
+                     ? 'hover:bg-[#E60000] hover:border-white hover:w-15 hover:h-15 cursor-pointer' 
                      : 'opacity-30 cursor-not-allowed'
                  }`}
                >

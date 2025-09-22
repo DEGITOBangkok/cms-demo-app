@@ -19,6 +19,7 @@ export async function generateMetadata({ params }) {
   });
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH),
     title: t("categorisebt"),
   };
 }

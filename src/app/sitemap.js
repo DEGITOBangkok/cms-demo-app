@@ -1,12 +1,12 @@
 import { getArticles } from '../lib/api';
 
 export default async function sitemap() {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_PATH;
   
   try {
     // Fetch all articles
     const articlesResponse = await getArticles({
-      pagination: { page: 1, pageSize: ถ }, // Get all articles
+      pagination: { page: 1, pageSize:  5 }, // Get all articles
       populate: '*'
     });
     
