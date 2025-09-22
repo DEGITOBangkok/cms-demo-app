@@ -16,13 +16,8 @@ phases:
       - echo Building the Docker image...
       - |
         docker build \
-        --build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
-        --build-arg NEXT_PUBLIC_IMAGE_URL=$NEXT_PUBLIC_IMAGE_URL \
-        --build-arg NEXT_PUBLIC_API_POLICY=$NEXT_PUBLIC_API_POLICY \
-        --build-arg NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
-        --build-arg NEXT_PUBLIC_RECAPTCHA_SITE_KEY=$NEXT_PUBLIC_RECAPTCHA_SITE_KEY \
-        --build-arg RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY \
-        --build-arg PREVIEW_SECRET=$PREVIEW_SECRET \
+        --build-arg NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL \
+        --build-arg NEXT_PUBLIC_STRAPI_API_TOKEN=$NEXT_PUBLIC_STRAPI_API_TOKEN \
         -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
 
