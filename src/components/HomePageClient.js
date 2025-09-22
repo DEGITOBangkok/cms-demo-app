@@ -14,6 +14,8 @@ export default function HomePageClient({ locale = 'en' }) {
 
   // Extract banner data (always run, even if loading/error)
   const banners = homeData?.banners || [];
+  const homeDetails = homeData?.homeDetails || [];
+  const homeImg = homeData?.homeImg;
   const bannerImages = banners.map(banner => {
     // Try different possible image field paths
     const imageUrl = banner?.image?.url || 
@@ -138,7 +140,7 @@ export default function HomePageClient({ locale = 'en' }) {
         >
         <div className="h-full flex items-end justify-center relative pl-0 pr-0">
           {/* Main Content - Bottom Left */}
-          <div className="text-left text-white w-full relative z-30 p-4 sm:p-8 pb-12 mobile-text-breakout">
+          <div className="text-left text-white w-full relative z-30 p-4 sm:p-8 pb-12 mobile-text-breakout lg:ml-8">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
               {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
             </h1>
@@ -253,52 +255,69 @@ export default function HomePageClient({ locale = 'en' }) {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 text-black">
+       <div className="container mx-auto px-4 py-8">
+         <div className="max-w-6xl mx-auto text-left sm:text-center">
+          <h2 className="text-4xl font-bold mb-6 text-black">
             {homeData?.homeTitle}
           </h2>
           
           {homeData?.homeDesc && (
             <div className="prose prose-lg max-w-none mb-8">
-              <p className="text-gray-700 leading-relaxed text-2xl font-bold">
+              <p className="text-gray-700 leading-relaxed text-2xl lg:text-2xl font-bold">
                 {homeData.homeDesc}
               </p>
             </div>
           )}
 
-          {/* Banner Services Section */}
-          {banners.length > 0 && (
+          {/* Services Section - Two Column Layout */}
+          {homeDetails.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-3xl font-bold mb-8 text-center text-black">Our Services</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {banners.map((banner, index) => (
-                  <div key={banner.id || index} className="bg-white p-8 rounded-lg shadow-lg border">
-                    <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-                      {banner.title}
-                    </h3>
-                    {banner.description && (
-                      <div 
-                        className="text-gray-600 leading-relaxed prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ 
-                          __html: banner.description 
-                        }}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 items-center">
+                {/* Left Column - Home Image */}
+                <div className="order-2 lg:order-1">
+                  {homeImg && (
+                    <div className="relative aspect-[2.7/3] w-2/3 mx-auto">
+                      <img 
+                        src={getStrapiMediaURL(homeImg.url)} 
+                        alt="Our Services"
+                        className="w-full h-full rounded-lg shadow-lg object-cover"
                       />
-                    )}
-                    {banner.youtubeUrl && (
-                      <div className="mt-4">
-                        <a 
-                          href={banner.youtubeUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          Watch Video →
-                        </a>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Right Column - Services List */}
+                <div className="order-1 lg:order-2 space-y-8">
+                  {homeDetails.map((service, index) => (
+                    <div key={service.id || index} className="flex items-start space-x-4">
+                      {/* Service Icon */}
+                      {service.icon && (
+                        <div className="flex-shrink-0">
+                          <img 
+                            src={getStrapiMediaURL(service.icon.url)} 
+                            alt={service.title || 'Service Icon'}
+                            className="w-18 h-18 object-contain"
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Service Content */}
+                      <div className="flex-1 text-left">
+                        <h3 className="text-2xl font-semibold mb-3 text-red-600">
+                          {service.title}
+                        </h3>
+                        {service.description && (
+                          <div 
+                            className="text-gray-800 leading-relaxed prose prose-sm max-w-none"
+                            dangerouslySetInnerHTML={{ 
+                              __html: service.description 
+                            }}
+                          />
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
