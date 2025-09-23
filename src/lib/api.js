@@ -72,7 +72,56 @@ export async function getArticles(params = {}) {
   });
 
   try {
-  const result = await fetchAPI(`/api/articles?${queryParams}`);
+    const result = await fetchAPI(`/api/articles?${queryParams}`);
+    
+    // If articles found in requested locale, return them
+    if (result.data && result.data.length > 0) {
+      return result;
+    }
+    
+    // If no articles found and locale is not 'en', try fallback to English
+    if (locale !== 'en') {
+      console.log(`No articles found in ${locale}, trying fallback to English...`);
+      const fallbackParams = new URLSearchParams();
+      
+      // Add sort
+      if (sort) {
+        fallbackParams.append('sort', sort);
+      }
+      
+      // Add English locale
+      fallbackParams.append('locale', 'en');
+      
+      // Add populate
+      if (populate === '*') {
+        fallbackParams.append('populate', '*');
+      } else if (populate === 'specific') {
+        fallbackParams.append('populate[cover]', '*');
+        fallbackParams.append('populate[author]', '*');
+        fallbackParams.append('populate[category]', '*');
+        fallbackParams.append('populate[tags]', '*');
+      } else if (populate) {
+        fallbackParams.append('populate', populate);
+      }
+      
+      // Add pagination
+      fallbackParams.append('pagination[page]', pagination.page);
+      fallbackParams.append('pagination[pageSize]', pagination.pageSize);
+      
+      // Add filters
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          fallbackParams.append(`filters[${key}]`, value);
+        }
+      });
+      
+      const fallbackResult = await fetchAPI(`/api/articles?${fallbackParams}`);
+      
+      if (fallbackResult.data && fallbackResult.data.length > 0) {
+        return fallbackResult;
+      }
+    }
+    
     return result;
   } catch (error) {
     console.error('Error fetching articles:', error);
@@ -80,7 +129,7 @@ export async function getArticles(params = {}) {
   }
 }
 
-// Fetch single article by slug
+// Fetch single article by slug with fallback
 export async function getArticle(slug, locale = 'en') {
   const queryParams = new URLSearchParams();
   queryParams.append('filters[slug][$eq]', slug);
@@ -92,18 +141,48 @@ export async function getArticle(slug, locale = 'en') {
 
   try {
     const response = await fetchAPI(`/api/articles?${queryParams}`);
-    return response.data?.[0] || null;
+    const article = response.data?.[0];
+    
+    // If article found in requested locale, return it
+    if (article) {
+      return article;
+    }
+    
+    // If no article found and locale is not 'en', try fallback to English
+    if (locale !== 'en') {
+      console.log(`Article not found in ${locale}, trying fallback to English...`);
+      const fallbackParams = new URLSearchParams();
+      fallbackParams.append('filters[slug][$eq]', slug);
+      fallbackParams.append('populate', '*');
+      fallbackParams.append('populate[blocks][populate]', '*');
+      fallbackParams.append('populate[blocks][on][shared.slider][populate][files]', '*');
+      fallbackParams.append('populate[blocks][on][shared.slider][populate][images]', '*');
+      fallbackParams.append('locale', 'en');
+      
+      const fallbackResponse = await fetchAPI(`/api/articles?${fallbackParams}`);
+      const fallbackArticle = fallbackResponse.data?.[0];
+      
+      if (fallbackArticle) {
+        console.log(`Found article in English fallback for slug: ${slug}`);
+        return fallbackArticle;
+      }
+    }
+    
+    return null;
   } catch (error) {
     console.error('Error fetching article:', error);
     return null;
   }
 }
 
-// Fetch featured articles (you can customize this logic)
+// Fetch featured articles (latest articles for homepage)
 export async function getFeaturedArticles(limit = 3, locale = 'en') {
   return getArticles({
     pagination: { page: 1, pageSize: limit },
-    filters: { featured: { $eq: true } }, // Assuming you have a featured field
+    // Remove featured filter since the field doesn't exist
+    // Just get the latest articles instead
+    sort: 'publishedAt:desc',
+    populate: '*', // Ensure all fields are populated including cover, category, author, etc.
     locale: locale,
   });
 }

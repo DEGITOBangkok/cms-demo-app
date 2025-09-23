@@ -90,7 +90,7 @@ export function useArticlesWithSort(sortValue = '', searchQuery = '', locale = '
 }
 
 // Custom hook for featured articles
-export function useFeaturedArticles(limit = 3) {
+export function useFeaturedArticles(limit = 3, locale = 'en') {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,7 +100,7 @@ export function useFeaturedArticles(limit = 3) {
       try {
         setLoading(true);
         setError(null);
-        const response = await getFeaturedArticles(limit);
+        const response = await getFeaturedArticles(limit, locale);
         setArticles(response.data || []);
       } catch (err) {
         setError(err.message);
@@ -111,7 +111,7 @@ export function useFeaturedArticles(limit = 3) {
     };
 
     fetchFeatured();
-  }, [limit]);
+  }, [limit, locale || 'en']);
 
   return { articles, loading, error };
 }

@@ -4,6 +4,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "../../../i18n/routing";
 import { Footer} from "../../components";
 import  Navbar  from "@/components/NavBar/Navbar";
+import { getHome } from "../../lib/api";
+import { generateHomeSEO } from "../../lib/seo";
 import "../../app/globals.css";
 
 export function generateStaticParams() {
@@ -13,13 +15,29 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { locale } = await params;
 
+  try {
+    // Fetch home page data for SEO
+    const homeData = await getHome(locale);
+    
+    if (homeData) {
+      return generateHomeSEO(homeData, {
+        siteName: 'News Portal',
+        siteUrl: 'http://localhost:3000'
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching home data for metadata:', error);
+  }
+
+  // Fallback metadata
   const t = await getTranslations({
     locale,
-    namespace: "HomePage",
+    namespace: "Navigation",
   });
 
   return {
-    title: t("categorisebt"),
+    title: t("home"),
+    description: 'Welcome to our news portal',
   };
 }
 
@@ -39,7 +57,7 @@ export default async function LocaleLayout({ children, params }) {
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+        <Footer key={locale} />
       </div>
     </NextIntlClientProvider>
   );

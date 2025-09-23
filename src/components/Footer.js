@@ -3,6 +3,7 @@
 import { ArrowWithTailIcon } from './icons';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSocialMedia } from '../hooks/useSocialMedia';
+import { useEffect } from 'react';
 
 
 /**
@@ -15,6 +16,10 @@ const Footer = () => {
   const locale = useLocale();
   const t = useTranslations('Footer');
   const { socialMedia, loading } = useSocialMedia();
+
+  // Force re-render when locale changes
+  useEffect(() => {
+  }, [locale]);
 
   return (
     <footer className="bg-[#17191F] text-white">
@@ -35,8 +40,8 @@ const Footer = () => {
             
             {/* Address */}
             <div className="text-sm text-gray-300 leading-relaxed">
-              123, 24th Floor, Digi Tower,<br />
-              Bangkoknoi, Bangkok, 10700, Thailand
+              {t('addressLine1')}<br />
+              {t('addressLine2')}
             </div>
             
             {/* Contact Information */}
@@ -158,7 +163,7 @@ const Footer = () => {
       <div className="max-w-full mx-auto pl-8 pr-2 sm:pl-12 sm:pr-4 lg:pl-20 lg:pr-8 py-6">
         <div className="text-center">
           <p className="text-sm text-gray-400">
-            ©2025 Digi Proxima Co., Ltd. All right reserved
+            {t('license')}
           </p>
         </div>
       </div>

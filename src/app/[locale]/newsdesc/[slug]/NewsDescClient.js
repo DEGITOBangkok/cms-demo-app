@@ -93,13 +93,9 @@ export default function NewsDescClient({ article }) {
     router.push(`/${locale}/newslist`);
   };
 
-  const handleCategoryClick = (e) => {
-    e.stopPropagation(); // Prevent the article click from firing
-    if (categoryName) {
-      // Navigate back to news list with category filter using translated name
-      const translatedCategoryName = getTranslatedCategoryName(categoryName);
-      router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
-    }
+  const handleCategoryClick = (categoryName) => {
+    const translatedCategoryName = getTranslatedCategoryName(categoryName);
+    router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
   };
 
   return (
@@ -129,7 +125,7 @@ export default function NewsDescClient({ article }) {
             {/* Category Tag */}
             <div className="mb-4">
               <span 
-              onClick={handleCategoryClick}
+              onClick={() => handleCategoryClick(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
               className="inline-block bg-white border border-gray-200 text-[#E60000] px-4 py-2 rounded-full text-[16px] font-normal cursor-pointer hover:bg-[#E60000] hover:text-white hover:border-[#E60000] transition-all duration-200">
                 {getTranslatedCategoryName(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
               </span>
@@ -478,6 +474,7 @@ export default function NewsDescClient({ article }) {
                               index={index}
                               locale={locale}
                               disableAnimation={true}
+                              onCategoryClick={handleCategoryClick}
                             />
                           </SwiperSlide>
                         ))}
@@ -522,6 +519,7 @@ export default function NewsDescClient({ article }) {
                               index={index}
                               locale={locale}
                               disableAnimation={true}
+                              onCategoryClick={handleCategoryClick}
                             />
                           </SwiperSlide>
                         ))}
@@ -542,6 +540,7 @@ export default function NewsDescClient({ article }) {
                         index={index}
                         locale={locale}
                         disableAnimation={true}
+                        onCategoryClick={handleCategoryClick}
                       />
               ))}
             </div>

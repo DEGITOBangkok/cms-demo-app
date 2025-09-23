@@ -91,6 +91,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --breakpoint-laptop: 1024px;
   --breakpoint-tablet: 820px;
 }
 
@@ -167,10 +168,10 @@ body {
 }
 
 /* Mobile and small tablet text breakout for banner content */
-@media (max-width: 639px) {
+@media (max-width: 800px) {
   .mobile-text-breakout {
     position: absolute !important;
-    bottom: 120px !important; /* More space for thumbnails below */
+    bottom: 40px !important; /* More space for thumbnails below */
     left: 16px !important;
     right: 16px !important;
     width: auto !important;
@@ -182,7 +183,7 @@ body {
   /* Mobile thumbnails positioning */
   .mobile-thumbnails {
     position: absolute !important;
-    bottom: 32px !important;
+    bottom: -40px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     z-index: 40 !important;

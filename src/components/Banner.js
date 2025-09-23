@@ -24,6 +24,7 @@ const Banner = ({
   currentSlide = 0,
   backgroundImage,
   className = '',
+  variant = 'home', // 'home' or 'newslist'
   ...rest
 }) => {
   // Determine which image to display
@@ -40,7 +41,17 @@ const Banner = ({
       }
     : {};
 
-  const baseClasses = "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
+  // Different styles for different banner variants
+  const getBaseClasses = () => {
+    if (variant === 'newslist') {
+      return "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
+    } else {
+      // Default 'home' variant with current styling
+      return "flex w-full pb-16 lg:pb-2 md:pb-3 h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
+    }
+  };
+
+  const baseClasses = getBaseClasses();
   const combinedClassName = className ? `${baseClasses} ${className}` : baseClasses;
 
   return (
