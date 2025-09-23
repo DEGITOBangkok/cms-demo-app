@@ -22,7 +22,7 @@ const Footer = () => {
   }, [locale]);
 
   return (
-    <footer className="bg-[#17191F] text-white">
+    <footer className="bg-[#17191F] text-white font-sarabun">
       {/* Main Footer Content */}
        <div className=" max-w-full mx-auto pl-8 pr-2 sm:pl-12 sm:pr-4 lg:pl-20 lg:pr-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start">

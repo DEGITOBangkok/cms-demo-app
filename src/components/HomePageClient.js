@@ -5,6 +5,7 @@ import { useHome, useFeaturedArticles } from '../hooks/useArticles';
 import Banner from './Banner';
 import { getStrapiMediaURL } from '../lib/api';
 import ArrowIcon from './icons/ArrowIcon';
+import AppIcon from './icons/AppIcon';
 import ArticlesCard from './ArticlesCard';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -19,9 +20,6 @@ export default function HomePageClient({ locale = 'en' }) {
   const router = useRouter();
   const t = useTranslations('HomePage')
   
-  // Debug: Log current locale and articles
-  console.log('HomePageClient - Current locale:', locale);
-  console.log('HomePageClient - Featured articles:', featuredArticles);
   
   // Function to get translated category name
   const getTranslatedCategoryName = (categoryName) => {
@@ -87,8 +85,10 @@ export default function HomePageClient({ locale = 'en' }) {
 
   // Initialize video for first slide
   useEffect(() => {
+    console.log('Banners useEffect triggered:', { banners, firstBanner: banners[0] });
     if (banners.length > 0 && banners[0]?.youtubeUrl) {
       const videoId = extractYouTubeId(banners[0].youtubeUrl);
+      console.log('Extracted video ID:', videoId);
       setCurrentVideoId(videoId);
     }
   }, [banners]);
@@ -96,8 +96,9 @@ export default function HomePageClient({ locale = 'en' }) {
   // Auto-play video when videoId changes
   useEffect(() => {
     if (currentVideoId && videoRef.current) {
+      const videoUrl = `https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`;
       // Reset video to start and play
-      videoRef.current.src = `https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1`;
+      videoRef.current.src = videoUrl;
     }
   }, [currentVideoId]);
 
@@ -168,6 +169,7 @@ export default function HomePageClient({ locale = 'en' }) {
           images={bannerImages}
           backgroundImage={hasImages ? currentImage : null}
           currentSlide={currentSlide}
+          hasVideo={!!currentVideoId}
           className={`${!hasImages ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800' : ''}`}
         >
         <div className="h-full flex items-end justify-center relative pl-0 pr-0">
@@ -272,23 +274,34 @@ export default function HomePageClient({ locale = 'en' }) {
 
       {/* YouTube Video Overlay - Full Width */}
       {currentVideoId && (
-        <div className="absolute inset-0 w-screen h-full z-0 overflow-hidden" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+        <div className="absolute inset-0 w-screen h-full z-19 overflow-hidden" style={{ left: '50%', transform: 'translateX(-50%)' }}>
           <iframe
             ref={videoRef}
             className="youtube-video-responsive"
-            src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`}
             title="Banner Video"
-            allow="autoplay; encrypted-media; fullscreen"
+            allow="autoplay; encrypted-media; fullscreen; accelerometer; gyroscope; picture-in-picture"
             allowFullScreen
+            frameBorder="0"
           />
-          <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+          <div className="absolute inset-0 bg-black/20 pointer-events-none z-10" />
         </div>
       )}
       </div>
 
       {/* Main Content */}
-       <div className="container mx-auto px-2 py-8">
-         <div className="max-w-7xl mx-auto text-left sm:text-center">
+       <main className="w-full px-4 sm:px-4 md:px-8 lg:px-18 py-12 relative">
+         {/* Background AppIcon - Right Side */}
+         {/* Right AppIcon - Responsive */}
+         <div className="absolute top-[-200px] right-[-150px] w-80 h-80 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-5">
+           <AppIcon className="w-full h-full text-[#E60000]" />
+         </div>
+         
+         {/* Left AppIcon - Responsive */}
+         <div className="absolute bottom-[100px] left-[-170px] sm:left-[-300px] md:left-[-380px] w-80 h-80 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-0">
+           <AppIcon className="w-full h-full text-[#E60000]" />
+         </div>
+         <div className="max-w-7xl mx-auto text-left sm:text-center relative z-10">
           <h2 className="text-3xl md:text-3xl lg:text-5xl font-bold mb-6 text-black">
             {homeData?.homeTitle}
           </h2>
@@ -371,7 +384,7 @@ export default function HomePageClient({ locale = 'en' }) {
               </div>
             </div>
         </div>
-      </div>
+      </main>
 
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
