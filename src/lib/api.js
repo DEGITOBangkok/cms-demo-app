@@ -219,6 +219,9 @@ export async function getHome(locale = 'en') {
   try {
     const queryParams = new URLSearchParams();
     queryParams.append('populate[banners][populate]', '*');
+    queryParams.append('populate[homeDetails][populate]', '*');
+    queryParams.append('populate[SEO][populate]', '*');
+    queryParams.append('populate', 'homeImg');
     queryParams.append('locale', locale);
     
     const response = await fetchAPI(`/api/home?${queryParams}`);
