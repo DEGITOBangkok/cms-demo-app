@@ -37,16 +37,7 @@ const Banner = ({
       : backgroundImage;
   }, [images, currentSlide, backgroundImage]);
 
-  const backgroundStyle = useMemo(() => {
-    return (displayImage && !hasVideo)
-      ? {
-          backgroundImage: `url(${displayImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }
-      : {};
-  }, [displayImage, hasVideo]);
+  // No longer using backgroundStyle since we'll use img element
 
   // Different styles for different banner variants
   const baseClasses = useMemo(() => {
@@ -65,9 +56,15 @@ const Banner = ({
   return (
     <div
       className={combinedClassName}
-      style={backgroundStyle}
       {...rest}
     >
+      {displayImage && !hasVideo && (
+        <img 
+          src={displayImage} 
+          alt="Banner background" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
       {displayImage && <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0" />}
       <div className="relative z-10 w-full h-full overflow-visible">{children}</div>
     </div>

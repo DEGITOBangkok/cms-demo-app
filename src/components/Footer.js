@@ -22,9 +22,9 @@ const Footer = () => {
   }, [locale]);
 
   return (
-    <footer className="bg-[#17191F] text-white font-sarabun">
+    <footer className="bg-[#17191F] text-white font-sarabun relative z-2">
       {/* Main Footer Content */}
-       <div className=" max-w-full mx-auto pl-8 pr-2 sm:pl-12 sm:pr-4 lg:pl-20 lg:pr-8 py-12">
+       <div className=" max-w-full mx-auto px-4 md:px-8 lg:px-16 py-10">
         <div className="flex flex-col md:flex-row justify-between items-start">
           
           {/* Company Information - Mobile: Full width, Desktop: Left */}
@@ -65,31 +65,34 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Mobile Separator Line */}
-          <div className="w-full my-6 md:hidden"></div>
+          {/*Mobile Separator Line*/}
+          <div className="w-full md:hidden mb-6"></div>
 
-          {/* Middle Group - Navigation + Social Media (Desktop: Close Together, Mobile: Separated) */}
-          <div className="w-full md:w-auto flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-40">
-            {/* Navigation Links */}
-            <div className="space-y-4 md:pl-12">
-              <div className="space-y-6 md:space-y-8">
-                <a href={`/${locale}/newslist`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-gray-700 pb-2 md:border-b-0 md:pb-0">
-                  {t('newsArticle')}
-                </a>
-                <a href={`/${locale}/contact`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-gray-700 pb-2 md:border-b-0 md:pb-0">
-                  {t('contactUs')}
-                </a>
-                <a href={`/${locale}/privacy`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-gray-700 pb-2 md:border-b-0 md:pb-0">
-                  {t('privacyPolicy')}
-                </a>
-              </div>
+          {/* Navigation Links */}
+          <div className="w-full space-y-10">
+            <div className="space-y-6">
+              <a href={`/${locale}/newslist`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-white pb-2 md:border-b-0 md:pb-0">
+                {t('newsArticle')}
+              </a>
+              <a href={`/${locale}/contact`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-white pb-2 md:border-b-0 md:pb-0">
+                {t('contactUs')}
+              </a>
+              <a href={`/${locale}/privacy`} className="block text-sm text-gray-300 hover:text-white transition-colors border-b border-white pb-2 md:border-b-0 md:pb-0">
+                {t('privacyPolicy')}
+              </a>
             </div>
+          </div>
 
-            {/* Social Media */}
+          {/* Mobile Separator Line */}
+          <div className="w-full my-6 md:hidden bg-none"></div>
+
+          {/* Bottom Row - Social Media (Left) + Top Button (Right) */}
+          <div className="w-full flex flex-row justify-between items-start">
+            {/* Social Media - Left Side */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white">{t('followUs')}</h3>
               
-              <div className="flex space-x-4">
+              <div className="flex gap-1 ml-[-8px]">
                 {loading ? (
                   // Loading skeleton
                   <>
@@ -104,11 +107,13 @@ const Footer = () => {
                         href={socialMedia.facebook.URL} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="w-10 h-10 bg-blue-600 flex items-center justify-center rounded-full hover:bg-blue-700 transition-colors"
+                        className="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"
                       >
-                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
+                        <img 
+                          src="/images/facebook_icon.png" 
+                          alt="Facebook" 
+                          className="w-[24px] h-[24px]"
+                        />
                       </a>
                     )}
                     
@@ -118,12 +123,12 @@ const Footer = () => {
                         href={socialMedia.instagram.URL} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="w-10 h-10 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 flex items-center justify-center rounded-full hover:opacity-90 transition-opacity"
+                        className="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"
                       >
                         <img 
-                          src="/images/IG.svg" 
+                          src="/images/ig_icon.png" 
                           alt="Instagram" 
-                          className="w-5 h-5"
+                          className="w-[24px] h-[24px]"
                         />
                       </a>
                     )}
@@ -131,27 +136,24 @@ const Footer = () => {
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Mobile Separator Line */}
-          <div className="w-full my-6 md:hidden"></div>
-
-          {/* Top Button - Mobile: Full width centered, Desktop: Right */}
-          <div className="w-full md:w-auto flex flex-col items-center justify-start space-y-1 md:flex-shrink-0 md:px-10">
-            <button 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-[#CC0000] transition-colors group"
-              aria-label="Scroll to top"
-            >
-              <ArrowWithTailIcon 
-                width={16} 
-                height={16} 
-                direction="left" 
-                color="white"
-                className="transform rotate-90"
-              />
-            </button>
-            <span className="text-xs text-gray-300 leading-none">{t('top')}</span>
+            {/* Top Button - Right Side */}
+            <div className="flex flex-col items-center space-y-1">
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-[#CC0000] transition-colors group"
+                aria-label="Scroll to top"
+              >
+                <ArrowWithTailIcon 
+                  width={16} 
+                  height={16} 
+                  direction="left" 
+                  color="white"
+                  className="transform rotate-90"
+                />
+              </button>
+              <span className="text-xs text-gray-300 leading-none">{t('top')}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -160,9 +162,9 @@ const Footer = () => {
       <div className="border-t border-gray-700"></div>
 
       {/* Copyright Section */}
-      <div className="max-w-full mx-auto pl-8 pr-2 sm:pl-12 sm:pr-4 lg:pl-20 lg:pr-8 py-6">
+      <div className="max-w-full mx-auto px-4 md:px-8 lg:px-16 py-6">
         <div className="text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-white">
             {t('license')}
           </p>
         </div>
