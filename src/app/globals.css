@@ -209,3 +209,20 @@ footer {
     margin-top: 2rem !important;
   }
 }
+
+/* Image popup arrow positioning for tablet sizes */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 32px !important;
+    transform: none !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 350px !important;
+    transform: none !important;
+  }
+}
