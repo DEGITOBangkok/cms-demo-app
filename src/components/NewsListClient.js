@@ -444,7 +444,7 @@ export default function NewsListClient() {
             {articlesError ? (
               <div className="text-center py-12">
                 <p className="text-red-600 mb-4">Error loading articles: {articlesError}</p>
-                <p className="text-gray-500">Make sure Strapi is running on http://localhost:1337</p>
+                <p className="text-gray-500">Make sure Strapi is running</p>
               </div>
             ) : displayArticles?.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">

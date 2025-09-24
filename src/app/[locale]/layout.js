@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "../../../i18n/routing";
 import { Footer} from "../../components";
 import  Navbar  from "@/components/NavBar/Navbar";
-import CMSStatus from "../../mockdata/CMSStatus";
+import CMSStatus from "../../components/CMSStatus";
 import { getHome } from "../../lib/api";
 import { generateHomeSEO } from "../../lib/seo";
 import "../../app/globals.css";
@@ -37,6 +37,7 @@ export async function generateMetadata({ params }) {
   });
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH),
     title: t("home"),
     description: 'Welcome to our news portal',
   };

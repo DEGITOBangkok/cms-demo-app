@@ -62,6 +62,9 @@ const Banner = ({
     return className ? `${baseClasses} ${className}` : baseClasses;
   }, [baseClasses, className]);
 
+  const baseClasses = "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
+  const combinedClassName = className ? `${baseClasses} ${className}` : baseClasses;
+
   return (
     <div
       className={combinedClassName}

@@ -173,10 +173,10 @@ footer {
 }
 
 /* Mobile and small tablet text breakout for banner content */
-@media (max-width: 800px) {
+@media (max-width: 639px) {
   .mobile-text-breakout {
     position: absolute !important;
-    bottom: 40px !important; /* More space for thumbnails below */
+    bottom: 120px !important; /* More space for thumbnails below */
     left: 16px !important;
     right: 16px !important;
     width: auto !important;
@@ -188,7 +188,7 @@ footer {
   /* Mobile thumbnails positioning */
   .mobile-thumbnails {
     position: absolute !important;
-    bottom: -40px !important;
+    bottom: 16px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     z-index: 40 !important;
@@ -207,22 +207,5 @@ footer {
     padding: 0 !important;
     margin: 0 !important;
     margin-top: 2rem !important;
-  }
-}
-
-/* Image popup arrow positioning for tablet sizes */
-@media (min-width: 640px) and (max-width: 1279px) {
-  .image-popup-arrow {
-    top: auto !important;
-    bottom: 32px !important;
-    transform: none !important;
-  }
-}
-
-@media (min-width: 1280px) {
-  .image-popup-arrow {
-    top: auto !important;
-    bottom: 350px !important;
-    transform: none !important;
   }
 }

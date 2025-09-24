@@ -20,6 +20,7 @@ export async function isCMSAvailable() {
     
     return response.ok;
   } catch (error) {
+    console.warn('CMS not available, using fallback mode:', error.message);
     return false;
   }
 }
