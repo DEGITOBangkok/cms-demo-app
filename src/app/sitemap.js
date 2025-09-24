@@ -6,7 +6,7 @@ export default async function sitemap() {
   try {
     // Fetch all articles
     const articlesResponse = await getArticles({
-      pagination: { page: 1, pageSize: ถ }, // Get all articles
+      pagination: { page: 1, pageSize: 4 }, // Get all articles
       populate: '*'
     });
     
