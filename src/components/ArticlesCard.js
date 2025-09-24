@@ -102,18 +102,18 @@ const ArticlesCard = ({
 
       {articleImage ? (
         <div className="relative overflow-hidden aspect-[4/3] w-full rounded-t-lg">
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-400 group-hover:scale-110 cursor-pointer"
-            style={{ backgroundImage: `url(${articleImage})` }}
-          >
-            {/* Gradient overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-          </div>
+          <img
+            src={articleImage}
+            alt={article.title || 'Article image'}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 cursor-pointer"
+          />
+          {/* Gradient overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
       ) : (
-        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-lg bg-gradient-to-r from-blue-400 to-purple-600">
+        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-lg bg-gradient-to-r from-blue-400 to-purple-600 cursor-pointer">
           {/* Gradient overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
       )}
 

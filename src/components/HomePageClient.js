@@ -131,7 +131,7 @@ export default function HomePageClient({ locale = 'en' }) {
           position: absolute !important;
           top: 50% !important;
           left: 50% !important;
-          width: 100vw !important;
+          width: 100% !important;
           transform: translate(-50%, -50%) !important;
           min-height: 100% !important;
         }
@@ -163,7 +163,7 @@ export default function HomePageClient({ locale = 'en' }) {
       `}</style>
       <div className=" bg-white min-h-screen">
       {/* Hero Banner Section */}
-      <div className="relative overflow-hidden mb-2 lg:mb-8 md:mb-3">
+      <div className="relative overflow-hidden mb-2 lg:mb-8 md:mb-3 mt-[96px]">
         <Banner 
           variant="home"
           images={bannerImages}
@@ -172,9 +172,9 @@ export default function HomePageClient({ locale = 'en' }) {
           hasVideo={!!currentVideoId}
           className={`${!hasImages ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800' : ''}`}
         >
-        <div className="h-full flex items-end justify-center relative pl-0 pr-0">
+        <div className="h-full flex items-end justify-center relative">
           {/* Main Content - Bottom Left */}
-          <div className="text-left text-white w-full relative z-30 p-4 sm:p-8 pb-16 sm:pb-20 md:pb-24 lg:pb-12 mobile-text-breakout lg:ml-8">
+          <div className="text-left text-white w-full relative z-20 px-4 md:px-8 lg:px-16 pb-16 md:pb-20 lg:pb-12 mobile-text-breakout">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
               {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
             </h1>
@@ -201,7 +201,7 @@ export default function HomePageClient({ locale = 'en' }) {
           {banners.length > 1 && (
             <>
               {/* Desktop: Right side */}
-              <div className="hidden md:block absolute bottom-8 right-8 flex space-x-3 z-40 gap-4">
+              <div className="hidden md:block absolute bottom-8 right-8 flex space-x-3 z-30 gap-4">
                 {banners.map((banner, index) => {
                   const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
                   const isActive = index === currentSlide;
@@ -235,7 +235,7 @@ export default function HomePageClient({ locale = 'en' }) {
               </div>
 
               {/* Mobile: Under Explore More button */}
-              <div className="md:hidden flex justify-center mt-10 space-x-2 z-40 mobile-thumbnails">
+              <div className="md:hidden flex justify-center mt-10 space-x-2 z-30 mobile-thumbnails">
                 {banners.map((banner, index) => {
                   const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
                   const isActive = index === currentSlide;
@@ -274,7 +274,7 @@ export default function HomePageClient({ locale = 'en' }) {
 
       {/* YouTube Video Overlay - Full Width */}
       {currentVideoId && (
-        <div className="absolute inset-0 w-screen h-full z-19 overflow-hidden" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+        <div className="absolute inset-0 w-full h-full z-19 overflow-hidden">
           <iframe
             ref={videoRef}
             className="youtube-video-responsive"
@@ -290,15 +290,14 @@ export default function HomePageClient({ locale = 'en' }) {
       </div>
 
       {/* Main Content */}
-       <main className="w-full px-4 sm:px-4 md:px-8 lg:px-18 py-12 relative">
-         {/* Background AppIcon - Right Side */}
-         {/* Right AppIcon - Responsive */}
-         <div className="absolute top-[-200px] right-[-150px] w-80 h-80 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-5">
+       <main className="w-full px-4 md:px-8 lg:px-16 py-12 relative">
+         {/* Background AppIcon - Right Side - Fixed & Responsive */}
+         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
-         {/* Left AppIcon - Responsive */}
-         <div className="absolute bottom-[100px] left-[-170px] sm:left-[-300px] md:left-[-380px] w-80 h-80 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-0">
+         {/* Left AppIcon - Fixed & Responsive */}
+         <div className="fixed bottom-[100px] left-[-120px] sm:left-[-170px] md:left-[-300px] lg:left-[-380px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          <div className="max-w-7xl mx-auto text-left sm:text-center relative z-10">
@@ -389,7 +388,7 @@ export default function HomePageClient({ locale = 'en' }) {
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
         {!articlesLoading && featuredArticles.length > 0 && (
-          <div className="w-full px-4 sm:px-4 md:px-8 lg:px-18">
+          <div className="w-full px-4 md:px-8 lg:px-16">
             {/* Mobile: Swiper */}
             <div className="block md:hidden">
               <Swiper
@@ -471,7 +470,7 @@ export default function HomePageClient({ locale = 'en' }) {
         )}
         
         {articlesLoading && (
-          <div className="w-full px-4 sm:px-4 md:px-8 lg:px-18">
+          <div className="w-full px-4 md:px-8 lg:px-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3].map((index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
