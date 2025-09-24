@@ -6,7 +6,7 @@ export default async function sitemap() {
   try {
     // Fetch all articles
     const articlesResponse = await getArticles({
-      pagination: { page: 1, pageSize:  5 }, // Get all articles
+      pagination: { page: 1, pageSize: 10 }, // Get all articles
       populate: '*'
     });
     
@@ -14,8 +14,8 @@ export default async function sitemap() {
     
     // Generate sitemap entries
     const articleUrls = articles.map((article) => ({
-      url: `${baseUrl}/newsdesc/${article.slug}`,
-      lastModified: article.updatedAt || article.publishedAt,
+      url: `${baseUrl}/en/newsdesc/${article.attributes?.slug || article.slug}`,
+      lastModified: article.attributes?.updatedAt || article.attributes?.publishedAt || article.updatedAt || article.publishedAt,
       changeFrequency: 'weekly',
       priority: 0.8,
     }));
@@ -29,7 +29,7 @@ export default async function sitemap() {
         priority: 1,
       },
       {
-        url: `${baseUrl}/newslist`,
+        url: `${baseUrl}/en/newslist`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.9,
@@ -49,7 +49,7 @@ export default async function sitemap() {
         priority: 1,
       },
       {
-        url: `${baseUrl}/newslist`,
+        url: `${baseUrl}/en/newslist`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.9,

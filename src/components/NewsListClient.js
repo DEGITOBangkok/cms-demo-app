@@ -216,7 +216,7 @@ export default function NewsListClient() {
                     onClick={handleBannerExploreClick}
                   >
                     {/* Content positioned in lower left - responsive */}
-                    <div className="absolute inset-x-0 bottom-20 md:bottom-24 lg:bottom-26">
+                    <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
                       {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
                       <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
@@ -274,6 +274,7 @@ export default function NewsListClient() {
           </div>
         ) : (
           <Banner
+            variant="newslist"
             className="text-white relative cursor-pointer"
             style={{
               background: ' #17191F'
@@ -281,7 +282,7 @@ export default function NewsListClient() {
             onClick={handleBannerExploreClick}
           >
             {/* Content positioned in lower left - responsive */}
-            <div className="absolute inset-x-0 bottom-20 md:bottom-24 lg:bottom-26">
+            <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
               {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
               <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
                 {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}

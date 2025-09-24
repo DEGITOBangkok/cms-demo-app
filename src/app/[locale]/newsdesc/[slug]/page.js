@@ -1,36 +1,12 @@
 import { notFound } from 'next/navigation';
 import { generateArticleSEO, generateArticleStructuredData } from '@/lib/seo';
-import { STRAPI_URL } from '@/config/strapi';
+import { getArticle } from '@/lib/api';
 import NewsDescClient from './NewsDescClient';
-
-// Shared function to fetch article data
-async function fetchArticleBySlug(slug, locale = 'en') {
-  const queryParams = new URLSearchParams();
-  queryParams.append('filters[slug][$eq]', slug);
-  queryParams.append('populate', '*');
-  queryParams.append('locale', locale);
-  
-  const response = await fetch(`${STRAPI_URL}/api/articles?${queryParams}`, {
-    cache: 'no-store'
-  });
-  
-  if (!response.ok) {
-    return null;
-  }
-  
-  const data = await response.json();
-  
-  if (!data.data || data.data.length === 0) {
-    return null;
-  }
-  
-  return data.data[0];
-}
 
 export async function generateMetadata({ params }) {
   try {
     const { slug, locale } = await params;
-    const article = await fetchArticleBySlug(slug, locale);
+    const article = await getArticle(slug, locale);
     
     if (!article) {
       return {
@@ -52,7 +28,7 @@ export async function generateMetadata({ params }) {
 export default async function NewsDesc({ params }) {
   try {
     const { slug, locale } = await params;
-    const article = await fetchArticleBySlug(slug, locale);
+    const article = await getArticle(slug, locale);
     
     if (!article) {
       notFound();

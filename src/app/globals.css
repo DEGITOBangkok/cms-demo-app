@@ -91,6 +91,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --breakpoint-laptop: 1024px;
   --breakpoint-tablet: 820px;
 }
 
@@ -106,6 +107,11 @@ body {
   color: var(--foreground);
   font-family: 'FCIconic', Sarabun, sans-serif;
   overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Force Sarabun font for footer */
+footer {
+  font-family: 'Sarabun', sans-serif !important;
 }
 
 /* Custom animation for banner entrance */
@@ -201,5 +207,22 @@ body {
     padding: 0 !important;
     margin: 0 !important;
     margin-top: 2rem !important;
+  }
 }
+
+/* Image popup arrow positioning for tablet sizes */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 32px !important;
+    transform: none !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 350px !important;
+    transform: none !important;
+  }
 }

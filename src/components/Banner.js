@@ -1,5 +1,7 @@
 'use client';
 
+import React, { useMemo } from 'react';
+
 /**
  * Banner Component
  * 
@@ -24,24 +26,41 @@ const Banner = ({
   currentSlide = 0,
   backgroundImage,
   className = '',
+  variant = 'home', // 'home' or 'newslist'
+  hasVideo = false, // New prop to detect if video is present
   ...rest
 }) => {
   // Determine which image to display
-  const displayImage = images.length > 0 
-    ? images[currentSlide] 
-    : backgroundImage;
+  const displayImage = useMemo(() => {
+    return images.length > 0 
+      ? images[currentSlide] 
+      : backgroundImage;
+  }, [images, currentSlide, backgroundImage]);
 
-  const backgroundStyle = displayImage
-    ? {
-        backgroundImage: `url(${displayImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }
-    : {};
+  const backgroundStyle = useMemo(() => {
+    return (displayImage && !hasVideo)
+      ? {
+          backgroundImage: `url(${displayImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }
+      : {};
+  }, [displayImage, hasVideo]);
 
-  const baseClasses = "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative";
-  const combinedClassName = className ? `${baseClasses} ${className}` : baseClasses;
+  // Different styles for different banner variants
+  const baseClasses = useMemo(() => {
+    if (variant === 'newslist') {
+      return "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-10";
+    } else {
+      // Default 'home' variant with current styling
+      return "flex w-full pb-16 lg:pb-2 md:pb-3 h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-20";
+    }
+  }, [variant]);
+
+  const combinedClassName = useMemo(() => {
+    return className ? `${baseClasses} ${className}` : baseClasses;
+  }, [baseClasses, className]);
 
   return (
     <div
@@ -56,4 +75,3 @@ const Banner = ({
 };
 
 export default Banner;
-
