@@ -1,4 +1,5 @@
-import { STRAPI_URL, api } from '../config/strapi';
+import { STRAPI_URL, api, isCMSAvailable } from '../config/strapi';
+import { mockArticles, mockCategories, mockHomeData, createMockResponse } from '../mockdata/mockData';
 
 // Helper function to get full image URL
 export const getStrapiURL = (path = '') => {
@@ -33,6 +34,17 @@ export async function getArticles(params = {}) {
     filters = {},
     locale = 'en', // Default locale
   } = params;
+
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return createMockResponse(mockArticles.slice(0, pagination.pageSize), {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      pageCount: 1,
+      total: mockArticles.length
+    });
+  }
 
   // Build query parameters for Strapi v5
   const queryParams = new URLSearchParams();
@@ -124,19 +136,28 @@ export async function getArticles(params = {}) {
     
     return result;
   } catch (error) {
-    console.error('Error fetching articles:', error);
-    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+    console.error('Error fetching articles, using mock data:', error);
+    return createMockResponse(mockArticles.slice(0, pagination.pageSize), {
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      pageCount: 1,
+      total: mockArticles.length
+    });
   }
 }
 
 // Fetch single article by slug with fallback
 export async function getArticle(slug, locale = 'en') {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    const mockArticle = mockArticles.find(article => article.attributes.slug === slug);
+    return mockArticle || mockArticles[0]; // Return first mock article if slug not found
+  }
+
   const queryParams = new URLSearchParams();
   queryParams.append('filters[slug][$eq]', slug);
-  queryParams.append('populate', '*'); // ใช้ populate=* แทน
-  queryParams.append('populate[blocks][populate]', '*');
-  queryParams.append('populate[blocks][on][shared.slider][populate][files]', '*');
-  queryParams.append('populate[blocks][on][shared.slider][populate][images]', '*');
+  queryParams.append('populate', '*'); // Use simple populate=* instead of complex blocks
   queryParams.append('locale', locale);
 
   try {
@@ -154,9 +175,6 @@ export async function getArticle(slug, locale = 'en') {
       const fallbackParams = new URLSearchParams();
       fallbackParams.append('filters[slug][$eq]', slug);
       fallbackParams.append('populate', '*');
-      fallbackParams.append('populate[blocks][populate]', '*');
-      fallbackParams.append('populate[blocks][on][shared.slider][populate][files]', '*');
-      fallbackParams.append('populate[blocks][on][shared.slider][populate][images]', '*');
       fallbackParams.append('locale', 'en');
       
       const fallbackResponse = await fetchAPI(`/api/articles?${fallbackParams}`);
@@ -170,8 +188,9 @@ export async function getArticle(slug, locale = 'en') {
     
     return null;
   } catch (error) {
-    console.error('Error fetching article:', error);
-    return null;
+    console.error('Error fetching article, using mock data:', error);
+    const mockArticle = mockArticles.find(article => article.attributes.slug === slug);
+    return mockArticle || mockArticles[0]; // Return first mock article if slug not found
   }
 }
 
@@ -191,6 +210,17 @@ export async function getFeaturedArticles(limit = 3, locale = 'en') {
 
 // Search articles
 export async function searchArticles(query, params = {}) {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    const filteredArticles = mockArticles.filter(article => 
+      article.attributes.title.toLowerCase().includes(query.toLowerCase()) ||
+      article.attributes.description.toLowerCase().includes(query.toLowerCase()) ||
+      article.attributes.tags.some(tag => tag.name.toLowerCase().includes(query.toLowerCase()))
+    );
+    return createMockResponse(filteredArticles);
+  }
+
   const queryParams = new URLSearchParams();
   
   // Add basic parameters
@@ -211,8 +241,13 @@ export async function searchArticles(query, params = {}) {
   try {
     return await fetchAPI(`/api/articles?${queryParams}`);
   } catch (error) {
-    console.error('Error searching articles:', error);
-    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+    console.error('Error searching articles, using mock data:', error);
+    const filteredArticles = mockArticles.filter(article => 
+      article.attributes.title.toLowerCase().includes(query.toLowerCase()) ||
+      article.attributes.description.toLowerCase().includes(query.toLowerCase()) ||
+      article.attributes.tags.some(tag => tag.name.toLowerCase().includes(query.toLowerCase()))
+    );
+    return createMockResponse(filteredArticles);
   }
 }
 
@@ -258,6 +293,12 @@ export async function getArticlesWithSpecificPopulate(params = {}) {
 
 // Fetch categories from Strapi
 export async function getCategories(locale = 'en') {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return createMockResponse(mockCategories);
+  }
+
   try {
     const queryParams = new URLSearchParams();
     queryParams.append('populate', '*');
@@ -266,35 +307,83 @@ export async function getCategories(locale = 'en') {
     const result = await fetchAPI(`/api/categories?${queryParams}`);
     return result;
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
+    console.error('Error fetching categories, using mock data:', error);
+    return createMockResponse(mockCategories);
   }
 }
 
 // Fetch Facebook single type (stored as 'social' in Strapi)
 export async function getFacebook() {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return {
+      id: 1,
+      attributes: {
+        name: 'Facebook Page',
+        url: 'https://facebook.com/demo',
+        icon: 'facebook',
+        locale: 'en'
+      }
+    };
+  }
+
   try {
     const response = await fetchAPI('/api/social?populate=*');
     return response.data || null;
   } catch (error) {
-    console.warn('Facebook data not available:', error.message);
-    return null;
+    return {
+      id: 1,
+      attributes: {
+        name: 'Facebook Page',
+        url: 'https://facebook.com/demo',
+        icon: 'facebook',
+        locale: 'en'
+      }
+    };
   }
 }
 
 // Fetch Instagram single type
 export async function getInstagram() {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return {
+      id: 1,
+      attributes: {
+        name: 'Instagram Page',
+        url: 'https://instagram.com/demo',
+        icon: 'instagram',
+        locale: 'en'
+      }
+    };
+  }
+
   try {
     const response = await fetchAPI('/api/instagram?populate=*');
     return response.data || null;
   } catch (error) {
-    console.warn('Instagram data not available:', error.message);
-    return null;
+    return {
+      id: 1,
+      attributes: {
+        name: 'Instagram Page',
+        url: 'https://instagram.com/demo',
+        icon: 'instagram',
+        locale: 'en'
+      }
+    };
   }
 }
 
 // Fetch Home single type
 export async function getHome(locale = 'en') {
+  // Check if CMS is available first
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return mockHomeData;
+  }
+
   try {
     const queryParams = new URLSearchParams();
     queryParams.append('populate[banners][populate]', '*');
@@ -306,7 +395,7 @@ export async function getHome(locale = 'en') {
     const response = await fetchAPI(`/api/home?${queryParams}`);
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching Home data:', error);
-    return null;
+    console.error('Error fetching Home data, using mock data:', error);
+    return mockHomeData;
   }
 }
