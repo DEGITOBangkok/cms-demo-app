@@ -6,7 +6,6 @@ export const STRAPI_API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 export async function isCMSAvailable() {
   try {
     if (!STRAPI_URL) {
-      console.warn('STRAPI_URL not configured, using fallback mode');
       return false;
     }
     

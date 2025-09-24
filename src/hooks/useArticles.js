@@ -192,11 +192,6 @@ export function useHome(locale = 'en') {
         setHomeData(response);
       } catch (err) {
         setError(err.message);
-<<<<<<< HEAD
-        console.error('Error fetching Home data:', err);
-=======
-        console.error('Error fetching Home data hook:', err);
->>>>>>> origin/uat
       } finally {
         setLoading(false);
       }

@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "../../../i18n/routing";
 import { Footer} from "../../components";
 import  Navbar  from "@/components/NavBar/Navbar";
-import CMSStatus from "../../components/CMSStatus";
+import CMSStatus from "../../mockdata/CMSStatus";
 import { getHome } from "../../lib/api";
 import { generateHomeSEO } from "../../lib/seo";
 import "../../app/globals.css";
