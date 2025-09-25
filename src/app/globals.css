@@ -91,6 +91,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --breakpoint-laptop: 1024px;
   --breakpoint-tablet: 820px;
 }
 
@@ -106,6 +107,16 @@ body {
   color: var(--foreground);
   font-family: 'FCIconic', Sarabun, sans-serif;
   overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Force Sarabun font for footer */
+footer {
+  font-family: 'FCIconic', sans-serif !important;
+}
+
+/* Override font for license text */
+footer [class*="font-sarabun"] {
+  font-family: 'Sarabun', sans-serif !important;
 }
 
 /* Custom animation for banner entrance */
@@ -163,5 +174,60 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Mobile and small tablet text breakout for banner content */
+@media (max-width: 639px) {
+  .mobile-text-breakout {
+    position: absolute !important;
+    bottom: 120px !important; /* More space for thumbnails below */
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Mobile thumbnails positioning */
+  .mobile-thumbnails {
+    position: absolute !important;
+    bottom: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 40 !important;
+  }
+}
+
+/* Small tablet adjustments */
+@media (min-width: 640px) and (max-width: 768px) {
+  .mobile-text-breakout {
+    position: absolute !important;
+    bottom: 48px !important;
+    left: 24px !important;
+    right: 24px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-top: 2rem !important;
+  }
+}
+
+/* Image popup arrow positioning for tablet sizes */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 32px !important;
+    transform: none !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .image-popup-arrow {
+    top: auto !important;
+    bottom: 350px !important;
+    transform: none !important;
   }
 }

@@ -2,12 +2,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { MENUS } from "@/lib/const";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import LocaleSwitcher from "../LocaleSwitch";
 import Hamburger from "./Hamburger";
 
 export default function Navbar() {
+  const router = useRouter();
   const { locale } = useParams();
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="flex items-center justify-between p-4 bg-white h-[96px] w-full px-4 tablet:px-16 fixed top-0 left-0 z-50"
+        className="flex items-center justify-between bg-white h-[96px] w-full px-4 md:px-8 lg:px-16 fixed top-0 left-0 z-50"
       >
         {/* Logo */}
         <div>
@@ -45,11 +46,12 @@ export default function Navbar() {
             width={266}
             height={30}
             className="object-contain"
+            onClick={() => router.push(`/${locale}/`)}
           />
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden tablet:flex flex-row gap-10 items-center text-black">
+        <div className="hidden lg:flex flex-row gap-10 items-center text-black">
           {MENUS.map((m) => (
             <a
               key={m.slug}
@@ -66,9 +68,9 @@ export default function Navbar() {
           <LocaleSwitcher />
         </div>
 
-        {/* Mobile Hamburger */}
-        <div className=" tablet:hidden">
-          <button onClick={() => setIsOpen(!isOpen)}>
+        {/* Mobile & Tablet Hamburger */}
+        <div className="lg:hidden relative z-50">
+          <button onClick={() => setIsOpen(!isOpen)} className="relative z-50">
             <Hamburger state={isOpen ? "close" : "default"} />
           </button>
         </div>
@@ -77,7 +79,7 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="fixed top-[96px] left-0 w-full h-[calc(100%-96px)] bg-white z-40 flex flex-col justify-between overflow-y-auto tablet:hidden">
+        <div className="fixed top-[96px] left-0 w-full h-[calc(100%-96px)] bg-white z-40 flex flex-col justify-between overflow-y-auto lg:hidden">
           {/* Menu items */}
           <div className="flex flex-col items-start px-4 pt-4">
             {MENUS.map((m) => (

@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '../../../components';
-import { useArticles, useSearch, useArticlesWithSort, useCategories } from '../../../hooks/useArticles';
+import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '@/components';
+import { useArticles, useSearch, useArticlesWithSort, useCategories } from '@/hooks/useArticles';
 import { useLocale } from 'next-intl';
-import { getStrapiMediaURL } from '../../../lib/api';
+import { getStrapiMediaURL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import { formatDate } from '@/lib/day';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -216,7 +216,7 @@ export default function NewsListClient() {
                     onClick={handleBannerExploreClick}
                   >
                     {/* Content positioned in lower left - responsive */}
-                    <div className="absolute inset-x-0 bottom-20 md:bottom-24 lg:bottom-26">
+                    <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
                       {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
                       <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
@@ -274,6 +274,7 @@ export default function NewsListClient() {
           </div>
         ) : (
           <Banner
+            variant="newslist"
             className="text-white relative cursor-pointer"
             style={{
               background: ' #17191F'
@@ -281,7 +282,7 @@ export default function NewsListClient() {
             onClick={handleBannerExploreClick}
           >
             {/* Content positioned in lower left - responsive */}
-            <div className="absolute inset-x-0 bottom-20 md:bottom-24 lg:bottom-26">
+            <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
               {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
               <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
                 {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
@@ -443,7 +444,7 @@ export default function NewsListClient() {
             {articlesError ? (
               <div className="text-center py-12">
                 <p className="text-red-600 mb-4">Error loading articles: {articlesError}</p>
-                <p className="text-gray-500">Make sure Strapi is running on http://localhost:1337</p>
+                <p className="text-gray-500">Make sure Strapi is running</p>
               </div>
             ) : displayArticles?.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">

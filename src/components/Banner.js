@@ -1,5 +1,7 @@
 'use client';
 
+import React, { useMemo } from 'react';
+
 /**
  * Banner Component
  * 
@@ -24,33 +26,49 @@ const Banner = ({
   currentSlide = 0,
   backgroundImage,
   className = '',
+  variant = 'home', // 'home' or 'newslist'
+  hasVideo = false, // New prop to detect if video is present
   ...rest
 }) => {
   // Determine which image to display
-  const displayImage = images.length > 0 
-    ? images[currentSlide] 
-    : backgroundImage;
+  const displayImage = useMemo(() => {
+    return images.length > 0 
+      ? images[currentSlide] 
+      : backgroundImage;
+  }, [images, currentSlide, backgroundImage]);
 
-  const backgroundStyle = displayImage
-    ? {
-        backgroundImage: `url(${displayImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }
-    : {};
+  // No longer using backgroundStyle since we'll use img element
+
+  // Different styles for different banner variants
+  const baseClasses = useMemo(() => {
+    if (variant === 'newslist') {
+      return "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-10";
+    } else {
+      // Default 'home' variant with current styling
+      return "flex w-full pb-16 lg:pb-2 md:pb-3 h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-20";
+    }
+  }, [variant]);
+
+  const combinedClassName = useMemo(() => {
+    return className ? `${baseClasses} ${className}` : baseClasses;
+  }, [baseClasses, className]);
 
   return (
     <div
-      className={`flex w-full h-[950px] sm:h-[450px] md:h-[500px] lg:h-[600px] xl:h-[720px] justify-center items-center flex-shrink-0 relative ${className}`}
-      style={backgroundStyle}
+      className={combinedClassName}
       {...rest}
     >
+      {displayImage && !hasVideo && (
+        <img 
+          src={displayImage} 
+          alt="Banner background" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
       {displayImage && <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0" />}
-      <div className="relative z-10 w-full h-full">{children}</div>
+      <div className="relative z-10 w-full h-full overflow-visible">{children}</div>
     </div>
   );
 };
 
 export default Banner;
-

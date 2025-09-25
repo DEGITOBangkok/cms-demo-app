@@ -7,11 +7,14 @@
     "locale" : "Eng"
   },
   "Footer": {
+    "addressLine1": "123, 24th Floor, Digi Tower",
+    "addressLine2": "Bangkoknoi, Bangkok, 10700, Thailand",
     "newsArticle": "News & Article",
     "contactUs": "Contact Us",
     "privacyPolicy": "Privacy Policy",
     "followUs": "Follow Us",
-    "top": "Top"
+    "top": "Top",
+    "license": "©2025 Digi Proxima Co., Ltd. All right reserved"
   },
    "LocaleSwitcher": {
     "label": "Change language",
@@ -19,6 +22,7 @@
   },
   "HomePage": {
     "readmore": "Read More",
+    "exploreall": "Explore all",
     "latestnew": "Latest News",
     "newslist": "News & Articles",
     "searchbar": "Search News & Articles",

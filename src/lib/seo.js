@@ -70,6 +70,30 @@ export function generateArticleSEO(article, options = {}) {
  * @param {Object} options - SEO options
  * @returns {Object} SEO metadata object
  */
+export function generateHomeSEO(homeData, options = {}) {
+  // SEO is an array, get the first item
+  const seo = Array.isArray(homeData?.SEO) ? homeData.SEO[0] : homeData?.SEO;
+  
+  return {
+    title: seo?.metaTitle || homeData?.homeTitle || 'Home',
+    description: seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+    keywords: seo?.keywords || '',
+    openGraph: {
+      title: seo?.ogTitle || seo?.metaTitle || homeData?.homeTitle || 'Home',
+      description: seo?.ogDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+      images: seo?.ogImage ? [{ url: seo.ogImage.url }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seo?.twitterTitle || seo?.metaTitle || homeData?.homeTitle || 'Home',
+      description: seo?.twitterDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
+      images: seo?.twitterImage ? [seo.twitterImage.url] : [],
+    },
+    ...options,
+  };
+}
+
 export function generateNewsListSEO(options = {}) {
   const {
     siteName = 'News Portal',
