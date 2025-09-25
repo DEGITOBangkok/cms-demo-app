@@ -28,7 +28,7 @@ const Footer = () => {
   }, [locale]);
 
   return (
-    <footer className="bg-[#17191F] text-white font-sarabun relative z-2 px-4 py-10 lg:px-[64px] lg:py-[40px]">
+    <footer className="bg-[#17191F] text-white relative z-2 px-4 py-10 lg:px-[64px] lg:py-[40px]">
       {/* Main Footer Content */}
        <div className=" max-w-full mx-auto ">
         <div className="flex flex-col lg:flex-row justify-between items-start self-stretch pb-8">
@@ -79,14 +79,14 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <div className="w-full my-10 lg:my-0 lg:w-auto lg:space-y-6">
-            <div className="lg:space-y-6">
-              <a href={isClient ? `/${locale}/newslist` : '/en/newslist'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 lg:border-b-0 lg:pb-0">
+            <div className="lg:space-y-10">
+              <a href={isClient ? `/${locale}/newslist` : '/en/newslist'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 lg:pt-0 lg:border-b-0 lg:pb-0">
                 {t('newsArticle')}
               </a>
-              <a href={isClient ? `/${locale}/contact` : '/en/contact'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:border-b-0 lg:pb-0">
+              <a href={isClient ? `/${locale}/contact` : '/en/contact'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:pt-0 lg:pb-0 lg:border-b-0 lg:pb-0">
                 {t('contactUs')}
               </a>
-              <a href={isClient ? `/${locale}/privacy` : '/en/privacy'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:border-b-0 lg:pb-0">
+              <a href={isClient ? `/${locale}/privacy` : '/en/privacy'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:pt-0 lg:pb-0 lg:border-b-0 lg:pb-0">
                 {t('privacyPolicy')}
               </a>
             </div>
@@ -161,7 +161,7 @@ const Footer = () => {
                     className="transform rotate-90 transition-colors group-hover:[&>path]:fill-[#E60000]"
                   />
                 </button>
-                <span className="text-[16px] text-white leading-none px-2 pt-2">{t('top')}</span>
+                <span className="text-[16px] text-white leading-none pt-[7.5px] pb-[0.5px] !font-sarabun">{t('top')}</span>
               </div>
             </div>
           </div>
@@ -181,7 +181,7 @@ const Footer = () => {
                 className="transform rotate-90 transition-colors group-hover:[&>path]:fill-[#E60000]"
               />
             </button>
-            <span className="text-[16px] text-white leading-none px-2 py-2">{t('top')}</span>
+            <span className="text-[16px] font-[400] text-white leading-none pt-[7.5px] pb-[0.5px] !font-sarabun">{t('top')}</span>
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ const Footer = () => {
 
        {/* Copyright Section */}
        <div className="max-w-full mx-auto pt-8">
-         <div className="text-left">
+         <div className="lg:text-left text-center">
            <p className="text-[14px] font-[400] text-white">
              {t('license')}
            </p>
