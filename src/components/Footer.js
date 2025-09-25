@@ -188,7 +188,7 @@ const Footer = () => {
 
       {/* Separator Line */}
 
-        <div className="border-t-[0.2px]" style={{ borderColor: 'rgba(255, 255, 255, 0.50)' }}></div>
+        <div className="border-t-[1px]" style={{ borderColor: 'rgba(255, 255, 255, 0.50)' }}></div>
 
        {/* Copyright Section */}
        <div className="max-w-full mx-auto pt-8">
