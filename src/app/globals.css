@@ -111,6 +111,11 @@ body {
 
 /* Force Sarabun font for footer */
 footer {
+  font-family: 'FCIconic', sans-serif !important;
+}
+
+/* Override font for license text */
+footer [class*="font-sarabun"] {
   font-family: 'Sarabun', sans-serif !important;
 }
 
