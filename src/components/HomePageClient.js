@@ -163,7 +163,7 @@ export default function HomePageClient({ locale = 'en' }) {
       `}</style>
       <div className=" bg-white min-h-screen">
       {/* Hero Banner Section */}
-      <div className="relative overflow-hidden mb-2 lg:mb-8 md:mb-3 mt-[96px]">
+      <div className="relative overflow-hidden">
         <Banner 
           variant="home"
           images={bannerImages}
@@ -173,126 +173,163 @@ export default function HomePageClient({ locale = 'en' }) {
           className={`${!hasImages ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800' : ''}`}
         >
         <div className="h-full flex items-end justify-center relative">
-          {/* Main Content - Bottom Left */}
-          <div className="text-left text-white w-full relative z-20 px-4 md:px-8 lg:px-16 pb-16 md:pb-20 lg:pb-12 mobile-text-breakout">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
-              {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
-            </h1>
-            <div className="text-base md:text-lg lg:text-xl w-full sm:max-w-2xl lg:max-w-3xl drop-shadow-xl">
-              {currentBanner?.description ? (
-                <div 
-                  dangerouslySetInnerHTML={{ 
-                    __html: currentBanner.description.replace(/<[^>]*>/g, '') 
-                  }}
-                />
-              ) : (
-                <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
-              )}
+          {/* Main Content Container */}
+            <div className="flex w-full justify-between items-end relative z-10 px-4 md:px-8 lg:px-16 pb-16 lg:pb-8">
+              {/* Text Content - Left Side */}
+              <div className="text-left text-white lg:w-1/2 sm:w-1/2 mobile-text-breakout">
+              <h1 className="text-2xl text-[32px] lg:text-[56px] font-[700]">
+                {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
+              </h1>
+              <div className="font-[400] text-[20px] lg:text-[20px] w-full lg:max-w-2xl lg:py-4 py-6">
+                {currentBanner?.description ? (
+                  <div 
+                    dangerouslySetInnerHTML={{ 
+                      __html: currentBanner.description.replace(/<[^>]*>/g, '') 
+                    }}
+                  />
+                ) : (
+                  <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
+                )}
+              </div>
+               <div className="flex justify-start">
+                   <button className="bg-[#E60000] text-white font-bold text-[14px] px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#D40000] transition-colors duration-200">
+                       <span>{homeData?.exploreButton|| 'Explore More'}</span>
+                       <ArrowIcon className="w-6 h-6" />
+                   </button>
+               </div>
             </div>
-             <div className="flex justify-start mt-8 pb-8">
-                 <button className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#D40000] transition-colors duration-200">
-                     <span>{homeData?.exploreButton|| 'Explore More'}</span>
-                     <ArrowIcon className="w-4 h-4" />
-                 </button>
-             </div>
+
+            {/* Tablet: Column Layout */}
+            {banners.length > 1 && (
+              <div className="hidden md:block lg:hidden flex flex-col space-y-4">
+                {banners.map((banner, index) => {
+                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                  const isActive = index === currentSlide;
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSlideChange(index)}
+                      className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 ${
+                        isActive 
+                          ? 'ring-2 ring-[#E60000]' 
+                          : 'opacity-100'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
+                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                    >
+                      {thumbnailUrl ? (
+                        <img
+                          src={getStrapiMediaURL(thumbnailUrl)}
+                          alt={`Banner ${index + 1} thumbnail`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className={`w-full h-full ${
+                          isActive ? 'bg-white' : 'bg-white/50'
+                        }`} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Desktop: Row Layout */}
+            {banners.length > 1 && (
+              <div className="hidden lg:block flex space-x-6">
+                {banners.map((banner, index) => {
+                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                  const isActive = index === currentSlide;
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSlideChange(index)}
+                      className={`relative  w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 ${
+                        isActive 
+                          ? 'ring-2 ring-[#E60000]' 
+                          : 'opacity-100'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
+                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                    >
+                      {thumbnailUrl ? (
+                        <img
+                          src={getStrapiMediaURL(thumbnailUrl)}
+                          alt={`Banner ${index + 1} thumbnail`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className={`w-full h-full ${
+                          isActive ? 'bg-white' : 'bg-white/50'
+                        }`} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Thumbnail Indicators - Desktop: right side, Mobile: under button */}
+          {/* Mobile: Under Explore More button */}
           {banners.length > 1 && (
-            <>
-              {/* Desktop: Right side */}
-              <div className="hidden md:block absolute bottom-8 right-8 flex space-x-3 z-30 gap-4">
-                {banners.map((banner, index) => {
-                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
-                  const isActive = index === currentSlide;
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleSlideChange(index)}
-                      className={`relative w-20 h-20 rounded-lg overflow-hidden transition-all duration-200 ${
-                        isActive 
-                          ? 'ring-2 ring-[#E60000]' 
-                          : 'opacity-100'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
-                    >
-                      {thumbnailUrl ? (
-                        <img
-                          src={getStrapiMediaURL(thumbnailUrl)}
-                          alt={`Banner ${index + 1} thumbnail`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className={`w-full h-full ${
-                          isActive ? 'bg-white' : 'bg-white/50'
-                        }`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Mobile: Under Explore More button */}
-              <div className="md:hidden flex justify-center mt-10 space-x-2 z-30 mobile-thumbnails">
-                {banners.map((banner, index) => {
-                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
-                  const isActive = index === currentSlide;
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleSlideChange(index)}
-                      className={`relative w-20 h-20 rounded-lg overflow-hidden transition-all duration-200 ${
-                        isActive 
-                          ? 'ring-2 ring-[#E60000]' 
-                          : 'opacity-100'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
-                    >
-                      {thumbnailUrl ? (
-                        <img
-                          src={getStrapiMediaURL(thumbnailUrl)}
-                          alt={`Banner ${index + 1} thumbnail`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className={`w-full h-full ${
-                          isActive ? 'bg-white' : 'bg-white/50'
-                        }`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
+            <div className="md:hidden flex justify-center space-x-4 z-10 mobile-thumbnails">
+              {banners.map((banner, index) => {
+                const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                const isActive = index === currentSlide;
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleSlideChange(index)}
+                    className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 ${
+                      isActive 
+                        ? 'ring-2 ring-[#E60000]' 
+                        : 'opacity-100'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
+                    title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                  >
+                    {thumbnailUrl ? (
+                      <img
+                        src={getStrapiMediaURL(thumbnailUrl)}
+                        alt={`Banner ${index + 1} thumbnail`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className={`w-full h-full ${
+                        isActive ? 'bg-white' : 'bg-white/50'
+                      }`} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {/* YouTube Video Overlay - Inside Banner */}
+          {currentVideoId && (
+            <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+              <iframe
+                ref={videoRef}
+                className="youtube-video-responsive"
+                src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`}
+                title="Banner Video"
+                allow="autoplay; encrypted-media; fullscreen; accelerometer; gyroscope; picture-in-picture"
+                allowFullScreen
+                frameBorder="0"
+              />
+              <div className="absolute inset-0 bg-black/20 pointer-events-none z-0" />
+            </div>
           )}
         </div>
       </Banner>
-
-      {/* YouTube Video Overlay - Full Width */}
-      {currentVideoId && (
-        <div className="absolute inset-0 w-full h-full z-19 overflow-hidden">
-          <iframe
-            ref={videoRef}
-            className="youtube-video-responsive"
-            src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`}
-            title="Banner Video"
-            allow="autoplay; encrypted-media; fullscreen; accelerometer; gyroscope; picture-in-picture"
-            allowFullScreen
-            frameBorder="0"
-          />
-          <div className="absolute inset-0 bg-black/20 pointer-events-none z-10" />
-        </div>
-      )}
       </div>
 
       {/* Main Content */}
        <main className="w-full px-4 md:px-8 lg:px-16 py-12 relative">
          {/* Background AppIcon - Right Side - Fixed & Responsive */}
-         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
@@ -335,10 +372,10 @@ export default function HomePageClient({ locale = 'en' }) {
                   {homeDetails.map((service, index) => (
                     <div key={service.id || index} className="flex items-start space-x-4">
                       {/* Service Icon */}
-                      {service.icon && (
+                      {service.image && (
                         <div className="flex-shrink-0">
                           <img 
-                            src={getStrapiMediaURL(service.icon.url)} 
+                            src={getStrapiMediaURL(service.image.url)} 
                             alt={service.title || 'Service Icon'}
                             className="w-18 h-18 object-contain"
                           />

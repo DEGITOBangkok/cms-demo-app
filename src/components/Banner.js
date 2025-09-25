@@ -42,10 +42,10 @@ const Banner = ({
   // Different styles for different banner variants
   const baseClasses = useMemo(() => {
     if (variant === 'newslist') {
-      return "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-10";
+      return "flex w-full aspect-[1/2] lg:aspect-[2/1] justify-start sm:justify-center items-center flex-shrink-0 relative z-0";
     } else {
-      // Default 'home' variant with current styling
-      return "flex w-full pb-16 lg:pb-2 md:pb-3 h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-20";
+      // Default 'home' variant with 2:1 aspect ratio on desktop, 1/2 height on mobile
+      return "flex w-full aspect-[1/2] lg:aspect-[2/1] justify-start sm:justify-center items-center flex-shrink-0 relative z-0";
     }
   }, [variant]);
 

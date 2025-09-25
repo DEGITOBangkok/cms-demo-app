@@ -378,7 +378,22 @@ export async function getInstagram() {
     };
   }
 }
-
+export async function getContactConfig() {
+  const cmsAvailable = await isCMSAvailable();
+  if (!cmsAvailable) {
+    return null;
+  }
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append('populate[ContactForm]', '*');
+    const response = await fetchAPI(`/api/contact?${queryParams}`);
+    console.log('API response:', response);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 // Fetch Home single type
 export async function getHome(locale = 'en') {
   // Check if CMS is available first
