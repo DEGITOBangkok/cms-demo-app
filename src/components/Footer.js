@@ -24,8 +24,8 @@ const Footer = () => {
   return (
     <footer className="bg-[#17191F] text-white font-sarabun relative z-2">
       {/* Main Footer Content */}
-       <div className=" max-w-full mx-auto px-4 py-6 lg:px-16 lg:py-10">
-        <div className="flex flex-col lg:flex-row justify-between items-start self-stretch">
+       <div className=" max-w-full mx-auto px-4 py-6 lg:px-[64px] lg:py-[40px]">
+        <div className="flex flex-col lg:flex-row justify-between items-start self-stretch" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', alignSelf: 'stretch' }}>
           
           {/* Company Information - Mobile: Full width, Desktop: Left */}
           <div className="w-full lg:w-auto space-y-2 lg:flex-shrink-0">
@@ -72,7 +72,7 @@ const Footer = () => {
           <div className="w-full lg:hidden mb-6"></div>
 
           {/* Navigation & Social Media Group - Desktop */}
-          <div className="w-full lg:w-auto lg:flex lg:gap-40 lg:items-start">
+          <div className="w-full lg:w-auto">
             {/* Navigation Links */}
             <div className="w-full lg:w-auto lg:space-y-6">
               <div className="space-y-6">
