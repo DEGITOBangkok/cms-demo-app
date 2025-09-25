@@ -320,7 +320,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 {/* Left Column - Home Image */}
                 <div className="order-1 md:order-1">
                   {homeImg && (
-                    <div className="relative aspect-[1/1] md:aspect-[2.3/3] lg:aspect-[2.5/3] w-full sm:w-3/5 md:w-full lg:w-2/3 mx-auto">
+                    <div className="relative aspect-[1/1] md:aspect-[2.3/3] lg:aspect-[1/1] w-full sm:w-3/5 md:w-full lg:w-2/3 mx-auto">
                       <img 
                         src={getStrapiMediaURL(homeImg.url)} 
                         alt="Our Services"
