@@ -18,6 +18,8 @@ export const getStrapiMediaURL = (url) => {
 // Generic fetch function for Strapi API
 async function fetchAPI(endpoint, options = {}) {
   try {
+    console.log('STRAPI_URL:', STRAPI_URL);
+    console.log('Full API URL:', `${STRAPI_URL}${endpoint}`);
     return await api(endpoint, options);
   } catch (error) {
     console.error('API Error:', error);
@@ -84,6 +86,7 @@ export async function getArticles(params = {}) {
   });
 
   try {
+    console.log('getArticles', `${STRAPI_URL}/api/articles?${queryParams}`);
     const result = await fetchAPI(`/api/articles?${queryParams}`);
     
     // If articles found in requested locale, return them
