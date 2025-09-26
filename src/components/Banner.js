@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useBannerAspectRatio } from '../hooks/useResponsiveContainer';
 
 /**
  * Banner Component
@@ -39,15 +40,18 @@ const Banner = ({
 
   // No longer using backgroundStyle since we'll use img element
 
+  // Get dynamic aspect ratio classes
+  const aspectClasses = useBannerAspectRatio();
+
   // Different styles for different banner variants
   const baseClasses = useMemo(() => {
     if (variant === 'newslist') {
-      return "flex w-full aspect-[1/2] lg:aspect-[2/1] justify-start sm:justify-center items-center flex-shrink-0 relative z-0";
+      return `flex w-full ${aspectClasses} justify-start sm:justify-center items-center flex-shrink-0 relative z-0`;
     } else {
-      // Default 'home' variant with 2:1 aspect ratio on desktop, 1/2 height on mobile
-      return "flex w-full aspect-[1/2] lg:aspect-[2/1] justify-start sm:justify-center items-center flex-shrink-0 relative z-0";
+      // Default 'home' variant with dynamic aspect ratio
+      return `flex w-full ${aspectClasses} justify-start sm:justify-center items-center flex-shrink-0 relative z-0`;
     }
-  }, [variant]);
+  }, [variant, aspectClasses]);
 
   const combinedClassName = useMemo(() => {
     return className ? `${baseClasses} ${className}` : baseClasses;
