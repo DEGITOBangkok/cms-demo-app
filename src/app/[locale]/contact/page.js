@@ -207,7 +207,7 @@ export default function ContactPage() {
                   name="phonenumber"
                   value={formData.phonenumber}
                   onChange={handleChange}
-                  placeholder="you@example.com"
+                  placeholder="Phone Number ex.0991234567"
                   className="mt-1 w-full border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.phonenumber && (
@@ -242,28 +242,47 @@ export default function ContactPage() {
               </div>
               <FileDrop />
               {/* Checkbox */}
-              <div className="md:col-span-2 flex items-start space-x-2 text-[16px]">
-                <input
-                  type="checkbox"
-                  id="privacy"
-                  name="privacy"
-                  checked={formData.privacy}
-                  onChange={handleChange}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-[#E60000] focus:ring-[#E60000]"
-                />
-                <label htmlFor="privacy" className="text-sm text-gray-700">
-                  I have read and accepted terms and conditions specified in the
-                  <a
-                    href="/privacy-policy"
-                    className="text-[#E60000] font-bold underline"
-                  >
-                    Privacy Policy
-                  </a>
-                  and do hereby consent to the collecting, processing and/or
-                  disclosing of the personal data provided by me to fulfil the
-                  above-said purposes.
+              <div className="md:col-span-2 text-[16px]">
+                <label
+                  className="flex items-start space-x-2 cursor-pointer"
+                  onClick={(e) => {
+                    // ถ้า click ที่ <a> ให้ไปหน้า ไม่ toggle
+                    if (e.target.tagName.toLowerCase() === "a") return;
+                    setFormData((prev) => ({
+                      ...prev,
+                      privacy: !prev.privacy, // toggle checkbox
+                    }));
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    name="privacy"
+                    checked={formData.privacy} // bind state
+                    onChange={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        privacy: !prev.privacy,
+                      }))
+                    }
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-[#E60000] focus:ring-[#E60000]"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I have read and accepted terms and conditions specified in
+                    the{" "}
+                    <a
+                      href="/privacy-policy"
+                      className="text-[#E60000] font-bold underline"
+                      onClick={(e) => e.stopPropagation()} // ป้องกัน toggle
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    and do hereby consent to the collecting, processing and/or
+                    disclosing of the personal data provided by me to fulfil the
+                    above-said purposes.
+                  </span>
                 </label>
               </div>
+
               {formError.privacy && (
                 <p className="text-red-600 text-sm mt-1">{formError.privacy}</p>
               )}
@@ -306,7 +325,6 @@ export default function ContactPage() {
 
             <div className="flex flex-col gap-6">
               <div className=" flex flex-row">
-               
                 <img
                   src={"/images/localtion.png"}
                   className=" object-cover w-[32px] h-[32px]"
@@ -317,7 +335,6 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className=" flex flex-row pl-[5px]">
-               
                 <img
                   src={"/images/phone.png"}
                   className=" object-cover w-[24px] h-[32px]"
@@ -327,8 +344,7 @@ export default function ContactPage() {
                   <p className="text-white/70">{contactForm?.Phonenumber}</p>
                 </div>
               </div>
-               <div className=" flex flex-row pl-[2px]">
-               
+              <div className=" flex flex-row pl-[2px]">
                 <img
                   src={"/images/mail.png"}
                   className=" object-cover w-[32px] h-[32px]"
@@ -338,18 +354,19 @@ export default function ContactPage() {
                   <p className="text-white/70">{contactForm?.email}</p>
                 </div>
               </div>
-               <div className=" flex flex-row pl-[2px]">
-               
+              <div className=" flex flex-row pl-[2px]">
                 <img
                   src={"/images/clock.png"}
                   className=" object-cover w-[32px] h-[32px]"
                 ></img>
                 <div className="flex flex-col pl-[26px]">
-                  <span className="block font-bold text-white"> Business Hours</span>
+                  <span className="block font-bold text-white">
+                    {" "}
+                    Business Hours
+                  </span>
                   <p className="text-white/70">{contactForm?.Time}</p>
                 </div>
               </div>
-         
             </div>
           </div>
         </div>
