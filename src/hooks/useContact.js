@@ -24,8 +24,7 @@ export function useContact() {
         setLoading(false);
       }
     };
-
-    fetchContact();
+     fetchContact();
   }, []);
 
   return { contactData, loading, error };

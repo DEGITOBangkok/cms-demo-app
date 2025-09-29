@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 import React, { useState, useEffect } from "react";
@@ -35,17 +36,17 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        className="flex items-center justify-between bg-white h-[96px] w-full px-4 md:px-8 lg:px-16 fixed top-0 left-0 z-50"
-      >
+      <nav className="flex items-center justify-between bg-white h-[96px] w-full px-4 md:px-8 lg:px-16 fixed top-0 left-0 z-50">
         {/* Logo */}
         <div>
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            width={266}
-            height={30}
-            className="object-contain"
+            className="object-contain 
+               lg:w-[266px]    
+               md:w-[266px]
+               w-[142px]
+              sm:w-[266px]"
             onClick={() => router.push(`/${locale}/`)}
           />
         </div>
@@ -75,7 +76,6 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
-
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
