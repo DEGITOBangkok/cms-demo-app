@@ -9,6 +9,7 @@ import AppIcon from './icons/AppIcon';
 import ArticlesCard from './ArticlesCard';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding } from '../hooks/useResponsiveContainer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -20,6 +21,11 @@ export default function HomePageClient({ locale = 'en' }) {
   const router = useRouter();
   const t = useTranslations('HomePage')
   
+  // Custom responsive container hooks
+  const containerClasses = useResponsiveContainer();
+  const bannerPositionClasses = useBannerContentPosition();
+  const layoutClasses = useMobileColumnLayout();
+  const bannerPaddingClasses = useBannerBottomPadding();
   
   // Function to get translated category name
   const getTranslatedCategoryName = (categoryName) => {
@@ -144,26 +150,34 @@ export default function HomePageClient({ locale = 'en' }) {
           }
         }
         
-        /* Tablet: width > height (4:3 aspect ratio) */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablet: very large video to cover entire banner area */
+        @media (min-width: 768px) and (max-width: 1024px) {
           .youtube-video-responsive {
-            height: 80vw !important;
-            min-width: 220vh !important;
+            height: 150vh !important;
+            width: 150vw !important;
+            min-width: 150vw !important;
+            top: -25vh !important;
+            left: -25vw !important;
+            transform: none !important;
           }
         }
         
-        /* Desktop: 16:9 aspect ratio */
+        /* Desktop: very large video to cover entire banner area */
         @media (min-width: 1025px) {
           .youtube-video-responsive {
-            height: 62.5vw !important;
-            min-width: 220vh !important;
+            height: 200vh !important;
+            width: 200vw !important;
+            min-width: 200vw !important;
+            top: -50vh !important;
+            left: -50vw !important;
+            transform: none !important;
           }
         }
         
       `}</style>
       <div className=" bg-white min-h-screen">
       {/* Hero Banner Section */}
-      <div className="relative overflow-hidden mb-2 lg:mb-8 md:mb-3 mt-[96px]">
+      <div className="relative overflow-hidden">
         <Banner 
           variant="home"
           images={bannerImages}
@@ -173,126 +187,144 @@ export default function HomePageClient({ locale = 'en' }) {
           className={`${!hasImages ? 'bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800' : ''}`}
         >
         <div className="h-full flex items-end justify-center relative">
-          {/* Main Content - Bottom Left */}
-          <div className="text-left text-white w-full relative z-20 px-4 md:px-8 lg:px-16 pb-16 md:pb-20 lg:pb-12 mobile-text-breakout">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
-              {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
-            </h1>
-            <div className="text-base md:text-lg lg:text-xl w-full sm:max-w-2xl lg:max-w-3xl drop-shadow-xl">
-              {currentBanner?.description ? (
-                <div 
-                  dangerouslySetInnerHTML={{ 
-                    __html: currentBanner.description.replace(/<[^>]*>/g, '') 
-                  }}
-                />
-              ) : (
-                <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
-              )}
+            {/* Main Content Container */}
+            <div className={`${layoutClasses} relative z-10 ${containerClasses} ${bannerPaddingClasses} banner-content-container`}>
+              {/* Text Content - Left Side */}
+              <div className="text-left text-white lg:w-1/2 sm:w-1/2 mobile-text-breakout">
+              <h1 className="banner-title-custom">
+                {currentBanner?.title || homeData?.homeTitle || 'Welcome to Our News'}
+              </h1>
+              <div className="banner-description-custom w-full lg:max-w-2xl lg:py-4 py-6">
+                {currentBanner?.description ? (
+                  <div 
+                    dangerouslySetInnerHTML={{ 
+                      __html: currentBanner.description.replace(/<[^>]*>/g, '') 
+                    }}
+                  />
+                ) : (
+                  <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
+                )}
+              </div>
+               <div className="flex justify-start">
+                   <button className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group">
+                       <span>{homeData?.exploreButton|| 'Explore More'}</span>
+                       <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
+                   </button>
+               </div>
             </div>
-             <div className="flex justify-start mt-8 pb-8">
-                 <button className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#D40000] transition-colors duration-200">
-                     <span>{homeData?.exploreButton|| 'Explore More'}</span>
-                     <ArrowIcon className="w-4 h-4" />
-                 </button>
-             </div>
+
+            {/* Dynamic Thumbnail Layout */}
+            {banners.length > 1 && (
+              <>
+                {/* Mobile Thumbnail Swiper */}
+                <div className="mobile-swiper-only thumbnail-container">
+                  <Swiper
+                    spaceBetween={16}
+                    slidesPerView={3}
+                    centeredSlides={true}
+                    initialSlide={currentSlide}
+                    onSlideChange={(swiper) => handleSlideChange(swiper.activeIndex)}
+                    className="!w-auto"
+                    allowTouchMove={true}
+                    touchRatio={0.5}
+                    threshold={10}
+                    resistance={true}
+                    resistanceRatio={0.5}
+                  >
+                    {banners.map((banner, index) => {
+                      const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                      const isActive = index === currentSlide;
+                      
+                      return (
+                        <SwiperSlide key={index} className="!w-[74px]">
+                          <button
+                            onClick={() => handleSlideChange(index)}
+                            className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 ${
+                              isActive 
+                                ? 'ring-2 ring-[#E60000]' 
+                                : 'opacity-100'
+                            }`}
+                            aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
+                            title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                          >
+                            {thumbnailUrl ? (
+                              <img
+                                src={getStrapiMediaURL(thumbnailUrl)}
+                                alt={`Banner ${index + 1} thumbnail`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className={`w-full h-full ${
+                                isActive ? 'bg-white' : 'bg-white/50'
+                              }`} />
+                            )}
+                          </button>
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
+                </div>
+
+                {/* Desktop/Tablet Thumbnail Layout */}
+                <div className="desktop-thumbnails-only thumbnail-container">
+                  {banners.map((banner, index) => {
+                    const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                    const isActive = index === currentSlide;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleSlideChange(index)}
+                        className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 ${
+                          isActive 
+                            ? 'ring-2 ring-[#E60000]' 
+                            : 'opacity-100'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
+                        title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                      >
+                        {thumbnailUrl ? (
+                          <img
+                            src={getStrapiMediaURL(thumbnailUrl)}
+                            alt={`Banner ${index + 1} thumbnail`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className={`w-full h-full ${
+                            isActive ? 'bg-white' : 'bg-white/50'
+                          }`} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Thumbnail Indicators - Desktop: right side, Mobile: under button */}
-          {banners.length > 1 && (
-            <>
-              {/* Desktop: Right side */}
-              <div className="hidden md:block absolute bottom-8 right-8 flex space-x-3 z-30 gap-4">
-                {banners.map((banner, index) => {
-                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
-                  const isActive = index === currentSlide;
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleSlideChange(index)}
-                      className={`relative w-20 h-20 rounded-lg overflow-hidden transition-all duration-200 ${
-                        isActive 
-                          ? 'ring-2 ring-[#E60000]' 
-                          : 'opacity-100'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
-                    >
-                      {thumbnailUrl ? (
-                        <img
-                          src={getStrapiMediaURL(thumbnailUrl)}
-                          alt={`Banner ${index + 1} thumbnail`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className={`w-full h-full ${
-                          isActive ? 'bg-white' : 'bg-white/50'
-                        }`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Mobile: Under Explore More button */}
-              <div className="md:hidden flex justify-center mt-10 space-x-2 z-30 mobile-thumbnails">
-                {banners.map((banner, index) => {
-                  const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
-                  const isActive = index === currentSlide;
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleSlideChange(index)}
-                      className={`relative w-20 h-20 rounded-lg overflow-hidden transition-all duration-200 ${
-                        isActive 
-                          ? 'ring-2 ring-[#E60000]' 
-                          : 'opacity-100'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                      title={banner.youtubeUrl ? 'This slide has a video' : ''}
-                    >
-                      {thumbnailUrl ? (
-                        <img
-                          src={getStrapiMediaURL(thumbnailUrl)}
-                          alt={`Banner ${index + 1} thumbnail`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className={`w-full h-full ${
-                          isActive ? 'bg-white' : 'bg-white/50'
-                        }`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
+          {/* YouTube Video Overlay - Inside Banner */}
+          {currentVideoId && (
+            <div className="absolute inset-0 w-full h-full z-0 overflow-visible">
+              <iframe
+                ref={videoRef}
+                className="youtube-video-responsive"
+                src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`}
+                title="Banner Video"
+                allow="autoplay; encrypted-media; fullscreen; accelerometer; gyroscope; picture-in-picture"
+                allowFullScreen
+                frameBorder="0"
+              />
+              <div className="absolute inset-0 bg-black/20 pointer-events-none z-0" />
+            </div>
           )}
         </div>
       </Banner>
-
-      {/* YouTube Video Overlay - Full Width */}
-      {currentVideoId && (
-        <div className="absolute inset-0 w-full h-full z-19 overflow-hidden">
-          <iframe
-            ref={videoRef}
-            className="youtube-video-responsive"
-            src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&mute=1&loop=1&playlist=${currentVideoId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&enablejsapi=1&start=0&end=0`}
-            title="Banner Video"
-            allow="autoplay; encrypted-media; fullscreen; accelerometer; gyroscope; picture-in-picture"
-            allowFullScreen
-            frameBorder="0"
-          />
-          <div className="absolute inset-0 bg-black/20 pointer-events-none z-10" />
-        </div>
-      )}
       </div>
 
       {/* Main Content */}
-       <main className="w-full px-4 md:px-8 lg:px-16 py-12 relative">
+       <main className="w-full px-4 md:px-8 lg:px-44 lg:pt-30 lg:pb-10 py-10 pt-30 relative">
          {/* Background AppIcon - Right Side - Fixed & Responsive */}
-         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
@@ -301,26 +333,26 @@ export default function HomePageClient({ locale = 'en' }) {
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          <div className="max-w-7xl mx-auto text-left sm:text-center relative z-10">
-          <h2 className="text-3xl md:text-3xl lg:text-5xl font-bold mb-6 text-black">
+          <h2 className="text-[28px] md:text-3xl lg:text-[40px] font-[700] mb-6 text-black">
             {homeData?.homeTitle}
           </h2>
           
           {homeData?.homeDesc && (
             <div className="prose prose-lg max-w-none mb-8">
-              <p className="text-gray-700 leading-relaxed text-lg sm:text-xl md:text-xl lg:text-3xl font-bold">
+              <p className="text-gray-700 leading-relaxed text-lg text-[22px] md:text-xl lg:text-[24px] font-[700]">
                 {homeData.homeDesc}
               </p>
             </div>
           )}
 
-          {/* Services Section - Two Column Layout */}
+          {/* Services Section - Flex Layout */}
           {homeDetails.length > 0 && (
-            <div className="mt-18">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 items-center">
+            <div className="mt-10">
+              <div className=" flex flex-col lg:flex-row items-center gap-8 self-stretch">
                 {/* Left Column - Home Image */}
-                <div className="order-1 md:order-1">
+                <div className="flex-shrink-0">
                   {homeImg && (
-                    <div className="relative aspect-[1/1] md:aspect-[2.3/3] lg:aspect-[2.5/3] w-full sm:w-3/5 md:w-full lg:w-2/3 mx-auto">
+                    <div className="relative aspect-[1/1] w-full sm:w-3/5 md:w-[400px] lg:w-[532px] mx-auto">
                       <img 
                         src={getStrapiMediaURL(homeImg.url)} 
                         alt="Our Services"
@@ -331,22 +363,22 @@ export default function HomePageClient({ locale = 'en' }) {
                 </div>
                 
                 {/* Right Column - Services List */}
-                <div className="order-2 md:order-2 lg:space-y-7 md:space-y-8 space-y-8 lg:ml-[-60px] md:ml-4 mt-8 md:mt-0">
+                <div className="flex-1">
                   {homeDetails.map((service, index) => (
-                    <div key={service.id || index} className="flex items-start space-x-4">
+                    <div key={service.id || index} className="flex flex-col lg:flex-row items-start lg:items-start lg:space-x-4 lg:pb-14 pb-8">
                       {/* Service Icon */}
-                      {service.icon && (
-                        <div className="flex-shrink-0">
+                      {service.image && (
+                        <div className="mb-4 lg:mb-0 lg:flex-shrink-0">
                           <img 
-                            src={getStrapiMediaURL(service.icon.url)} 
+                            src={getStrapiMediaURL(service.image.url)} 
                             alt={service.title || 'Service Icon'}
-                            className="w-18 h-18 object-contain"
+                            className="w-22 h-22 object-contain"
                           />
                         </div>
                       )}
                       
                       {/* Service Content */}
-                      <div className="flex-1 text-left lg:max-w-sm md:max-w-none sm:max-w-sm">
+                      <div className="text-left lg:max-w-sm md:max-w-none sm:max-w-sm lg:flex-1">
                         <h3 className="text-2xl font-regular mb-3 text-red-600">
                           {service.title}
                         </h3>
@@ -365,25 +397,25 @@ export default function HomePageClient({ locale = 'en' }) {
               </div>
             </div>
           )}
-
-           {/* News Content - Below Services */}
-           <div className="container mx-auto px-2 py-8 mt-8 lg:mt-12">
-             <div className="max-w-7xl mx-auto text-left sm:text-center">
-              <h2 className="text-3xl md:text-3xl lg:text-5xl font-bold mb-6 text-black">
-                {homeData?.homeNewsTitle}
-              </h2>
-              
-                {homeData?.homeDesc && (
-                  <div className="prose prose-lg max-w-none mb-8">
-                    <p className="text-gray-700 leading-relaxed text-lg sm:text-xl md:text-xl lg:text-3xl font-bold">
-                      {homeData.homeNewsDesc}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
         </div>
       </main>
+
+      {/* News Content - Outside Services Container */}
+      <section className="w-full px-4 md:px-8 lg:px-16 py-8 mt-8 lg:mt-12">
+        <div className="max-w-7xl mx-auto text-left sm:text-center">
+          <h2 className="text-[28px] md:text-3xl lg:text-[40px] font-[700] mb-6 text-black">
+            {homeData?.homeNewsTitle}
+          </h2>
+          
+          {homeData?.homeNewsDesc && (
+            <div className="prose prose-lg max-w-none mb-8">
+              <p className="text-gray-700 leading-relaxed text-lg sm:text-xl md:text-xl lg:text-[24px] font-[700]">
+                {homeData.homeNewsDesc}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
@@ -490,10 +522,10 @@ export default function HomePageClient({ locale = 'en' }) {
         <div className="flex justify-center mt-12">
           <button 
             onClick={() => router.push(`/${locale}/newslist`)}
-            className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#D40000] transition-colors duration-200"
+            className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group"
           >
             <span>{t('exploreall')}</span>
-            <ArrowIcon className="w-4 h-4" />
+            <ArrowIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
           </button>
         </div>
       </section>
