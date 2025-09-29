@@ -109,8 +109,131 @@ body {
   overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+/* Banner content container - responsive sizing */
+.banner-content-container {
+  margin: 0 auto !important;
+
+}
+
+/* Mobile: full width with padding */
+@media (max-width: 639px) {
+  .banner-content-container {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* Small tablet: optimized width */
+@media (min-width: 640px) and (max-width: 799px) {
+  .banner-content-container {
+    max-width: 768px !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* Large tablet: full 1024px width */
+@media (min-width: 800px) and (max-width: 1024px) {
+  .banner-content-container {
+    max-width: 1024px !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    bottom: 16px !important;
+  }
+}
+
+/* Custom banner text classes for max-width 1440px */
+.banner-title-custom {
+  font-family: 'FCIconic', Sarabun, sans-serif !important;
+  font-weight: 700 !important;
+  color: white !important;
+  line-height: 150% !important;
+}
+
+.banner-description-custom {
+  font-family: 'FCIconic', Sarabun, sans-serif !important;
+  font-weight: 400 !important;
+  color: white !important;
+  line-height: 150% !important;
+}
+
+/* Responsive font sizes for banner text */
+@media (max-width: 639px) {
+  .banner-title-custom {
+    font-size: 32px !important;
+  }
+  .banner-description-custom {
+    font-size: 20px !important;
+  }
+  .banner-button-custom {
+    font-size: 14px !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .banner-title-custom {
+    font-size: 36px !important;
+  }
+  .banner-description-custom {
+    font-size: 18px !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .banner-title-custom {
+    font-size: 44px !important;
+  }
+  .banner-description-custom {
+    font-size: 18px !important;
+  }
+  .banner-button-custom {
+    font-size: 14px !important;
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .banner-title-custom {
+    font-size: 52px !important;
+  }
+  .banner-description-custom {
+    font-size: 22px !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  .banner-title-custom {
+    font-size: 64px !important;
+  }
+}
+
+
+/* Font sizes for screens 1201px to 1664px - no decrease */
+@media (min-width: 1201px) and (max-width: 1664px) {
+  .banner-title-custom {
+    font-size: 56px !important;
+  }
+  .banner-description-custom {
+    font-size: 22px !important;
+  }
+}
+
+@media (min-width: 1665px) {
+  .banner-title-custom {
+    font-size: 64px !important;
+  }
+  .banner-description-custom {
+    font-size: 24px !important;
+  }
+}
+
 /* Force Sarabun font for footer */
 footer {
+  font-family: 'FCIconic', sans-serif !important;
+}
+
+/* Override font for license text */
+footer [class*="font-sarabun"] {
   font-family: 'Sarabun', sans-serif !important;
 }
 
@@ -171,12 +294,24 @@ footer {
     transform: translateY(0);
   }
 }
-
+@media (min-width: 641px) and (max-width: 649px) {
 /* Mobile and small tablet text breakout for banner content */
-@media (max-width: 639px) {
   .mobile-text-breakout {
     position: absolute !important;
-    bottom: 120px !important; /* More space for thumbnails below */
+    bottom: 140px !important; /* Moved up to create more space for thumbnails */
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .mobile-text-breakout {
+    position: absolute !important;
+    bottom: 120px !important; /* Moved up to create more space for thumbnails */
     left: 16px !important;
     right: 16px !important;
     width: auto !important;
@@ -199,7 +334,7 @@ footer {
 @media (min-width: 640px) and (max-width: 768px) {
   .mobile-text-breakout {
     position: absolute !important;
-    bottom: 48px !important;
+    bottom: 120px !important;
     left: 24px !important;
     right: 24px !important;
     width: auto !important;
@@ -210,14 +345,110 @@ footer {
   }
 }
 
-/* Image popup arrow positioning for tablet sizes */
-@media (min-width: 640px) and (max-width: 1279px) {
+@media (max-width: 500px){
+  
+  /* Mobile swiper styling */
+  .thumbnail-container .swiper {
+    width: auto !important;
+    max-width: 300px !important;
+    overflow: visible !important;
+    right: 40% !important;
+  }
+  
+  .thumbnail-container .swiper-slide {
+    width: 74px !important;
+    height: 74px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .thumbnail-container .swiper-wrapper {
+    display: flex !important;
+    align-items: center !important;
+  }
+}
+/* Hide swiper on larger screens */
+@media (min-width: 501px) {
+  .thumbnail-container .swiper {
+    display: none !important;
+  }
+  
+  .thumbnail-container .swiper-wrapper {
+    display: none !important;
+  }
+  
+  .thumbnail-container .swiper-slide {
+    display: none !important;
+  }
+}
+
+/* Custom breakpoint for mobile swiper */
+.mobile-swiper-only {
+  display: block !important;
+}
+
+@media (min-width: 501px) {
+  .mobile-swiper-only {
+    display: none !important;
+  }
+}
+
+.desktop-thumbnails-only {
+  display: none !important;
+}
+
+@media (min-width: 501px) {
+  .desktop-thumbnails-only {
+    display: flex !important;
+  }
+}
+
+/* Thumbnail positioning for different screen ranges */
+@media (min-width: 501px) and (max-width: 768px) {
+  .thumbnail-container {
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 20px !important;
+    transform: translateX(-50%) !important;
+    z-index: 40 !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 16px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .thumbnail-container {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    margin-top: 20px !important; /* Increased spacing above thumbnails */
+    position: relative !important;
+  }
+}
+
+@media (min-width: 799px) and (max-width: 1023px) {
+  .thumbnail-container {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    margin-top: 24px !important; /* mt-6 equivalent */
+    position: relative !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .thumbnail-container {
+    display: flex !important;
+    gap: 24px !important; /* space-x-6 equivalent */
+    position: relative !important;
+  }
+}
   .image-popup-arrow {
     top: auto !important;
     bottom: 32px !important;
     transform: none !important;
   }
-}
+
 
 @media (min-width: 1280px) {
   .image-popup-arrow {
