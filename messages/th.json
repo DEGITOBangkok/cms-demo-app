@@ -4,7 +4,7 @@
     "categories": "หมวดหมู่",
     "news": "ห้องข่าวและบทความ",
     "contact": "ติดต่อ",
-    "locale" : "ไทย"
+    "locale": "ไทย"
   },
   "Footer": {
     "addressLine1": "123 ชั้น 24 อาคารดิจิทาวเวอร์",
@@ -16,7 +16,7 @@
     "top": "ด้านบน",
     "license": "©2025 บริษัท ดิจิ พล็อกซิม่า จำกัด สงวนลิขสิทธิ์ทั้งหมด"
   },
-   "LocaleSwitcher": {
+  "LocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, th {Thai} en {English} other {Unknown}}"
   },
@@ -50,6 +50,36 @@
     "next": "ถัดไป",
     "previous": "ก่อนหน้า",
     "of": "จาก"
+  },
+  "Contact": {
+    "title": "ติดต่อเรา",
+    "subtitle": "ติดต่อทีมงานของเรา เรายินดีช่วยเหลือคุณในทุกคำถามหรือข้อสงสัย",
+    "titleleft": "ส่งข้อความถึงเรา",
+    "lablefirstname": "ชื่อ",
+    "lablelastname": "นามสกุล",
+    "lableemail": "อีเมล",
+    "labelphonenumber": "หมายเลขโทรศัพท์",
+    "labelmessages": "ข้อความ / รายละเอียด",
+    "labelattachment": "ไฟล์แนบ",
+    "labelsubattachment": "(ไฟล์ PDF หรือเอกสารไม่เกิน 5 MB)",
+    "labeldropfile": "อัปโหลดหรือวางไฟล์ที่นี่",
+    "labelbutton": "ส่ง",
+    "titleright": "ติดต่อเรา",
+    "labellocation": "ที่อยู่",
+    "labeltelephone": "โทรศัพท์",
+    "labelemail": "อีเมล",
+    "labeltime": "เวลาทำการ",
+    "messagesent": "ส่งข้อความเรียบร้อย",
+    "thank": "ขอบคุณที่ติดต่อเรา เราจะตอบกลับคุณในเร็ว ๆ นี้",
+    "button": "ปิด",
+    "privacypolicyP1": "ฉันได้อ่านและยอมรับข้อกำหนดและเงื่อนไขที่ระบุใน",
+    "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+    "privacyPolicyP2": "และยินยอมให้เก็บ ประมวลผล และ/หรือ เปิดเผยข้อมูลส่วนบุคคลที่ฉันให้ไว้เพื่อวัตถุประสงค์ดังกล่าว"
+  },
+  "notfound" : {
+    "title" : "ไม่พบหน้าที่คุณค้นหา",
+    "subtitle" : "ขออภัย หน้าที่คุณกำลังมองหาอาจถูกย้าย ลบ หรือไม่มีอยู่",
+    "button" : "กลับสู่หน้าหลัก"
+}
 
-  }
 }
