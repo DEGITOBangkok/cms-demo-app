@@ -36,7 +36,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="flex items-center justify-between bg-white h-[96px] w-full px-4 md:px-8 lg:px-16 fixed top-0 left-0 z-50">
+     <nav className="flex items-center justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
+
         {/* Logo */}
         <div>
           <img
@@ -46,7 +47,8 @@ export default function Navbar() {
                lg:w-[266px]    
                md:w-[266px]
                w-[142px]
-              sm:w-[266px]"
+              sm:w-[266px]
+              py-4"
             onClick={() => router.push(`/${locale}/`)}
           />
         </div>
