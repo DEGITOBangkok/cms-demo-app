@@ -164,6 +164,68 @@ export const mockHomeData = {
         }
       }
     ],
+    articles: [
+      {
+        id: 1,
+        attributes: {
+          title: "Sample Article 1",
+          description: "This is a sample article description",
+          slug: "sample-article-1",
+          publishedAt: "2024-01-01T00:00:00.000Z",
+          thumbnail: {
+            url: "/images/demo_logo.png",
+            alternativeText: "Article thumbnail"
+          },
+          category: {
+            data: {
+              attributes: {
+                name: "Health"
+              }
+            }
+          }
+        }
+      },
+      {
+        id: 2,
+        attributes: {
+          title: "Sample Article 2",
+          description: "This is another sample article description",
+          slug: "sample-article-2",
+          publishedAt: "2024-01-02T00:00:00.000Z",
+          thumbnail: {
+            url: "/images/demo_logo.png",
+            alternativeText: "Article thumbnail"
+          },
+          category: {
+            data: {
+              attributes: {
+                name: "Geography"
+              }
+            }
+          }
+        }
+      },
+      {
+        id: 3,
+        attributes: {
+          title: "Sample Article 3",
+          description: "This is a third sample article description",
+          slug: "sample-article-3",
+          publishedAt: "2024-01-03T00:00:00.000Z",
+          thumbnail: {
+            url: "/images/demo_logo.png",
+            alternativeText: "Article thumbnail"
+          },
+          category: {
+            data: {
+              attributes: {
+                name: "Events & Updates"
+              }
+            }
+          }
+        }
+      }
+    ],
     homeDetails: [
       {
         id: 1,
@@ -178,6 +240,70 @@ export const mockHomeData = {
     }
   }
 };
+
+// Mock latest articles for fallback
+export const mockLatestArticles = [
+  {
+    id: 1,
+    attributes: {
+      title: "Latest Article 1",
+      description: "This is the latest published article",
+      slug: "latest-article-1",
+      publishedAt: "2024-01-15T00:00:00.000Z",
+      thumbnail: {
+        url: "/images/demo_logo.png",
+        alternativeText: "Latest article thumbnail"
+      },
+      category: {
+        data: {
+          attributes: {
+            name: "Health"
+          }
+        }
+      }
+    }
+  },
+  {
+    id: 2,
+    attributes: {
+      title: "Latest Article 2",
+      description: "This is the second latest published article",
+      slug: "latest-article-2",
+      publishedAt: "2024-01-14T00:00:00.000Z",
+      thumbnail: {
+        url: "/images/demo_logo.png",
+        alternativeText: "Latest article thumbnail"
+      },
+      category: {
+        data: {
+          attributes: {
+            name: "Geography"
+          }
+        }
+      }
+    }
+  },
+  {
+    id: 3,
+    attributes: {
+      title: "Latest Article 3",
+      description: "This is the third latest published article",
+      slug: "latest-article-3",
+      publishedAt: "2024-01-13T00:00:00.000Z",
+      thumbnail: {
+        url: "/images/demo_logo.png",
+        alternativeText: "Latest article thumbnail"
+      },
+      category: {
+        data: {
+          attributes: {
+            name: "Events & Updates"
+          }
+        }
+      }
+    }
+  }
+];
 
 // Helper function to create API response format
 export const createMockResponse = (data, pagination = null) => ({

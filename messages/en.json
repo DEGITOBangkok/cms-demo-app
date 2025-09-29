@@ -7,14 +7,14 @@
     "locale" : "Eng"
   },
   "Footer": {
-    "addressLine1": "123, 24th Floor, Digi Tower",
+    "addressLine1": "123, 24th Floor, KBK Tower",
     "addressLine2": "Bangkoknoi, Bangkok, 10700, Thailand",
     "newsArticle": "News & Article",
     "contactUs": "Contact Us",
     "privacyPolicy": "Privacy Policy",
     "followUs": "Follow Us",
     "top": "Top",
-    "license": "©2025 Digi Proxima Co., Ltd. All right reserved"
+    "license": "©2025 PROM SERVE Co., Ltd. All right reserved"
   },
    "LocaleSwitcher": {
     "label": "Change language",
