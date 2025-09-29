@@ -449,22 +449,6 @@ export async function getHome(locale = "en") {
 }
 
 
- export async function getContactConfig() {
-   const cmsAvailable = await isCMSAvailable();
-   if (!cmsAvailable) {
-     return null;
-   }
-   try {
-     const queryParams = new URLSearchParams();
-     queryParams.append("populate[ContactForm]", "*");
-     const response = await fetchAPI(`/api/contact?${queryParams}`);
-     console.log("API response:", response);
-     return response.data;
-   } catch (error) {
-     console.log(error);
-     return console.log("API Error", error);
-   }
-}
 
 export async function createContactForm(
   formData,
