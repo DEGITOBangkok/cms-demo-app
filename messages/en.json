@@ -50,5 +50,35 @@
     "next": "Next",
     "previous": "Prev",
     "of": "of"
+  },
+  "Contact" : {
+    "title" : "Contact Us",
+    "subtitle" : "Get in touch with our team. We're here to help you with any questions or inquiries.",
+    "titleleft" : "Send us a Message",
+    "lablefirstname" : "First Name",
+    "lablelastname" : "Last Name",
+    "lableemail" : "Email Address",
+    "labelphonenumber" : "Phone Number",
+    "labelmessages" : "Message / Description",
+    "labelattachment" : "Attachment",
+    "labelsubattachment" : "(PDF file or document not exceeding 5 MB)",
+    "labeldropfile" : "Upload or Drag and drop files here",
+    "labelbutton" : "Submit",
+    "titleright" : "Get in Touch",
+    "labellocation" : "Location",
+    "labeltelephone" : "Telephone",
+    "labelemail" : "Email",
+    "labeltime" : "Business Hours",
+    "messagesent" : "Message Sent",
+    "thank" : " Thank you for contacting us. We will reply to you shortly.",
+    "button" : "Close",
+    "privacypolicyP1" : "I have read and accepted terms and conditions specified in the",
+    "privacyPolicy" : "Privacy Policy",
+    "privacyPolicyP2" : "and do hereby consent to the collecting, processing and/or disclosing of the personal data provided by me to fulfil the above-said purposes."
+  },
+  "notfound" : {
+    "title" : "The page cannot be found",
+    "subtitle" : "Sorry, the page you were looking for appears to have been moved, deleted or does not exist",
+    "button" : "Back to Homepage"
   }
 }

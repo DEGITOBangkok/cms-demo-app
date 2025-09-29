@@ -443,12 +443,40 @@ export async function getContactConfig() {
   }
 }
 
-export async function createContactForm(formData) {
+export async function createContactForm(
+  formData,
+  filePath,
+  fileName,
+  mimeType
+) {
   try {
+    // ถ้ามีไฟล์แนบ
+    if (filePath) {
+      if (!fs.existsSync(filePath)) {
+        throw new Error("File not found");
+      }
+
+      const fileBuffer = fs.readFileSync(filePath);
+
+      // แปลงไฟล์เป็น base64
+      const base64File = fileBuffer.toString("base64");
+
+      // เพิ่มไฟล์เข้า formData
+      formData.attachment = {
+        name: fileName || "attachment",
+        type: mimeType || "application/octet-stream",
+        data: base64File,
+      };
+
+      // ลบไฟล์ชั่วคราวหลังอ่าน
+      fs.unlinkSync(filePath);
+    }
+
+    // ส่งข้อมูลไป Strapi
     const response = await fetch(`${STRAPI_URL}/api/contact-forms`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", 
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ data: formData }),
     });
@@ -464,3 +492,4 @@ export async function createContactForm(formData) {
     throw error;
   }
 }
+
