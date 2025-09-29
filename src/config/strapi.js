@@ -43,12 +43,14 @@ export async function api(path, init = {}) {
     });
     
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      // Log error and return null instead of throwing
+      console.error(`API Error: HTTP ${res.status}: ${await res.text()}`);
+      return null;
     }
     
     return res.json();
   } catch (error) {
     console.error('API request failed:', error);
-    throw error;
+    return null;
   }
 }

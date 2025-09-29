@@ -369,29 +369,29 @@ export async function getSocial() {
     };
   }
 
-  try {
-    const socialResponse = await fetchAPI("/api/social?populate=*");
-    
-    return {
-      facebook: {
-        id: 1,
-        attributes: {
-          name: "Facebook Page",
-          url: socialResponse.data?.Facebook || "https://facebook.com/demo",
-          icon: "facebook",
-          locale: "en",
-        },
-      },
-      instagram: {
-        id: 1,
-        attributes: {
-          name: "Instagram Page",
-          url: socialResponse.data?.Instagram || "https://instagram.com/demo",
-          icon: "instagram",
-          locale: "en",
-        },
-      },
-    };
+        try {
+          const socialResponse = await fetchAPI("/api/social?populate=*");
+          
+          return {
+            facebook: {
+              id: 1,
+              attributes: {
+                name: "Facebook Page",
+                url: socialResponse?.data?.Facebook || "https://facebook.com/demo",
+                icon: "facebook",
+                locale: "en",
+              },
+            },
+            instagram: {
+              id: 1,
+              attributes: {
+                name: "Instagram Page",
+                url: socialResponse?.data?.Instagram || "https://instagram.com/demo",
+                icon: "instagram",
+                locale: "en",
+              },
+            },
+          };
   } catch (error) {
     return {
       facebook: {
@@ -423,9 +423,9 @@ export async function getContactConfig() {
   try {
     const queryParams = new URLSearchParams();
     queryParams.append('populate[ContactForm]', '*');
+    queryParams.append('populate[SEO][populate]', '*');
     const response = await fetchAPI(`/api/contact?${queryParams}`);
-    console.log('API response:', response);
-    return response.data;
+    return response?.data || null;
   } catch (error) {
     console.log(error);
     return null;
@@ -446,8 +446,8 @@ export async function getHome(locale = "en") {
       fetchAPI(`/api/articles?populate=*&sort=publishedAt:desc&pagination[limit]=3&locale=${locale}`)
     ]);
 
-    const homeData = homeResponse.status === 'fulfilled' ? homeResponse.value.data : mockHomeData;
-    const latestArticles = latestArticlesResponse.status === 'fulfilled' ? latestArticlesResponse.value.data : mockLatestArticles;
+    const homeData = homeResponse.status === 'fulfilled' && homeResponse.value ? homeResponse.value.data : mockHomeData;
+    const latestArticles = latestArticlesResponse.status === 'fulfilled' && latestArticlesResponse.value ? latestArticlesResponse.value.data : mockLatestArticles;
 
     // Use relation articles if available, otherwise use latest articles
     const articles = homeData?.articles && homeData.articles.length > 0 
