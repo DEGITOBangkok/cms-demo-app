@@ -437,29 +437,17 @@ export async function getHome(locale = "en") {
     queryParams.append("locale", locale);
 
     const response = await fetchAPI(`/api/home?${queryParams}`);
-    return response.data || null;
+    return response.data || mockHomeData;
   } catch (error) {
+    // Silently handle 404 errors and return mock data
+    if (error.message.includes('404')) {
+      return mockHomeData;
+    }
     console.error("Error fetching Home data, using mock data:", error);
     return mockHomeData;
   }
 }
 
-export async function getContactConfig() {
-  const cmsAvailable = await isCMSAvailable();
-  if (!cmsAvailable) {
-    return null;
-  }
-  try {
-    const queryParams = new URLSearchParams();
-    queryParams.append("populate[ContactForm]", "*");
-    const response = await fetchAPI(`/api/contact?${queryParams}`);
-    console.log("API response:", response);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    return console.log("API Error", error);
-  }
-}
 
 export async function createContactForm(formData) {
   try {
