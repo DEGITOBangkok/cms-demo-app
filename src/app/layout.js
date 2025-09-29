@@ -1,9 +1,6 @@
 import { routing } from "../../i18n/routing";
 import "./globals.css";
 import "./ck-editor.css";
-import { NextIntlClientProvider } from "next-intl";
-import { Footer } from "../components";
-import Navbar from "@/components/NavBar/Navbar";
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000'),
@@ -17,11 +14,7 @@ export default async function RootLayout({ children, params }) {
   return (
     <html lang="en">
       <body className="font-fciconic">
-        <NextIntlClientProvider>
-          <Navbar></Navbar>
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
+        {children}
       </body>
     </html>
   );

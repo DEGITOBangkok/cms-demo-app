@@ -54,13 +54,13 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <NextIntlClientProvider>
-      <Navbar></Navbar>
-      <div className="font-fciconic min-h-screen flex flex-col">
-        <CMSStatus />
+      <Navbar />
+      <div className="min-h-screen flex flex-col">
         <main className="flex-grow">
+          <CMSStatus />
           {children}
         </main>
-        <Footer key={locale} />
+        <Footer />
       </div>
     </NextIntlClientProvider>
   );

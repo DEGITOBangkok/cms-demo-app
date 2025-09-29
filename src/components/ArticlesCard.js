@@ -68,7 +68,7 @@ const ArticlesCard = ({
 
   return (
     <article
-      className={`bg-white rounded-lg relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
+      className={`bg-white rounded-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
         disableAnimation 
           ? '' 
           : 'opacity-0 -translate-y-8 animate-[fadeInSlideUp_0.6s_ease-out_forwards]'
@@ -101,7 +101,7 @@ const ArticlesCard = ({
       )}
 
       {articleImage ? (
-        <div className="relative overflow-hidden aspect-[4/3] w-full rounded-t-lg">
+        <div className="relative overflow-hidden aspect-[4/3] w-full rounded-t-2xl">
           <img
             src={articleImage}
             alt={article.title || 'Article image'}
@@ -111,7 +111,7 @@ const ArticlesCard = ({
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
       ) : (
-        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-lg bg-gradient-to-r from-blue-400 to-purple-600 cursor-pointer">
+        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-2xl bg-gradient-to-r from-blue-400 to-purple-600 cursor-pointer">
           {/* Gradient overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
