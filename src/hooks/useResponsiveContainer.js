@@ -287,7 +287,7 @@ export const useMainContentPadding = () => {
       
       if (width < 1330) {
         // Below 1320px: Reduced padding
-        setPaddingClasses('px-4 md:px-8 xl:px-16');
+        setPaddingClasses('px-4 md:px-14 xl:px-16');
       } else {
         // 1320px and above: Full padding
         setPaddingClasses('px-4 md:px-8 xl:px-44');

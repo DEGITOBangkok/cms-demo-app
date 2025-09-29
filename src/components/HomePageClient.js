@@ -422,7 +422,7 @@ export default function HomePageClient({ locale = 'en' }) {
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
         {!articlesLoading && featuredArticles.length > 0 && (
-          <div className="w-full px-4 md:px-8 lg:px-16">
+          <div className="w-full px-4 md:px-14 lg:px-16">
             {/* Mobile: Swiper */}
             <div className="block md:hidden">
               <Swiper
