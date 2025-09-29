@@ -9,7 +9,7 @@ import AppIcon from './icons/AppIcon';
 import ArticlesCard from './ArticlesCard';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding } from '../hooks/useResponsiveContainer';
+import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding, useMainContentPadding } from '../hooks/useResponsiveContainer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -26,6 +26,7 @@ export default function HomePageClient({ locale = 'en' }) {
   const bannerPositionClasses = useBannerContentPosition();
   const layoutClasses = useMobileColumnLayout();
   const bannerPaddingClasses = useBannerBottomPadding();
+  const mainPaddingClasses = useMainContentPadding();
   
   // Function to get translated category name
   const getTranslatedCategoryName = (categoryName) => {
@@ -153,12 +154,13 @@ export default function HomePageClient({ locale = 'en' }) {
         /* Tablet: very large video to cover entire banner area */
         @media (min-width: 768px) and (max-width: 1024px) {
           .youtube-video-responsive {
-            height: 150vh !important;
-            width: 150vw !important;
-            min-width: 150vw !important;
-            top: -25vh !important;
-            left: -25vw !important;
-            transform: none !important;
+            height: 100vh !important;
+            width: 177.78vh !important;
+            min-width: 100vw !important;
+            min-height: 56.25vw !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
           }
         }
         
@@ -322,14 +324,14 @@ export default function HomePageClient({ locale = 'en' }) {
       </div>
 
       {/* Main Content */}
-       <main className="w-full px-4 md:px-8 lg:px-44 lg:pt-30 lg:pb-10 py-10 pt-30 relative">
-         {/* Background AppIcon - Right Side - Fixed & Responsive */}
-         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+       <main className={`w-full ${mainPaddingClasses} xl:pt-30 xl:pb-10 py-10 pt-30 relative overflow-x-hidden`}>
+         {/* Background AppIcon - Right Side - Absolute & Responsive */}
+         <div className="absolute top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
-         {/* Left AppIcon - Fixed & Responsive */}
-         <div className="fixed bottom-[100px] left-[-120px] sm:left-[-170px] md:left-[-300px] lg:left-[-380px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+         {/* Left AppIcon - Absolute & Responsive */}
+         <div className="absolute bottom-[100px] left-[-120px] sm:left-[-170px] md:left-[-300px] lg:left-[-380px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          <div className="max-w-7xl mx-auto text-left sm:text-center relative z-10">
@@ -348,7 +350,7 @@ export default function HomePageClient({ locale = 'en' }) {
           {/* Services Section - Flex Layout */}
           {homeDetails.length > 0 && (
             <div className="mt-10">
-              <div className=" flex flex-col lg:flex-row items-center gap-8 self-stretch">
+              <div className=" flex flex-col xl:flex-row items-center gap-8 xl:gap-8 self-stretch">
                 {/* Left Column - Home Image */}
                 <div className="flex-shrink-0">
                   {homeImg && (
@@ -365,10 +367,10 @@ export default function HomePageClient({ locale = 'en' }) {
                 {/* Right Column - Services List */}
                 <div className="flex-1">
                   {homeDetails.map((service, index) => (
-                    <div key={service.id || index} className="flex flex-col lg:flex-row items-start lg:items-start lg:space-x-4 lg:pb-14 pb-8">
+                    <div key={service.id || index} className={`flex flex-col xl:flex-row items-start xl:items-start xl:gap-6 pb-8 ${index === homeDetails.length - 1 ? 'xl:pb-0' : 'xl:pb-14'}`}>
                       {/* Service Icon */}
                       {service.image && (
-                        <div className="mb-4 lg:mb-0 lg:flex-shrink-0">
+                        <div className="mb-4 xl:mb-0 xl:flex-shrink-0">
                           <img 
                             src={getStrapiMediaURL(service.image.url)} 
                             alt={service.title || 'Service Icon'}
@@ -378,13 +380,13 @@ export default function HomePageClient({ locale = 'en' }) {
                       )}
                       
                       {/* Service Content */}
-                      <div className="text-left lg:max-w-sm md:max-w-none sm:max-w-sm lg:flex-1">
-                        <h3 className="text-2xl font-regular mb-3 text-red-600">
+                      <div className="text-left md:max-w-none sm:max-w-sm xl:flex-1">
+                        <h3 className="text-[20px] font-[400] mb-3 text-[#E60000]">
                           {service.title}
                         </h3>
                         {service.description && (
                           <div 
-                            className="text-gray-800 leading-relaxed prose prose-sm max-w-none"
+                            className="text-[#17191F] leading-relaxed prose prose-sm max-w-none text-[20px]"
                             dangerouslySetInnerHTML={{ 
                               __html: service.description 
                             }}
@@ -420,7 +422,7 @@ export default function HomePageClient({ locale = 'en' }) {
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
         {!articlesLoading && featuredArticles.length > 0 && (
-          <div className="w-full px-4 md:px-8 lg:px-16">
+          <div className="w-full px-4 md:px-14 lg:px-16">
             {/* Mobile: Swiper */}
             <div className="block md:hidden">
               <Swiper
