@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useBannerAspectRatio } from '../hooks/useResponsiveContainer';
 
 /**
  * Banner Component
@@ -39,15 +40,18 @@ const Banner = ({
 
   // No longer using backgroundStyle since we'll use img element
 
+  // Get dynamic aspect ratio classes
+  const aspectClasses = useBannerAspectRatio();
+
   // Different styles for different banner variants
   const baseClasses = useMemo(() => {
     if (variant === 'newslist') {
-      return "flex w-full h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-10";
+      return `flex w-full ${aspectClasses} justify-start sm:justify-center items-center flex-shrink-0 relative z-0`;
     } else {
-      // Default 'home' variant with current styling
-      return "flex w-full pb-16 lg:pb-2 md:pb-3 h-[1200px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] justify-start sm:justify-center items-center flex-shrink-0 relative z-20";
+      // Default 'home' variant with dynamic aspect ratio
+      return `flex w-full ${aspectClasses} justify-start sm:justify-center items-center flex-shrink-0 relative z-0`;
     }
-  }, [variant]);
+  }, [variant, aspectClasses]);
 
   const combinedClassName = useMemo(() => {
     return className ? `${baseClasses} ${className}` : baseClasses;
@@ -65,7 +69,9 @@ const Banner = ({
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      {displayImage && <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0" />}
+      {displayImage && (
+        <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0 tablet:from-[#000000]/30 tablet:to-[#20394C]/0" />
+      )}
       <div className="relative z-10 w-full h-full overflow-visible">{children}</div>
     </div>
   );
