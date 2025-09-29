@@ -53,24 +53,24 @@ const Footer = () => {
             {/* Contact Information */}
             <div className="space-y-6 md:space-y-0 md:flex md:flex-row md:space-x-6 md:space-y-0">
               {/* Phone */}
-              <div className="flex items-center space-x-2">
+              <a href="tel:+6623233232" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                 <img 
                   src="/images/Phone.png" 
                   alt="Phone icon" 
                   className="w-[24px] h-[24px]"
                 />
                 <span className="text-[14px] font-[400] text-gray-300">+662 323 3232</span>
-              </div>
+              </a>
               
               {/* Email */}
-              <div className="flex items-center space-x-2">
+              <a href="mailto:contact@digiproxima.com" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                 <img 
                   src="/images/Email.png" 
                   alt="Email icon" 
                   className="w-[24px] h-[24px]"
                 />
                 <span className="text-[14px] font-[400] text-gray-300">contact@digiproxima.com</span>
-              </div>
+              </a>
             </div>
           </div>
 
@@ -111,9 +111,9 @@ const Footer = () => {
               ) : (
                 <>
                   {/* Facebook */}
-                  {socialMedia.facebook?.URL && (
+                  {socialMedia.facebook?.attributes?.url && (
                     <a 
-                      href={socialMedia.facebook.URL} 
+                      href={socialMedia.facebook.attributes.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-6 h-6 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"
@@ -127,9 +127,9 @@ const Footer = () => {
                   )}
                   
                   {/* Instagram */}
-                  {socialMedia.instagram?.URL && (
+                  {socialMedia.instagram?.attributes?.url && (
                     <a 
-                      href={socialMedia.instagram.URL} 
+                      href={socialMedia.instagram.attributes.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-6 h-6 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"

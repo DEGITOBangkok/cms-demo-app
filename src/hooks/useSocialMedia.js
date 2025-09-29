@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getFacebook, getInstagram } from '../lib/api';
+import { getSocial } from '../lib/api';
 
 // Custom hook for fetching social media data
 export function useSocialMedia() {
@@ -18,24 +18,13 @@ export function useSocialMedia() {
         setLoading(true);
         setError(null);
         
-        // Fetch both Facebook and Instagram data in parallel with error handling
-        const [facebookResult, instagramResult] = await Promise.allSettled([
-          getFacebook(),
-          getInstagram()
-        ]);
-
-        // Handle results - use null if failed
-        const facebookData = facebookResult.status === 'fulfilled' ? facebookResult.value : null;
-        const instagramData = instagramResult.status === 'fulfilled' ? instagramResult.value : null;
+        // Fetch all social media data
+        const socialData = await getSocial();
 
         // Debug logging
-        console.log('Facebook data:', facebookData);
-        console.log('Instagram data:', instagramData);
+        console.log('Social data:', socialData);
 
-        setSocialMedia({
-          facebook: facebookData,
-          instagram: instagramData
-        });
+        setSocialMedia(socialData);
       } catch (err) {
         setError(err.message);
         console.error('Error fetching social media data:', err);

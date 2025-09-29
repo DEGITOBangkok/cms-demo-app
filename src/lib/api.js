@@ -3,6 +3,7 @@ import {
   mockArticles,
   mockCategories,
   mockHomeData,
+  mockLatestArticles,
   createMockResponse,
 } from "../mockdata/mockData";
 
@@ -341,65 +342,75 @@ export async function getCategories(locale = "en") {
   }
 }
 
-// Fetch Facebook single type (stored as 'social' in Strapi)
-export async function getFacebook() {
+// Fetch all social media data
+export async function getSocial() {
   // Check if CMS is available first
   const cmsAvailable = await isCMSAvailable();
   if (!cmsAvailable) {
     return {
-      id: 1,
-      attributes: {
-        name: "Facebook Page",
-        url: "https://facebook.com/demo",
-        icon: "facebook",
-        locale: "en",
+      facebook: {
+        id: 1,
+        attributes: {
+          name: "Facebook Page",
+          url: "https://facebook.com/demo",
+          icon: "facebook",
+          locale: "en",
+        },
+      },
+      instagram: {
+        id: 1,
+        attributes: {
+          name: "Instagram Page",
+          url: "https://instagram.com/demo",
+          icon: "instagram",
+          locale: "en",
+        },
       },
     };
   }
 
   try {
-    const response = await fetchAPI("/api/social?populate=*");
-    return response.data || null;
-  } catch (error) {
+    const socialResponse = await fetchAPI("/api/social?populate=*");
+    
     return {
-      id: 1,
-      attributes: {
-        name: "Facebook Page",
-        url: "https://facebook.com/demo",
-        icon: "facebook",
-        locale: "en",
+      facebook: {
+        id: 1,
+        attributes: {
+          name: "Facebook Page",
+          url: socialResponse.data?.Facebook || "https://facebook.com/demo",
+          icon: "facebook",
+          locale: "en",
+        },
+      },
+      instagram: {
+        id: 1,
+        attributes: {
+          name: "Instagram Page",
+          url: socialResponse.data?.Instagram || "https://instagram.com/demo",
+          icon: "instagram",
+          locale: "en",
+        },
       },
     };
-  }
-}
-
-// Fetch Instagram single type
-export async function getInstagram() {
-  // Check if CMS is available first
-  const cmsAvailable = await isCMSAvailable();
-  if (!cmsAvailable) {
-    return {
-      id: 1,
-      attributes: {
-        name: "Instagram Page",
-        url: "https://instagram.com/demo",
-        icon: "instagram",
-        locale: "en",
-      },
-    };
-  }
-
-  try {
-    const response = await fetchAPI("/api/instagram?populate=*");
-    return response.data || null;
   } catch (error) {
     return {
-      id: 1,
-      attributes: {
-        name: "Instagram Page",
-        url: "https://instagram.com/demo",
-        icon: "instagram",
-        locale: "en",
+      facebook: {
+        id: 1,
+        attributes: {
+          name: "Facebook Page",
+          url: "https://facebook.com/demo",
+          icon: "facebook",
+          locale: "en",
+        },
+      },
+      instagram: {
+        id: 1,
+        attributes: {
+          name: "Instagram Page",
+          url: "https://instagram.com/demo",
+          icon: "instagram",
+          locale: "en",
+        },
       },
     };
   }
@@ -429,15 +440,24 @@ export async function getHome(locale = "en") {
   }
 
   try {
-    const queryParams = new URLSearchParams();
-    queryParams.append("populate[banners][populate]", "*");
-    queryParams.append("populate[homeDetails][populate]", "*");
-    queryParams.append("populate[SEO][populate]", "*");
-    queryParams.append("populate", "homeImg");
-    queryParams.append("locale", locale);
+    // Fetch home data and latest articles separately
+    const [homeResponse, latestArticlesResponse] = await Promise.allSettled([
+      fetchAPI(`/api/home?populate[banners][populate]=*&populate[articles][populate]=*&populate[homeDetails][populate]=*&populate[SEO][populate]=*&populate=homeImg&locale=${locale}`),
+      fetchAPI(`/api/articles?populate=*&sort=publishedAt:desc&pagination[limit]=3&locale=${locale}`)
+    ]);
 
-    const response = await fetchAPI(`/api/home?${queryParams}`);
-    return response.data || mockHomeData;
+    const homeData = homeResponse.status === 'fulfilled' ? homeResponse.value.data : mockHomeData;
+    const latestArticles = latestArticlesResponse.status === 'fulfilled' ? latestArticlesResponse.value.data : mockLatestArticles;
+
+    // Use relation articles if available, otherwise use latest articles
+    const articles = homeData?.articles && homeData.articles.length > 0 
+      ? homeData.articles 
+      : latestArticles;
+
+    return {
+      ...homeData,
+      articles: articles
+    };
   } catch (error) {
     // Silently handle 404 errors and return mock data
     if (error.message.includes('404')) {
@@ -449,22 +469,6 @@ export async function getHome(locale = "en") {
 }
 
 
- export async function getContactConfig() {
-   const cmsAvailable = await isCMSAvailable();
-   if (!cmsAvailable) {
-     return null;
-   }
-   try {
-     const queryParams = new URLSearchParams();
-     queryParams.append("populate[ContactForm]", "*");
-     const response = await fetchAPI(`/api/contact?${queryParams}`);
-     console.log("API response:", response);
-     return response.data;
-   } catch (error) {
-     console.log(error);
-     return console.log("API Error", error);
-   }
-}
 
 export async function createContactForm(
   formData,

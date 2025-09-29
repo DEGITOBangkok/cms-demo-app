@@ -74,15 +74,25 @@ export default function ContactPage() {
 
     try {
       const payload = new FormData();
-      payload.append("data", JSON.stringify(formData)); // ข้อมูล text
+      
+      // Add form data fields individually to match Strapi schema
+      payload.append("data[FirstName]", formData.FirstName);
+      payload.append("data[lastname]", formData.lastname);
+      payload.append("data[email]", formData.email);
+      payload.append("data[phonenumber]", formData.phonenumber);
+      payload.append("data[message]", formData.message);
+      payload.append("data[privacy]", formData.privacy);
 
       if (file) {
-        payload.append("files.attachment", file); // ไฟล์แนบ
+        console.log("File being uploaded:", file.name, file.type, file.size);
+        payload.append("files.attachment", file); // File attachment
+      } else {
+        console.log("No file selected");
       }
 
       const response = await fetch(`${STRAPI_URL}/api/contact-forms`, {
         method: "POST",
-        body: payload, // ส่ง FormData ตรงๆ
+        body: payload,
       });
 
       if (!response.ok) {
@@ -132,7 +142,7 @@ export default function ContactPage() {
       <div className="relative z-20  flex flex-col lg:flex-row w-full px-[32px] md:px-[64px] justify-center items-stretch gap-[32px]">
         {/* LEFT FORM */}
         <div
-          className="w-full max-w-[864px] mt-[32px] 
+          className="w-full  mt-[32px] 
              rounded-[16px] bg-[rgba(255,255,255,0.90)] 
              shadow-[0_16px_64px_0_rgba(0,0,0,0.12)] 
              backdrop-blur-[24px] min-h-[770px]"
@@ -328,7 +338,7 @@ export default function ContactPage() {
              mx-auto  
              "
         >
-          <div className="py-10 px-16">
+          <div className="py-10 px-8">
             <h2 className="text-white font-bold text-[24px]">{t("titleright")}</h2>
             <div className="py-8">
               <div className="w-full h-[264px] my-[32px]">

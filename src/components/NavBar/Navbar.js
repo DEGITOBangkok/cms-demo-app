@@ -10,9 +10,19 @@ import Hamburger from "./Hamburger";
 
 export default function Navbar() {
   const router = useRouter();
-  const { locale } = useParams();
+  const params = useParams();
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [locale, setLocale] = useState('en');
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+    if (params?.locale) {
+      setLocale(params.locale);
+    }
+  }, [params]);
 
   // lock scroll when mobile menu open
   useEffect(() => {
@@ -34,6 +44,47 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen]);
 
+  if (!isClient) {
+    return (
+      <nav className="flex items-center justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
+        <div>
+          <img
+            src="/images/nav_logo.png"
+            alt="Logo"
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+          />
+        </div>
+        <div className="hidden lg:flex flex-row gap-10 items-center text-black">
+          <a
+            title="News & Articles"
+            href="/en/newslist"
+            className="px-2 py-1 relative group"
+          >
+            <span className="relative z-10 group-hover:text-[#E60000] transition-colors">
+              News & Articles
+            </span>
+            <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-[#E60000] group-hover:w-full transition-all duration-300"></span>
+          </a>
+          <a
+            title="Contact"
+            href="/en/contact"
+            className="px-2 py-1 relative group"
+          >
+            <span className="relative z-10 group-hover:text-[#E60000] transition-colors">
+              Contact
+            </span>
+            <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-[#E60000] group-hover:w-full transition-all duration-300"></span>
+          </a>
+        </div>
+        <div className="lg:hidden relative z-50">
+          <button className="relative z-50">
+            <Hamburger state="default" />
+          </button>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <>
      <nav className="flex items-center justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
@@ -43,13 +94,8 @@ export default function Navbar() {
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            className="object-contain 
-               lg:w-[266px]    
-               md:w-[266px]
-               w-[142px]
-              sm:w-[266px]
-              py-4"
-            onClick={() => router.push(`/${locale}/`)}
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+            onClick={() => isClient && router.push(`/${locale}/`)}
           />
         </div>
 
@@ -73,7 +119,7 @@ export default function Navbar() {
 
         {/* Mobile & Tablet Hamburger */}
         <div className="lg:hidden relative z-50">
-          <button onClick={() => setIsOpen(!isOpen)} className="relative z-50">
+          <button onClick={() => isClient && setIsOpen(!isOpen)} className="relative z-50">
             <Hamburger state={isOpen ? "close" : "default"} />
           </button>
         </div>
