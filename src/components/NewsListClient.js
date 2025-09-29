@@ -225,7 +225,7 @@ export default function NewsListClient() {
                       {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
                       <div className={containerClasses}>
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
-                        <div className="max-w-8xl">
+                        <div className="max-w-8xl lg:px-10">
                           {/* Category tag */}
                           <div className="mb-1 sm:mb-2">
                             <span

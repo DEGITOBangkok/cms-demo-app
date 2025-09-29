@@ -6,11 +6,12 @@ import React, { useState } from "react";
 import FileDrop from "@/components/FileDrop";
 import { ArrowIcon } from "@/components";
 import { useContact } from "../../../hooks/useContact";
-import { createContactForm } from "../../../lib/api";
+import { STRAPI_URL } from "../../../config/strapi";
+import { useTranslations } from "next-intl";
 
 export default function ContactPage() {
   const [showOverlay, setShowOverlay] = useState(false);
-
+  const t = useTranslations("Contact");
   const [formData, setFormData] = useState({
     FirstName: "",
     lastname: "",
@@ -19,6 +20,9 @@ export default function ContactPage() {
     message: "",
     privacy: false,
   });
+
+  const [file, setFile] = useState(null);
+
   const [formError, setFormError] = useState({
     FirstName: "",
     lastname: "",
@@ -40,12 +44,18 @@ export default function ContactPage() {
     e.preventDefault();
 
     // validate
-    const errors = { FirstName: "", lastname: "", email: "", message: "" };
+    const errors = {
+      FirstName: "",
+      lastname: "",
+      email: "",
+      message: "",
+      phonenumber: "",
+      privacy: "",
+    };
     if (!formData.FirstName) errors.FirstName = "First name is required";
     if (!formData.lastname) errors.lastname = "Last name is required";
     if (!formData.email) errors.email = "Email is required";
-    if (!formData.phonenumber)
-      errors.phonenumber = "phonenumber Number is required";
+    if (!formData.phonenumber) errors.phonenumber = "Phone Number is required";
     if (!formData.message) errors.message = "Message is required";
     if (!formData.privacy)
       errors.privacy = "You must accept the Privacy Policy";
@@ -59,14 +69,37 @@ export default function ContactPage() {
       errors.phonenumber ||
       errors.privacy
     ) {
-      console.log("erroes if 1", errors);
       return;
     }
 
     try {
-      console.log("Sending to Strapi API...");
-      console.log("DEBUG sending formData:", formData);
-      await createContactForm(formData);
+      const payload = new FormData();
+      
+      // Add form data fields individually to match Strapi schema
+      payload.append("data[FirstName]", formData.FirstName);
+      payload.append("data[lastname]", formData.lastname);
+      payload.append("data[email]", formData.email);
+      payload.append("data[phonenumber]", formData.phonenumber);
+      payload.append("data[message]", formData.message);
+      payload.append("data[privacy]", formData.privacy);
+
+      if (file) {
+        console.log("File being uploaded:", file.name, file.type, file.size);
+        payload.append("files.attachment", file); // File attachment
+      } else {
+        console.log("No file selected");
+      }
+
+      const response = await fetch(`${STRAPI_URL}/api/contact-forms`, {
+        method: "POST",
+        body: payload,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.error?.message || "Failed to submit form");
+      }
+
       setFormData({
         FirstName: "",
         lastname: "",
@@ -75,10 +108,10 @@ export default function ContactPage() {
         message: "",
         privacy: false,
       });
-
+      setFile(null);
       setShowOverlay(true);
-    } catch (error) {
-      console.error("Submit failed:", error);
+    } catch (err) {
+      console.error("Submit failed:", err);
     }
   };
 
@@ -98,10 +131,9 @@ export default function ContactPage() {
       ></div>
       <div className="mt-[96px] w-full relative z-20  flex  justify-center items-center flex-col text-center">
         <div className="mt-[56px]">
-          <h1 className="text-[56px] text-white font-bold ">Contact Us</h1>
+          <h1 className="text-[56px] text-white font-bold ">{t("title")}</h1>
           <p className="text-[20px] text-white mt-2  font-light px-4">
-            Get in touch with our team. We&apos;re here to help you with any
-            questions or inquiries.
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -110,14 +142,14 @@ export default function ContactPage() {
       <div className="relative z-20  flex flex-col lg:flex-row w-full px-[32px] md:px-[64px] justify-center items-stretch gap-[32px]">
         {/* LEFT FORM */}
         <div
-          className="w-full max-w-[864px] mt-[32px] 
+          className="w-full  mt-[32px] 
              rounded-[16px] bg-[rgba(255,255,255,0.90)] 
              shadow-[0_16px_64px_0_rgba(0,0,0,0.12)] 
              backdrop-blur-[24px] min-h-[770px]"
         >
           <div className="py-10 px-8 md:px-16">
             <h2 className="text-[#E60000] text-[32px] pb-[32px] font-bold">
-              Send us a Message
+              {t("titleleft")}
             </h2>
 
             <form
@@ -133,7 +165,7 @@ export default function ContactPage() {
                   htmlFor="name"
                   className="block text-sm font-medium text-black"
                 >
-                  First Name <span className="text-[#E60000]">*</span>
+                 {t("lablefirstname")} <span className="text-[#E60000]">*</span>
                 </label>
                 <input
                   type="text"
@@ -142,7 +174,7 @@ export default function ContactPage() {
                   value={formData.FirstName}
                   onChange={handleChange}
                   placeholder="First Name"
-                  className="mt-1 w-full border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
+                  className="mt-1 w-full focus:border-[#E60000]  focus:outline-none border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.FirstName && (
                   <p className="text-red-600 text-sm mt-1">
@@ -156,7 +188,7 @@ export default function ContactPage() {
                   htmlFor="lastname"
                   className="block text-sm font-medium text-black"
                 >
-                  Last Name <span className="text-[#E60000]">*</span>
+                  {t("lablelastname")} <span className="text-[#E60000]">*</span>
                 </label>
                 <input
                   type="text"
@@ -165,7 +197,7 @@ export default function ContactPage() {
                   value={formData.lastname}
                   onChange={handleChange}
                   placeholder="Last Name"
-                  className="mt-1 w-full border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
+                  className="mt-1 w-full border focus:border-[#E60000]  focus:outline-none border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.lastname && (
                   <p className="text-red-600 text-sm mt-1">
@@ -179,7 +211,7 @@ export default function ContactPage() {
                   htmlFor="email"
                   className="block text-sm font-medium text-black"
                 >
-                  Email Address <span className="text-[#E60000]">*</span>
+                  {t("lableemail")} <span className="text-[#E60000]">*</span>
                 </label>
                 <input
                   type="email"
@@ -188,7 +220,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="mt-1 w-full border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
+                  className="mt-1 w-full border focus:border-[#E60000]  focus:outline-none border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.email && (
                   <p className="text-red-600 text-sm mt-1">{formError.email}</p>
@@ -199,7 +231,7 @@ export default function ContactPage() {
                   htmlFor="phonenumber"
                   className="block text-sm font-medium text-black"
                 >
-                  Phone Number <span className="text-[#E60000]">*</span>
+                  {t("labelphonenumber")} <span className="text-[#E60000]">*</span>
                 </label>
                 <input
                   type="text"
@@ -208,7 +240,7 @@ export default function ContactPage() {
                   value={formData.phonenumber}
                   onChange={handleChange}
                   placeholder="Phone Number ex.0991234567"
-                  className="mt-1 w-full border border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
+                  className="mt-1 w-full border focus:border-[#E60000]  focus:outline-none border-black px-4 py-3 outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.phonenumber && (
                   <p className="text-red-600 text-sm mt-1">
@@ -222,7 +254,7 @@ export default function ContactPage() {
                   htmlFor="message"
                   className="block text-sm font-medium text-black"
                 >
-                  Message / Description
+                 {t("labelmessages")}
                   <span className="text-[#E60000]">*</span>
                 </label>
                 <textarea
@@ -232,7 +264,7 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Message / Description"
-                  className="mt-1 w-full border border-black px-4 py-3 resize-none outline-none focus:ring-2 focus:ring-[#E60000]"
+                  className="mt-1 w-full border border-black  focus:border-[#E60000]  focus:outline-none px-4 py-3 resize-none outline-none focus:ring-2 focus:ring-[#E60000]"
                 />
                 {formError.message && (
                   <p className="text-red-600 text-sm mt-1">
@@ -240,7 +272,7 @@ export default function ContactPage() {
                   </p>
                 )}
               </div>
-              <FileDrop />
+              <FileDrop file={file} setFile={setFile} />
               {/* Checkbox */}
               <div className="md:col-span-2 text-[16px]">
                 <label
@@ -267,18 +299,15 @@ export default function ContactPage() {
                     className="mt-1 h-4 w-4 rounded border-gray-300 text-[#E60000] focus:ring-[#E60000]"
                   />
                   <span className="text-sm text-gray-700">
-                    I have read and accepted terms and conditions specified in
-                    the{" "}
+                 {t("privacypolicyP1")}{" "}
                     <a
                       href="/privacy-policy"
                       className="text-[#E60000] font-bold underline"
-                      onClick={(e) => e.stopPropagation()} // ป้องกัน toggle
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      Privacy Policy
+                      {t("privacyPolicy")}
                     </a>{" "}
-                    and do hereby consent to the collecting, processing and/or
-                    disclosing of the personal data provided by me to fulfil the
-                    above-said purposes.
+                    {t("privacyPolicyP2")}
                   </span>
                 </label>
               </div>
@@ -293,7 +322,7 @@ export default function ContactPage() {
                   className="w-full bg-[#E60000] cursor-pointer py-3.5 rounded-[100px] text-white font-medium hover:bg-[#cc0000]"
                 >
                   <div className="flex flex-row justify-center">
-                    <span className="pr-2">Submit</span>
+                    <span className="pr-2">{t("labelbutton")}</span>
                     <ArrowIcon width={24} height={24}></ArrowIcon>
                   </div>
                 </button>
@@ -309,8 +338,8 @@ export default function ContactPage() {
              mx-auto  
              "
         >
-          <div className="py-10 px-16">
-            <h2 className="text-white font-bold text-[24px]">Get in Touch</h2>
+          <div className="py-10 px-8">
+            <h2 className="text-white font-bold text-[24px]">{t("titleright")}</h2>
             <div className="py-8">
               <div className="w-full h-[264px] my-[32px]">
                 <iframe
@@ -330,7 +359,7 @@ export default function ContactPage() {
                   className=" object-cover w-[32px] h-[32px]"
                 ></img>
                 <div className="flex flex-col pl-[26px]">
-                  <span className="block font-bold text-white">Location</span>
+                  <span className="block font-bold text-white">{t("labellocation")}</span>
                   <p className="text-white/70">{contactForm?.Address}</p>
                 </div>
               </div>
@@ -340,8 +369,8 @@ export default function ContactPage() {
                   className=" object-cover w-[24px] h-[32px]"
                 ></img>
                 <div className="flex flex-col pl-[26px]">
-                  <span className="block font-bold text-white">Telephone</span>
-                  <p className="text-white/70">{contactForm?.Phonenumber}</p>
+                  <span className="block font-bold text-white pl-[2px]">{t("labeltelephone")}</span>
+                  <p className="text-white">{contactForm?.Phonenumber}</p>
                 </div>
               </div>
               <div className=" flex flex-row pl-[2px]">
@@ -350,7 +379,7 @@ export default function ContactPage() {
                   className=" object-cover w-[32px] h-[32px]"
                 ></img>
                 <div className="flex flex-col pl-[26px]">
-                  <span className="block font-bold text-white">Email</span>
+                  <span className="block font-bold text-white">{t("labelemail")}</span>
                   <p className="text-white/70">{contactForm?.email}</p>
                 </div>
               </div>
@@ -362,7 +391,7 @@ export default function ContactPage() {
                 <div className="flex flex-col pl-[26px]">
                   <span className="block font-bold text-white">
                     {" "}
-                    Business Hours
+                    {t("labeltime")}
                   </span>
                   <p className="text-white/70">{contactForm?.Time}</p>
                 </div>
@@ -382,17 +411,17 @@ export default function ContactPage() {
               className=" object-cover w-24 h-24 mx-auto"
             ></img>
             <h1 className=" py-2 text-[32px] font-bold text-[#E60000]">
-              Message Sent
+              {t("messagesent")}
             </h1>
             <p className="text-black text-[16px]">
-              Thank you for contacting us. We will reply to you shortly.
+             {t("thank")}
             </p>
             <div className="pt-8">
               <button
                 onClick={() => setShowOverlay(false)}
                 className="bg-red-600 text-white px-12 w-[192px] cursor-pointer rounded-[100px] py-3.5 "
               >
-                Close
+                {t("button")}
               </button>
             </div>
           </div>
