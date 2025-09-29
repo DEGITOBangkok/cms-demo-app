@@ -91,12 +91,15 @@ export const useBannerAspectRatio = () => {
       
       if (width >= 650 && width <= 798) {
         // 650-798px: Keep 1:1 aspect ratio (square)
-        setAspectClasses('aspect-[1/1] pb-10');
+        setAspectClasses('aspect-[1/1]');
+      } else if (width >= 820 && width <= 1024) {
+        // 820-1024px: iPad Air - 1:1 aspect ratio (square)
+        setAspectClasses('aspect-[1.4/1]');
       } else if (width < 650) {
         // < 650px: Portrait aspect ratio
         setAspectClasses('aspect-[1/2]');
       } else {
-        // > 798px: Desktop aspect ratio
+        // > 1024px: Desktop aspect ratio
         setAspectClasses('aspect-[2/1] lg:aspect-[2/1]');
       }
     };
@@ -269,4 +272,39 @@ export const useThumbnailPositioning = () => {
   }, []);
 
   return positionClasses;
+};
+
+/**
+ * Custom hook for main content padding based on screen width
+ * Returns padding classes for specific screen ranges
+ */
+export const useMainContentPadding = () => {
+  const [paddingClasses, setPaddingClasses] = useState('');
+
+  useEffect(() => {
+    const updatePaddingClasses = () => {
+      const width = window.innerWidth;
+      
+      if (width < 1330) {
+        // Below 1320px: Reduced padding
+        setPaddingClasses('px-4 md:px-8 xl:px-16');
+      } else {
+        // 1320px and above: Full padding
+        setPaddingClasses('px-4 md:px-8 xl:px-44');
+      }
+    };
+
+    // Set initial classes
+    updatePaddingClasses();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', updatePaddingClasses);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', updatePaddingClasses);
+    };
+  }, []);
+
+  return paddingClasses;
 };
