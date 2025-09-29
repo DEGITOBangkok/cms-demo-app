@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useHome, useFeaturedArticles } from '../hooks/useArticles';
+import { useHome } from '../hooks/useArticles';
 import Banner from './Banner';
 import { getStrapiMediaURL } from '../lib/api';
 import ArrowIcon from './icons/ArrowIcon';
@@ -17,7 +17,6 @@ import 'swiper/css/pagination';
 
 export default function HomePageClient({ locale = 'en' }) {
   const { homeData, loading, error } = useHome(locale);
-  const { articles: featuredArticles, loading: articlesLoading } = useFeaturedArticles(3, locale);
   const router = useRouter();
   const t = useTranslations('HomePage')
   
@@ -50,6 +49,7 @@ export default function HomePageClient({ locale = 'en' }) {
 
   // Extract banner data (always run, even if loading/error)
   const banners = homeData?.banners || [];
+  const articles = homeData?.articles || [];
   const homeDetails = homeData?.homeDetails || [];
   const homeImg = homeData?.homeImg;
   const bannerImages = banners.map(banner => {
@@ -326,7 +326,7 @@ export default function HomePageClient({ locale = 'en' }) {
       {/* Main Content */}
        <main className={`w-full ${mainPaddingClasses} xl:pt-30 xl:pb-10 py-10 pt-30 relative overflow-x-hidden`}>
          {/* Background AppIcon - Right Side - Absolute & Responsive */}
-         <div className="absolute top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
+         <div className="absolute top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] lg:top-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
@@ -421,7 +421,7 @@ export default function HomePageClient({ locale = 'en' }) {
 
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
-        {!articlesLoading && featuredArticles.length > 0 && (
+        {articles.length > 0 && (
           <div className="w-full px-4 md:px-14 lg:px-16">
             {/* Mobile: Swiper */}
             <div className="block md:hidden">
@@ -438,7 +438,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 }}
                 className="!h-auto"
               >
-                {featuredArticles.map((article, index) => (
+                {articles.map((article, index) => (
                   <SwiperSlide key={article.id || index} className="h-full">
                     <ArticlesCard
                       article={article}
@@ -473,7 +473,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 }}
                 className="!h-auto"
               >
-                {featuredArticles.map((article, index) => (
+                {articles.map((article, index) => (
                   <SwiperSlide key={article.id || index} className="h-full">
                     <ArticlesCard
                       article={article}
@@ -489,7 +489,7 @@ export default function HomePageClient({ locale = 'en' }) {
 
             {/* Desktop: Grid */}
             <div className="hidden xl:grid grid-cols-1 xl:grid-cols-3 gap-10">
-              {featuredArticles.map((article, index) => (
+              {articles.map((article, index) => (
                 <ArticlesCard
                   key={article.id || index}
                   article={article}
@@ -498,23 +498,6 @@ export default function HomePageClient({ locale = 'en' }) {
                   disableAnimation={false}
                   onCategoryClick={handleCategoryClick}
                 />
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {articlesLoading && (
-          <div className="w-full px-4 md:px-8 lg:px-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((index) => (
-                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                  <div className="h-48 bg-gray-300"></div>
-                  <div className="p-6">
-                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded mb-4"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  </div>
-                </div>
               ))}
             </div>
           </div>
