@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   
   return generateNotFoundSEO({
     siteName: 'News Portal',
-    siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000',
+    siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH,
     locale: locale
   });
 }
