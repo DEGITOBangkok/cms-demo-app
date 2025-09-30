@@ -5,8 +5,8 @@
 import React, { useState } from "react";
 import FileDrop from "@/components/FileDrop";
 import { ArrowIcon } from "@/components";
-import { useContact } from "../../../hooks/useContact";
-import { STRAPI_URL } from "../../../config/strapi";
+import { useContact } from "../../hooks/useContact";
+import { STRAPI_URL } from "../../config/strapi";
 import { useTranslations } from "next-intl";
 
 export default function ContactPageClient() {

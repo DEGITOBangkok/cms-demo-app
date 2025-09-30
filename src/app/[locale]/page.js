@@ -1,5 +1,5 @@
 import React from 'react'
-import HomePageClient from '../../components/HomePageClient'
+import HomePageClient from '../../components/pagesComponent/HomePageClient'
 import { generateHomeSEO } from '../../lib/seo'
 import { getHome } from '../../lib/api'
 

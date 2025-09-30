@@ -69,7 +69,7 @@ const Footer = () => {
                   alt="Email icon" 
                   className="w-[24px] h-[24px]"
                 />
-                <span className="text-[14px] font-[400] text-gray-300">contact@digiproxima.com</span>
+                <span className="text-[14px] font-[400] text-gray-300">contact@promserve.com</span>
               </a>
             </div>
           </div>

@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useHome } from '../hooks/useArticles';
-import Banner from './Banner';
-import { getStrapiMediaURL } from '../lib/api';
-import ArrowIcon from './icons/ArrowIcon';
-import AppIcon from './icons/AppIcon';
-import ArticlesCard from './ArticlesCard';
+import { useHome } from '../../hooks/useArticles';
+import Banner from '../Banner';
+import { getStrapiMediaURL } from '../../lib/api';
+import ArrowIcon from '../icons/ArrowIcon';
+import AppIcon from '../icons/AppIcon';
+import ArticlesCard from '../ArticlesCard';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding, useMainContentPadding } from '../hooks/useResponsiveContainer';
+import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding, useMainContentPadding } from '../../hooks/useResponsiveContainer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';

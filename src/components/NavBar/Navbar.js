@@ -46,7 +46,7 @@ export default function Navbar() {
 
   if (!isClient) {
     return (
-      <nav className="flex items-center justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
+      <nav className="flex items-center h-[56px] sm:h-[96px] justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
         <div>
           <img
             src="/images/nav_logo.png"
@@ -87,7 +87,7 @@ export default function Navbar() {
 
   return (
     <>
-     <nav className="flex items-center justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
+     <nav className="flex items-center h-[56px] sm:h-[96px] justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
 
         {/* Logo */}
         <div>

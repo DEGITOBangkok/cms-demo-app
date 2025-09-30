@@ -1,6 +1,6 @@
 import { generateContactSEO } from "../../../lib/seo";
 import { getContactConfig } from "../../../lib/api";
-import ContactPageClient from "./ContactPageClient";
+import ContactPageClient from "../../../components/pagesComponent/ContactPageClient";
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { generateArticleSEO, generateArticleStructuredData } from '@/lib/seo';
 import { getArticle } from '@/lib/api';
-import NewsDescClient from './NewsDescClient';
+import NewsDescClient from '../../../../components/pagesComponent/NewsDescClient';
 
 export async function generateMetadata({ params }) {
   try {

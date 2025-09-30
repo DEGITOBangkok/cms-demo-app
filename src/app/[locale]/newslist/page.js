@@ -1,5 +1,5 @@
 import { generateNewsListSEO } from '../../../lib/seo';
-import NewsListClient from '@/components/NewsListClient';
+import NewsListClient from '@/components/pagesComponent/NewsListClient';
 import { Suspense } from 'react';
 
 export async function generateMetadata({ params }) {
