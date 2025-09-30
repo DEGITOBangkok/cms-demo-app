@@ -132,6 +132,91 @@ export function generateNewsListSEO(options = {}) {
   };
 }
 
+export function generateContactSEO(options = {}) {
+  const {
+    siteName = 'News Portal',
+    siteUrl = 'http://localhost:3000',
+    defaultImage = '/default-og-image.jpg',
+    seoData = null
+  } = options;
+
+  // Use Strapi SEO data if available
+  const seo = seoData || {};
+  const title = seo.metaTitle || `Contact Us | ${siteName}`;
+  const description = seo.metaDescription || 'Get in touch with us. Send us a message or contact us directly for any inquiries or support.';
+  const image = seo.shareImage?.url 
+    ? getStrapiMediaURL(seo.shareImage.url)
+    : defaultImage;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      url: `${siteUrl}/contact`,
+      siteName: siteName,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: title,
+      description: description,
+      images: [image],
+    },
+    alternates: {
+      canonical: `${siteUrl}/contact`,
+    },
+  };
+}
+
+export function generateNotFoundSEO(options = {}) {
+  const {
+    siteName = 'News Portal',
+    siteUrl = 'http://localhost:3000',
+    defaultImage = '/default-og-image.jpg'
+  } = options;
+
+  return {
+    title: `Page Not Found | ${siteName}`,
+    description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+    openGraph: {
+      title: `Page Not Found | ${siteName}`,
+      description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+      url: `${siteUrl}/404`,
+      siteName: siteName,
+      images: [
+        {
+          url: defaultImage,
+          width: 1200,
+          height: 630,
+          alt: 'Page Not Found',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Page Not Found | ${siteName}`,
+      description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+      images: [defaultImage],
+    },
+    alternates: {
+      canonical: `${siteUrl}/404`,
+    },
+  };
+}
+
 /**
  * Generate structured data (JSON-LD) for articles
  * @param {Object} article - Article data from Strapi

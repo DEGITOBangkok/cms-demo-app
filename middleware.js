@@ -12,6 +12,18 @@ export default function middleware(request) {
     return NextResponse.redirect(new URL('/en/newslist', request.url));
   }
 
+  // Check if the first segment is an invalid locale
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length > 0) {
+    const firstSegment = segments[0];
+    const validLocales = routing.locales;
+    
+    // If first segment is not a valid locale, redirect to not-found
+    if (!validLocales.includes(firstSegment)) {
+      return NextResponse.redirect(new URL('/not-found', request.url));
+    }
+  }
+
   return intlMiddleware(request);
 }
 

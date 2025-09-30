@@ -8,6 +8,7 @@ import { useLocale } from 'next-intl';
 import { getStrapiMediaURL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import { formatDate } from '@/lib/day';
+import { useResponsiveContainer, useBannerContentPosition } from '@/hooks/useResponsiveContainer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -23,6 +24,10 @@ export default function NewsListClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('HomePage');
+  
+  // Custom responsive container hooks
+  const containerClasses = useResponsiveContainer();
+  const bannerPositionClasses = useBannerContentPosition();
 
   // Locale management
   const locale = useLocale();
@@ -216,11 +221,11 @@ export default function NewsListClient() {
                     onClick={handleBannerExploreClick}
                   >
                     {/* Content positioned in lower left - responsive */}
-                    <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
+                    <div className={bannerPositionClasses}>
                       {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
-                      <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
+                      <div className={containerClasses}>
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
-                        <div className="max-w-8xl">
+                        <div className="max-w-8xl lg:px-10">
                           {/* Category tag */}
                           <div className="mb-1 sm:mb-2">
                             <span
@@ -282,9 +287,9 @@ export default function NewsListClient() {
             onClick={handleBannerExploreClick}
           >
             {/* Content positioned in lower left - responsive */}
-            <div className="absolute inset-x-0 bottom-12 md:bottom-24 lg:bottom-26">
+            <div className={bannerPositionClasses}>
               {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
-              <div className="mx-auto w-full px-4 md:px-8 lg:px-16 lg:ml-8">
+              <div className={containerClasses}>
                 {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
                 <div className="max-w-4xl">
                   {/* Category - Only show when there are images */}
@@ -334,7 +339,7 @@ export default function NewsListClient() {
                   swiperRef.current.slidePrev();
                 }
               }}
-              className={`absolute left-2 md:left-4 bottom-2 lg:bottom-1/6 transform -translate-y-1/2 bg-[#E60000] text-white p-2 md:p-3 rounded-full transition-all z-10 ${currentSlide === 0
+              className={`absolute left-2 md:left-4 bottom-1 lg:bottom-1/6 transform -translate-y-1/2 bg-[#E60000] text-white p-2 md:p-3 rounded-full transition-all z-10 ${currentSlide === 0
                 ? 'opacity-30 cursor-not-allowed'
                 : 'bg-opacity-50 hover:bg-opacity-70 hover:scale-110 cursor-pointer'
                 }`}
@@ -353,7 +358,7 @@ export default function NewsListClient() {
                   swiperRef.current.slideNext();
                 }
               }}
-              className={`absolute right-2 md:right-4 bottom-2 lg:bottom-1/6 transform -translate-y-1/2 bg-[#E60000] text-white p-2 md:p-3 rounded-full transition-all z-10 ${currentSlide === articlesWithImages.length - 1
+              className={`absolute right-2 md:right-4 bottom-1 lg:bottom-1/6 transform -translate-y-1/2 bg-[#E60000] text-white p-2 md:p-3 rounded-full transition-all z-10 ${currentSlide === articlesWithImages.length - 1
                 ? 'opacity-30 cursor-not-allowed'
                 : 'bg-opacity-50 hover:bg-opacity-70 hover:scale-110 cursor-pointer'
                 }`}
