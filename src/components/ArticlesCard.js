@@ -68,7 +68,7 @@ const ArticlesCard = ({
 
   return (
     <article
-      className={`bg-white rounded-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
+      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
         disableAnimation 
           ? '' 
           : 'opacity-0 -translate-y-8 animate-[fadeInSlideUp_0.6s_ease-out_forwards]'
