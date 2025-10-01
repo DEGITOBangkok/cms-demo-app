@@ -1,5 +1,5 @@
 import { generateNotFoundSEO } from '../../../lib/seo';
-import NotFoundClient from '@/app/NotFoundClient';
+import NotFoundClient from '@/components/pagesComponent/NotFoundClient';
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;

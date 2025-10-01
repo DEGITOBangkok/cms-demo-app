@@ -164,7 +164,7 @@ export default function NewsDescClient({ article }) {
           {/* Hero Image */}
           <div className="mb-8">
             {articleImage ? (
-              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-lg shadow-lg">
+              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-lg">
                 <img 
                   src={articleImage}
                   alt={article.title || (locale === 'th' ? 'รูปภาพบทความ' : 'Article image')}
@@ -240,7 +240,7 @@ export default function NewsDescClient({ article }) {
                        <SwiperSlide key={index}>
                          <div className="relative">
                            <div
-                             className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+                             className="rounded-2xl overflow-hidden cursor-pointer group"
                              onClick={() => {
                                setSelectedImage({
                                  url: getStrapiMediaURL(fileUrl),
@@ -301,7 +301,7 @@ export default function NewsDescClient({ article }) {
                             return (
                   <div
                     key={index}
-                    className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+                    className="rounded-2xl overflow-hidden cursor-pointer group"
                      onClick={() => {
                        setSelectedImage({
                          url: getStrapiMediaURL(fileUrl),
@@ -451,7 +451,7 @@ export default function NewsDescClient({ article }) {
             {articlesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+                  <div key={i} className="bg-white rounded-lg overflow-hidden animate-pulse">
                     <div className="h-48 bg-gray-300"></div>
                     <div className="p-6">
                       <div className="h-6 bg-gray-300 rounded mb-2"></div>
