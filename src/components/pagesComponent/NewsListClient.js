@@ -227,7 +227,7 @@ export default function NewsListClient() {
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
                         <div className="max-w-8xl lg:px-10">
                           {/* Category tag */}
-                          <div className="mb-1 sm:mb-2">
+                          <div className="mb-2 sm:mb-2">
                             <span
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -241,8 +241,8 @@ export default function NewsListClient() {
                           </div>
 
                           {/* Date */}
-                          <div className="mb-1 sm:mb-2">
-                            <span className="text-gray-200 text-lg sm:text-lg">
+                          <div className="mb-2 sm:mb-2">
+                            <span className="text-white text-[16px] font-[400] sm:text-lg">
                               {currentArticle?.publishedAt
                                 ? formatDate(currentArticle.publishedAt, locale, 'D MMM YYYY')
                                 : formatDate(new Date(), locale, 'D MMM YYYY')}
@@ -252,7 +252,7 @@ export default function NewsListClient() {
                           {/* Title */}
                           <h1
                             onClick={handleBannerExploreClick}
-                            className="text-2xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
+                            className="text-[24px] sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer pt-1 pb-1"
                           >
                             {currentArticle?.title || 'Pioneering Sustainability Lubricants'}
                           </h1>
@@ -260,9 +260,9 @@ export default function NewsListClient() {
                           {/* CTA */}
                           <button
                             onClick={handleBannerExploreClick}
-                            className="inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap cursor-pointer group"
+                            className="inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap cursor-pointer group pb-8 sm:pb-0"
                           >
-                            <span className="text-[#E60000] font-semibold text-sm sm:text-xs md:text-sm">{t('readmore')}</span>
+                            <span className="text-[#E60000] font-semibold text-[14px] sm:text-xs md:text-sm">{t('readmore')}</span>
                             <ArrowIcon
                               width={16}
                               height={16}
