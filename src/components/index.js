@@ -7,7 +7,6 @@ export { default as ArticlesCard } from './ArticlesCard';
 export { default as LocaleSwitcher } from './LocaleSwitch';
 export { default as ShareBar } from './ShareBar';
 export { default as Footer } from './Footer';
-export { default as CMSStatus } from '../mockdata/CMSStatus';
 
 // Icons
 export * from './icons';

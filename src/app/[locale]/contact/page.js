@@ -1,13 +1,18 @@
 import { generateContactSEO } from "../../../lib/seo";
 import { getContactConfig } from "../../../lib/api";
 import ContactPageClient from "../../../components/pagesComponent/ContactPageClient";
+import { routing } from "../../../../i18n/routing";
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export async function generateMetadata({ params }) {
   const { locale } = await params;
   
   try {
     // Fetch contact SEO data from Strapi
-    const contactData = await getContactConfig();
+    const contactData = await getContactConfig(locale);
     
     if (contactData?.SEO) {
       return generateContactSEO({
@@ -29,6 +34,7 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default function ContactPage({ params }) {
-  return <ContactPageClient />;
+export default async function ContactPage({ params }) {
+  const { locale } = await params;
+  return <ContactPageClient locale={locale} />;
 }

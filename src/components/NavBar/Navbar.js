@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { MENUS } from "@/lib/const";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import LocaleSwitcher from "../LocaleSwitch";
 import Hamburger from "./Hamburger";
 
@@ -55,7 +56,7 @@ export default function Navbar() {
           />
         </div>
         <div className="hidden lg:flex flex-row gap-10 items-center text-black">
-          <a
+          <Link
             title="News & Articles"
             href="/en/newslist"
             className="px-2 py-1 relative group"
@@ -64,8 +65,8 @@ export default function Navbar() {
               News & Articles
             </span>
             <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-[#E60000] group-hover:w-full transition-all duration-300"></span>
-          </a>
-          <a
+          </Link>
+          <Link
             title="Contact"
             href="/en/contact"
             className="px-2 py-1 relative group"
@@ -74,7 +75,7 @@ export default function Navbar() {
               Contact
             </span>
             <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-[#E60000] group-hover:w-full transition-all duration-300"></span>
-          </a>
+          </Link>
         </div>
         <div className="lg:hidden relative z-50">
           <button className="relative z-50">
@@ -102,7 +103,7 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden lg:flex flex-row gap-10 items-center text-black">
           {MENUS.map((m) => (
-            <a
+            <Link
               key={m.slug}
               title={t(m.titleKey)}
               href={`/${locale}/${m.slug}`}
@@ -112,7 +113,7 @@ export default function Navbar() {
                 {t(m.titleKey)}
               </span>
               <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-[#E60000] group-hover:w-full transition-all duration-300"></span>
-            </a>
+            </Link>
           ))}
           <LocaleSwitcher />
         </div>
@@ -131,14 +132,14 @@ export default function Navbar() {
           {/* Menu items */}
           <div className="flex flex-col items-start px-4 pt-4">
             {MENUS.map((m) => (
-              <a
+              <Link
                 key={m.slug}
                 title={t(m.titleKey)}
                 href={`/${locale}/${m.slug}`}
                 className="w-full py-4 text-[16px] text-black hover:text-[#E60000] border-b-2"
               >
                 {t(m.titleKey)}
-              </a>
+              </Link>
             ))}
           </div>
 
