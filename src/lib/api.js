@@ -449,7 +449,7 @@ export async function getHome(locale = "en") {
   try {
     // Fetch home data and latest articles separately
     const [homeResponse, latestArticlesResponse] = await Promise.allSettled([
-      fetchAPI(`/api/home?populate[banners][populate]=*&populate[articles][populate]=*&populate[homeDetails][populate]=*&populate[SEO][populate]=*&populate=homeImg&locale=${locale}`),
+      fetchAPI(`/api/home?populate[banners][populate][media][populate]=*&populate[articles][populate]=*&populate[homeDetails][populate]=*&populate[SEO][populate]=*&populate=homeImg&locale=${locale}`),
       fetchAPI(`/api/articles?populate=*&sort=publishedAt:desc&pagination[limit]=3&locale=${locale}`)
     ]);
 
