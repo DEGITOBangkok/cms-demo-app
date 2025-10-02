@@ -17,7 +17,7 @@
     "license": "©2025 บริษัท พร้อม เซิร์ฟ จำกัด สงวนลิขสิทธิ์ทั้งหมด"
   },
   "LocaleSwitcher": {
-    "label": "Change language",
+    "label": "เปลี่ยนภาษา",
     "locale": "{locale, select, th {Thai} en {English} other {Unknown}}"
   },
   "HomePage": {

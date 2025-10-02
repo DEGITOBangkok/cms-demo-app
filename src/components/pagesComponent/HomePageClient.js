@@ -53,7 +53,16 @@ export default function HomePageClient({ locale = 'en' }) {
   const homeDetails = homeData?.homeDetails || [];
   const homeImg = homeData?.homeImg;
   const bannerImages = banners.map(banner => {
-    // Try different possible image field paths
+    // Check if banner has media dynamic zone with image
+    if (banner?.media) {
+      // Find image in media array
+      const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+      if (imageMedia?.Img?.url) {
+        return getStrapiMediaURL(imageMedia.Img.url);
+      }
+    }
+    
+    // Fallback to old structure for backward compatibility
     const imageUrl = banner?.image?.url || 
                      banner?.thumbnail?.url || 
                      banner?.url || 
@@ -70,6 +79,47 @@ export default function HomePageClient({ locale = 'en' }) {
   // Fallback gradient background if no images
   const hasImages = bannerImages.length > 0;
   
+  // Check if current banner has image or video in media dynamic zone
+  const getCurrentBannerMediaType = () => {
+    if (currentBanner?.media) {
+      const imageMedia = currentBanner.media.find(item => item.__component === 'media.img' || item.Img);
+      const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      
+      if (imageMedia?.Img) return 'image';
+      if (videoMedia?.youtubeUrl) return 'video';
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (currentBanner?.image || currentBanner?.thumbnail) return 'image';
+    if (currentBanner?.youtubeUrl) return 'video';
+    
+    return 'unknown';
+  };
+  
+  const currentBannerMediaType = getCurrentBannerMediaType();
+  const shouldShowExploreButton = currentBannerMediaType === 'video';
+  
+  // Handle explore button click - navigate to YouTube URL
+  const handleExploreClick = () => {
+    let youtubeUrl = null;
+    
+    if (currentBanner?.media) {
+      // Find video in media array
+      const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      youtubeUrl = videoMedia?.youtubeUrl;
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (!youtubeUrl) {
+      youtubeUrl = currentBanner?.youtubeUrl;
+    }
+    
+    if (youtubeUrl) {
+      // Open YouTube URL in a new tab
+      window.open(youtubeUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+  
   // Extract YouTube video ID from URL
   const extractYouTubeId = (url) => {
     if (!url) return null;
@@ -82,8 +132,22 @@ export default function HomePageClient({ locale = 'en' }) {
   const handleSlideChange = (newSlide) => {
     setCurrentSlide(newSlide);
     const banner = banners[newSlide];
-    if (banner?.youtubeUrl) {
-      const videoId = extractYouTubeId(banner.youtubeUrl);
+    
+    // Check if banner has media dynamic zone with video
+    let youtubeUrl = null;
+    if (banner?.media) {
+      // Find video in media array
+      const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      youtubeUrl = videoMedia?.youtubeUrl;
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (!youtubeUrl) {
+      youtubeUrl = banner?.youtubeUrl;
+    }
+    
+    if (youtubeUrl) {
+      const videoId = extractYouTubeId(youtubeUrl);
       setCurrentVideoId(videoId);
     } else {
       setCurrentVideoId(null);
@@ -93,10 +157,27 @@ export default function HomePageClient({ locale = 'en' }) {
   // Initialize video for first slide
   useEffect(() => {
     console.log('Banners useEffect triggered:', { banners, firstBanner: banners[0] });
-    if (banners.length > 0 && banners[0]?.youtubeUrl) {
-      const videoId = extractYouTubeId(banners[0].youtubeUrl);
-      console.log('Extracted video ID:', videoId);
-      setCurrentVideoId(videoId);
+    if (banners.length > 0) {
+      const firstBanner = banners[0];
+      
+      // Check if banner has media dynamic zone with video
+      let youtubeUrl = null;
+      if (firstBanner?.media) {
+        // Find video in media array
+        const videoMedia = firstBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+        youtubeUrl = videoMedia?.youtubeUrl;
+      }
+      
+      // Fallback to old structure for backward compatibility
+      if (!youtubeUrl) {
+        youtubeUrl = firstBanner?.youtubeUrl;
+      }
+      
+      if (youtubeUrl) {
+        const videoId = extractYouTubeId(youtubeUrl);
+        console.log('Extracted video ID:', videoId);
+        setCurrentVideoId(videoId);
+      }
     }
   }, [banners]);
 
@@ -207,12 +288,18 @@ export default function HomePageClient({ locale = 'en' }) {
                   <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
                 )}
               </div>
-               <div className="flex justify-start">
-                   <button className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group">
-                       <span>{homeData?.exploreButton|| 'Explore More'}</span>
-                       <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
-                   </button>
-               </div>
+               {/* Show explore button only for video banners */}
+               {shouldShowExploreButton && (
+                 <div className="flex justify-start">
+                     <button 
+                       onClick={handleExploreClick}
+                       className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group"
+                     >
+                         <span>{homeData?.exploreButton|| 'Explore More'}</span>
+                         <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
+                     </button>
+                 </div>
+               )}
             </div>
 
             {/* Dynamic Thumbnail Layout */}
@@ -234,7 +321,27 @@ export default function HomePageClient({ locale = 'en' }) {
                     resistanceRatio={0.5}
                   >
                     {banners.map((banner, index) => {
-                      const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                      // Check if banner has media dynamic zone with image for thumbnail
+                      let thumbnailUrl = null;
+                      if (banner?.media) {
+                        const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+                        thumbnailUrl = imageMedia?.Img?.formats?.thumbnail?.url || imageMedia?.Img?.url;
+                      }
+                      
+                      // Fallback to old structure for backward compatibility
+                      if (!thumbnailUrl) {
+                        thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                      }
+                      
+                      // Check if banner has video (for aria-label)
+                      let hasVideo = false;
+                      if (banner?.media) {
+                        const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+                        hasVideo = !!videoMedia?.youtubeUrl;
+                      } else {
+                        hasVideo = !!banner?.youtubeUrl;
+                      }
+                      
                       const isActive = index === currentSlide;
                       
                       return (
@@ -246,8 +353,8 @@ export default function HomePageClient({ locale = 'en' }) {
                                 ? 'ring-2 ring-[#E60000]' 
                                 : 'opacity-100'
                             }`}
-                            aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                            title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                            aria-label={`Go to slide ${index + 1}${hasVideo ? ' (has video)' : ''}`}
+                            title={hasVideo ? 'This slide has a video' : ''}
                           >
                             {thumbnailUrl ? (
                               <img
@@ -270,7 +377,27 @@ export default function HomePageClient({ locale = 'en' }) {
                 {/* Desktop/Tablet Thumbnail Layout */}
                 <div className="desktop-thumbnails-only thumbnail-container">
                   {banners.map((banner, index) => {
-                    const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                    // Check if banner has media dynamic zone with image for thumbnail
+                    let thumbnailUrl = null;
+                    if (banner?.media) {
+                      const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+                      thumbnailUrl = imageMedia?.Img?.formats?.thumbnail?.url || imageMedia?.Img?.url;
+                    }
+                    
+                    // Fallback to old structure for backward compatibility
+                    if (!thumbnailUrl) {
+                      thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                    }
+                    
+                    // Check if banner has video (for aria-label)
+                    let hasVideo = false;
+                    if (banner?.media) {
+                      const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+                      hasVideo = !!videoMedia?.youtubeUrl;
+                    } else {
+                      hasVideo = !!banner?.youtubeUrl;
+                    }
+                    
                     const isActive = index === currentSlide;
                     
                     return (
@@ -282,8 +409,8 @@ export default function HomePageClient({ locale = 'en' }) {
                             ? 'ring-2 ring-[#E60000]' 
                             : 'opacity-100'
                         }`}
-                        aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                        title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                        aria-label={`Go to slide ${index + 1}${hasVideo ? ' (has video)' : ''}`}
+                        title={hasVideo ? 'This slide has a video' : ''}
                       >
                         {thumbnailUrl ? (
                           <img
