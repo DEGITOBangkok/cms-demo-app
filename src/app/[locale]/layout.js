@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "../../../i18n/routing";
 import { Footer} from "../../components";
 import  Navbar  from "@/components/NavBar/Navbar";
-import CMSStatus from "../../mockdata/CMSStatus";
 import { getHome } from "../../lib/api";
 import { generateHomeSEO } from "../../lib/seo";
 import "../../app/globals.css";
@@ -57,7 +56,6 @@ export default async function LocaleLayout({ children, params }) {
       <Navbar />
       <div className="min-h-screen flex flex-col">
         <main className="flex-grow">
-          <CMSStatus />
           {children}
         </main>
         <Footer />
