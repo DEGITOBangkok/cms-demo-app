@@ -447,10 +447,26 @@ export async function getHome(locale = "en") {
   }
 
   try {
+    // Build query parameters for home data
+    const homeQueryParams = new URLSearchParams();
+    homeQueryParams.append('populate[banners][populate][media][populate]', '*');
+    homeQueryParams.append('populate[articles][populate]', '*');
+    homeQueryParams.append('populate[homeDetails][populate]', '*');
+    homeQueryParams.append('populate[SEO][populate]', '*');
+    homeQueryParams.append('populate[homeImg][populate]', '*');
+    homeQueryParams.append('locale', locale);
+
+    // Build query parameters for articles
+    const articlesQueryParams = new URLSearchParams();
+    articlesQueryParams.append('populate', '*');
+    articlesQueryParams.append('sort', 'publishedAt:desc');
+    articlesQueryParams.append('pagination[limit]', '3');
+    articlesQueryParams.append('locale', locale);
+
     // Fetch home data and latest articles separately
     const [homeResponse, latestArticlesResponse] = await Promise.allSettled([
-      fetchAPI(`/api/home?populate[banners][populate][media][populate]=*&populate[articles][populate]=*&populate[homeDetails][populate]=*&populate[SEO][populate]=*&populate=homeImg&locale=${locale}`),
-      fetchAPI(`/api/articles?populate=*&sort=publishedAt:desc&pagination[limit]=3&locale=${locale}`)
+      fetchAPI(`/api/home?${homeQueryParams}`),
+      fetchAPI(`/api/articles?${articlesQueryParams}`)
     ]);
 
     const homeData = homeResponse.status === 'fulfilled' && homeResponse.value ? homeResponse.value.data : mockHomeData;

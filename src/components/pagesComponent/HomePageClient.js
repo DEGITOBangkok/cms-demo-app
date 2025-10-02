@@ -68,15 +68,15 @@ export default function HomePageClient({ locale = 'en' }) {
                      banner?.image?.formats?.large?.url ||
                      banner?.image?.formats?.medium?.url;
     return getStrapiMediaURL(imageUrl);
-  }).filter(Boolean);
+  });
   
 
   // Get current banner content for display
   const currentBanner = banners[currentSlide] || banners[0] || {};
-  const currentImage = bannerImages[currentSlide] || bannerImages[0];
+  const currentImage = bannerImages[currentSlide];
   
   // Fallback gradient background if no images
-  const hasImages = bannerImages.length > 0;
+  const hasImages = bannerImages.some(img => img);
   
   // Check if current banner has image or video in media dynamic zone
   const getCurrentBannerMediaType = () => {
@@ -96,10 +96,42 @@ export default function HomePageClient({ locale = 'en' }) {
   };
   
   const currentBannerMediaType = getCurrentBannerMediaType();
-  const shouldShowExploreButton = currentBannerMediaType === 'video';
   
-  // Handle explore button click - navigate to YouTube URL
+  // Check if explore button should be shown
+  const shouldShowExploreButton = () => {
+    // Show if contentUrl is provided and not empty
+    if (currentBanner?.contentUrl && currentBanner.contentUrl.trim() !== '') {
+      return true;
+    }
+    
+    // Show for videos only if they have a YouTube URL
+    if (currentBannerMediaType === 'video') {
+      let youtubeUrl = null;
+      
+      if (currentBanner?.media) {
+        const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+        youtubeUrl = videoMedia?.youtubeUrl;
+      }
+      
+      if (!youtubeUrl) {
+        youtubeUrl = currentBanner?.youtubeUrl;
+      }
+      
+      return !!youtubeUrl;
+    }
+    
+    return false;
+  };
+  
+  // Handle explore button click - navigate to URL
   const handleExploreClick = () => {
+    // Priority 1: Use contentUrl if available and not empty
+    if (currentBanner?.contentUrl && currentBanner.contentUrl.trim() !== '') {
+      window.open(currentBanner.contentUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    
+    // Priority 2: Use YouTube URL (existing logic)
     let youtubeUrl = null;
     
     if (currentBanner?.media) {
@@ -294,7 +326,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 )}
               </div>
                {/* Show explore button only for video banners */}
-               {shouldShowExploreButton && (
+               {shouldShowExploreButton() && (
                  <div className="flex justify-start">
                      <button 
                        onClick={handleExploreClick}
