@@ -415,15 +415,22 @@ export async function getSocial() {
     };
   }
 }
-export async function getContactConfig() {
+export async function getContactConfig(locale = 'en') {
   const cmsAvailable = await isCMSAvailable();
   if (!cmsAvailable) {
     return null;
   }
   try {
     const queryParams = new URLSearchParams();
-    queryParams.append('populate[ContactForm]', '*');
+    queryParams.append('populate[ContactDetail]', '*');
+    queryParams.append('populate[ContactFill][populate][firstName][populate]', '*');
+    queryParams.append('populate[ContactFill][populate][lastName][populate]', '*');
+    queryParams.append('populate[ContactFill][populate][email][populate]', '*');
+    queryParams.append('populate[ContactFill][populate][phoneNumber][populate]', '*');
+    queryParams.append('populate[ContactFill][populate][message][populate]', '*');
+    queryParams.append('populate[ContactFill][populate][attachment][populate]', '*');
     queryParams.append('populate[SEO][populate]', '*');
+    queryParams.append('locale', locale);
     const response = await fetchAPI(`/api/contact?${queryParams}`);
     return response?.data || null;
   } catch (error) {
