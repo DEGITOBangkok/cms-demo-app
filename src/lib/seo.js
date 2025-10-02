@@ -26,6 +26,7 @@ export function generateArticleSEO(article, options = {}) {
       : defaultImage;
 
   const url = `${siteUrl}/newsdesc/${article?.slug}`;
+  const canonicalUrl = seo.canonicalUrl || url;
 
   return {
     title: `${title} | ${siteName}`,
@@ -53,7 +54,7 @@ export function generateArticleSEO(article, options = {}) {
       images: [image],
     },
     alternates: {
-      canonical: url,
+      canonical: canonicalUrl,
     },
     other: {
       'article:published_time': article?.publishedAt,
@@ -74,6 +75,10 @@ export function generateHomeSEO(homeData, options = {}) {
   // SEO is an array, get the first item
   const seo = Array.isArray(homeData?.SEO) ? homeData.SEO[0] : homeData?.SEO;
   
+  const siteUrl = options.siteUrl || 'http://localhost:3000';
+  const defaultCanonical = `${siteUrl}/`;
+  const canonicalUrl = seo?.canonicalUrl || defaultCanonical;
+  
   return {
     title: seo?.metaTitle || homeData?.homeTitle || 'Home',
     description: seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
@@ -89,6 +94,9 @@ export function generateHomeSEO(homeData, options = {}) {
       title: seo?.twitterTitle || seo?.metaTitle || homeData?.homeTitle || 'Home',
       description: seo?.twitterDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
       images: seo?.twitterImage ? [seo.twitterImage.url] : [],
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
     ...options,
   };
@@ -147,6 +155,8 @@ export function generateContactSEO(options = {}) {
   const image = seo.shareImage?.url 
     ? getStrapiMediaURL(seo.shareImage.url)
     : defaultImage;
+  const defaultCanonical = `${siteUrl}/contact`;
+  const canonicalUrl = seo.canonicalUrl || defaultCanonical;
 
   return {
     title: title,
@@ -174,7 +184,7 @@ export function generateContactSEO(options = {}) {
       images: [image],
     },
     alternates: {
-      canonical: `${siteUrl}/contact`,
+      canonical: canonicalUrl,
     },
   };
 }

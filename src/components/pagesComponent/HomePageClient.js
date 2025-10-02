@@ -64,7 +64,6 @@ export default function HomePageClient({ locale = 'en' }) {
     
     // Fallback to old structure for backward compatibility
     const imageUrl = banner?.image?.url || 
-                     banner?.thumbnail?.url || 
                      banner?.url || 
                      banner?.image?.formats?.large?.url ||
                      banner?.image?.formats?.medium?.url;
@@ -90,7 +89,7 @@ export default function HomePageClient({ locale = 'en' }) {
     }
     
     // Fallback to old structure for backward compatibility
-    if (currentBanner?.image || currentBanner?.thumbnail) return 'image';
+    if (currentBanner?.image) return 'image';
     if (currentBanner?.youtubeUrl) return 'video';
     
     return 'unknown';
@@ -126,6 +125,12 @@ export default function HomePageClient({ locale = 'en' }) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = url.match(regex);
     return match ? match[1] : null;
+  };
+
+  // Generate YouTube thumbnail URL from video ID
+  const generateYouTubeThumbnail = (videoId, quality = 'maxresdefault') => {
+    if (!videoId) return null;
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
   };
 
   // Handle slide change and video playback
@@ -330,16 +335,25 @@ export default function HomePageClient({ locale = 'en' }) {
                       
                       // Fallback to old structure for backward compatibility
                       if (!thumbnailUrl) {
-                        thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                        thumbnailUrl = banner?.image?.formats?.thumbnail?.url;
                       }
                       
-                      // Check if banner has video (for aria-label)
+                      // Check if banner has video (for aria-label and thumbnail)
                       let hasVideo = false;
+                      let youtubeUrl = null;
                       if (banner?.media) {
                         const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
                         hasVideo = !!videoMedia?.youtubeUrl;
+                        youtubeUrl = videoMedia?.youtubeUrl;
                       } else {
                         hasVideo = !!banner?.youtubeUrl;
+                        youtubeUrl = banner?.youtubeUrl;
+                      }
+                      
+                      // If no thumbnail from image, generate from YouTube URL
+                      if (!thumbnailUrl && youtubeUrl) {
+                        const videoId = extractYouTubeId(youtubeUrl);
+                        thumbnailUrl = generateYouTubeThumbnail(videoId);
                       }
                       
                       const isActive = index === currentSlide;
@@ -386,16 +400,25 @@ export default function HomePageClient({ locale = 'en' }) {
                     
                     // Fallback to old structure for backward compatibility
                     if (!thumbnailUrl) {
-                      thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                      thumbnailUrl = banner?.image?.formats?.thumbnail?.url;
                     }
                     
-                    // Check if banner has video (for aria-label)
+                    // Check if banner has video (for aria-label and thumbnail)
                     let hasVideo = false;
+                    let youtubeUrl = null;
                     if (banner?.media) {
                       const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
                       hasVideo = !!videoMedia?.youtubeUrl;
+                      youtubeUrl = videoMedia?.youtubeUrl;
                     } else {
                       hasVideo = !!banner?.youtubeUrl;
+                      youtubeUrl = banner?.youtubeUrl;
+                    }
+                    
+                    // If no thumbnail from image, generate from YouTube URL
+                    if (!thumbnailUrl && youtubeUrl) {
+                      const videoId = extractYouTubeId(youtubeUrl);
+                      thumbnailUrl = generateYouTubeThumbnail(videoId);
                     }
                     
                     const isActive = index === currentSlide;
