@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   
   return {
     ...generateNotFoundSEO({
-      siteName: 'News Portal',
+      siteName: 'Prom Serve',
       siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH,
       locale: locale
     }),
