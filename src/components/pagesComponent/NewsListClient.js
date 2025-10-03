@@ -32,18 +32,6 @@ export default function NewsListClient() {
   // Locale management
   const locale = useLocale();
 
-  // Function to get translated category name (reverse mapping)
-  const getOriginalCategoryName = (translatedName) => {
-    const categoryMap = {
-      [t('healthbt')]: 'Health',
-      [t('geographybt')]: 'Geography',
-      [t('eventbt')]: 'Events & Updates',
-      'นวัตกรรม': 'Innovation',
-      'Innovation': 'Innovation',
-      // Add more mappings as needed
-    };
-    return categoryMap[translatedName] || translatedName;
-  };
 
   // Fetch articles with sorting functionality
   const { articles, loading: articlesLoading, error: articlesError } = useArticlesWithSort(sortValue, searchQuery, locale);
@@ -61,9 +49,8 @@ export default function NewsListClient() {
     const sortParam = searchParams.get('sort');
 
     if (categoryParam) {
-      // Convert translated category name back to original name for filtering
-      const originalCategoryName = getOriginalCategoryName(categoryParam);
-      setSelectedTag(originalCategoryName);
+      // Use category slug directly from URL
+      setSelectedTag(categoryParam);
     }
 
     if (searchParam) {
@@ -104,8 +91,7 @@ export default function NewsListClient() {
   const handleTagChange = (tagValue) => {
     setSelectedTag(tagValue);
     // Convert to translated name for URL
-    const translatedTag = tagValue ? getTranslatedCategoryName(tagValue) : '';
-    updateURLParams({ category: translatedTag });
+    updateURLParams({ category: tagValue });
   };
 
   const sortOptions = [
@@ -117,29 +103,16 @@ export default function NewsListClient() {
     { value: 'popular', label: t('mostpop') }
   ];
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
-
-  // Create tag options from categories, with "All" as the first option
-  const tagOptions = [
-    { value: '', label: t('allbt') },
-    ...categories.map(category => ({
-      value: category.name || category.title || category.id,
-      label: getTranslatedCategoryName(category.name || category.title) || `Category ${category.id}`
-    }))
+  // Create category options with "All" as the first option
+  const categoryOptions = [
+    { id: '', attributes: { name: t('allbt'), slug: '' } },
+    ...categories
   ];
 
   // Filter articles based on selected category
-  const filterArticlesByTag = (articlesList) => {
-    if (!selectedTag) return articlesList; // Show all articles if no tag selected
+  const filterArticlesByCategory = (articlesList) => {
+    // Show all articles if no category selected or if "All" is selected (empty string)
+    if (!selectedTag || selectedTag === '') return articlesList;
 
     return articlesList?.filter(article => {
       // Check if article category matches the selected category
@@ -150,10 +123,13 @@ export default function NewsListClient() {
       if (articleCategory) {
         // Handle category relation object
         if (typeof articleCategory === 'object') {
-          // Check if the category name, title, or id matches the selected category
-          return articleCategory.name === selectedCategory ||
-            articleCategory.title === selectedCategory ||
-            articleCategory.id === selectedCategory;
+          // Handle both Strapi v4 and v5 data structures
+          const categoryData = articleCategory.attributes || articleCategory;
+          // Check if the category slug, name, title, or id matches the selected category
+          return categoryData.slug === selectedCategory ||
+            categoryData.name === selectedCategory ||
+            categoryData.title === selectedCategory ||
+            categoryData.id === selectedCategory;
         }
         // Handle string category format (fallback)
         return articleCategory === selectedCategory;
@@ -175,9 +151,9 @@ export default function NewsListClient() {
     article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
   ).filter(Boolean);
 
-  // Use search results if searching, otherwise use sorted articles, then apply tag filter
+  // Use search results if searching, otherwise use sorted articles, then apply category filter
   const baseArticles = searchQuery ? searchResults : articles;
-  const displayArticles = filterArticlesByTag(baseArticles);
+  const displayArticles = filterArticlesByCategory(baseArticles);
   const isLoading = searchQuery ? searchLoading : articlesLoading;
 
   // Handle banner explore more click
@@ -231,12 +207,19 @@ export default function NewsListClient() {
                             <span
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const categoryName = currentArticle?.category?.name || 'Sustainability';
-                                const translatedCategoryName = getTranslatedCategoryName(categoryName);
-                                router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+                                // Handle both Strapi v4 and v5 data structures
+                                const articleCategory = currentArticle?.category;
+                                const categoryData = articleCategory?.attributes || articleCategory;
+                                const categorySlug = categoryData?.slug || categoryData?.id || '';
+                                router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
                               }}
                               className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer transition-all duration-200">
-                              {getTranslatedCategoryName(currentArticle?.category?.name || 'Sustainability')}
+                              {(() => {
+                                // Handle both Strapi v4 and v5 data structures
+                                const articleCategory = currentArticle?.category;
+                                const categoryData = articleCategory?.attributes || articleCategory;
+                                return categoryData?.name || categoryData?.title || 'Sustainability';
+                              })()}
                             </span>
                           </div>
 
@@ -418,9 +401,9 @@ export default function NewsListClient() {
           {/* Tags */}
           <div className="col-span-12">
             <TagsCapsule
-              tags={tagOptions}
-              selectedTag={selectedTag}
-              onTagChange={handleTagChange}
+              categories={categoryOptions}
+              selectedCategory={selectedTag}
+              onCategoryChange={handleTagChange}
               articles={articles}
             />
           </div>
@@ -467,7 +450,7 @@ export default function NewsListClient() {
               <div className="text-center py-12">
                 <p className="text-gray-500">
                   {selectedTag
-                    ? `${t('noarticleswithtag')} "${getTranslatedCategoryName(selectedTag)}"`
+                    ? `${t('noarticleswithtag')} "${selectedTag}"`
                     : searchQuery
                       ? `${t('noarticlesforsearch')} "${searchQuery}".`
                       : t('noarticlesfound')

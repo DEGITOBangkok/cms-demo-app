@@ -27,21 +27,12 @@ export default function HomePageClient({ locale = 'en' }) {
   const bannerPaddingClasses = useBannerBottomPadding();
   const mainPaddingClasses = useMainContentPadding();
   
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
-
   // Handle category click
-  const handleCategoryClick = (categoryName) => {
-    const translatedCategoryName = getTranslatedCategoryName(categoryName);
-    router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+  const handleCategoryClick = (category) => {
+    // Handle both Strapi v4 and v5 data structures
+    const categoryData = category?.attributes || category;
+    const categorySlug = categoryData?.slug || categoryData?.id || '';
+    router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
   };
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentVideoId, setCurrentVideoId] = useState(null);
