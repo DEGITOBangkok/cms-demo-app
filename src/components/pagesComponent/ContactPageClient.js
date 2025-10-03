@@ -59,7 +59,7 @@ export default function ContactPageClient({ locale = 'en' }) {
     if (!formData.phonenumber) errors.phonenumber = et("phonenumber");
     if (!formData.message) errors.message = et("messages");
     if (!formData.privacy)
-      errors.privacy = et("firstprivacyname");
+      errors.privacy = et("privacy");
     setFormError(errors);
 
     if (
