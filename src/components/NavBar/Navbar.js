@@ -52,7 +52,7 @@ export default function Navbar() {
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4 cursor-pointer"
           />
         </div>
         <div className="hidden lg:flex flex-row gap-10 items-center text-black">
@@ -95,7 +95,7 @@ export default function Navbar() {
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4 cursor-pointer"
             onClick={() => isClient && router.push(`/${locale}/`)}
           />
         </div>
