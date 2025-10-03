@@ -50,9 +50,11 @@ const ArticlesCard = ({
 
   const handleCategoryClick = (e) => {
     e.stopPropagation(); // Prevent the article click from firing
-    if (categoryName && onCategoryClick) {
-      // Use the onCategoryClick prop instead of router.push to avoid page scroll
-      onCategoryClick(categoryName);
+    if (article.category && onCategoryClick) {
+      // Get the category slug for proper syncing with TagsCapsule
+      const categoryData = article.category?.attributes || article.category;
+      const categorySlug = categoryData?.slug || categoryData?.id || '';
+      onCategoryClick(categorySlug);
     }
   };
 
