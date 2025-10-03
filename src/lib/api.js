@@ -255,10 +255,8 @@ export async function searchArticles(query, params = {}) {
     queryParams.append("sort", params.sort);
   }
 
-  // Add search filters
+  // Add search filters - only search in fields that exist
   queryParams.append("filters[$or][0][title][$containsi]", query);
-  queryParams.append("filters[$or][1][description][$containsi]", query);
-  queryParams.append("filters[$or][2][tags][$containsi]", query);
 
   try {
     return await fetchAPI(`/api/articles?${queryParams}`);
