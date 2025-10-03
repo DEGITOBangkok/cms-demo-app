@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
     
     if (homeData) {
       return generateHomeSEO(homeData, {
-        siteName: 'News Portal',
+        siteName: 'Prom Serve',
         siteUrl: 'http://localhost:3000'
       });
     }
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }) {
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH),
     title: t("home"),
-    description: 'Welcome to our news portal',
+    description: 'Welcome to our Prom Serve',
   };
 }
 

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
     
     if (contactData?.SEO) {
       return generateContactSEO({
-        siteName: 'News Portal',
+        siteName: 'Prom Serve',
         siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000',
         locale: locale,
         seoData: contactData.SEO
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   
   // Fallback to default SEO
   return generateContactSEO({
-    siteName: 'News Portal',
+    siteName: 'Prom Serve',
     siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000',
     locale: locale
   });

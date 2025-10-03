@@ -255,13 +255,14 @@ export async function searchArticles(query, params = {}) {
     queryParams.append("sort", params.sort);
   }
 
-  // Add search filters
-  queryParams.append("filters[$or][0][title][$containsi]", query);
-  queryParams.append("filters[$or][1][description][$containsi]", query);
-  queryParams.append("filters[$or][2][tags][$containsi]", query);
+  // Add search filters - simple and effective search
+  queryParams.append("filters[title][$containsi]", query);
+  
+  console.log('Search URL:', `${STRAPI_URL}/api/articles?${queryParams}`);
 
   try {
-    return await fetchAPI(`/api/articles?${queryParams}`);
+    const result = await fetchAPI(`/api/articles?${queryParams}`);
+    return result;
   } catch (error) {
     console.error("Error searching articles, using mock data:", error);
     const filteredArticles = mockArticles.filter(

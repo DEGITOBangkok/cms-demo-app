@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '@/components';
 import { useArticles, useSearch, useArticlesWithSort, useCategories } from '@/hooks/useArticles';
@@ -21,6 +21,8 @@ export default function NewsListClient() {
   const [selectedTag, setSelectedTag] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const swiperRef = useRef(null);
+  const urlUpdateTimeoutRef = useRef(null);
+  const currentSlideRef = useRef(0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('HomePage');
@@ -62,37 +64,61 @@ export default function NewsListClient() {
     }
   }, [searchParams, t]);
 
-  // Helper function to update URL parameters
-  const updateURLParams = (newParams) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value && value !== '') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (urlUpdateTimeoutRef.current) {
+        clearTimeout(urlUpdateTimeoutRef.current);
       }
-    });
+    };
+  }, []);
 
-    const newURL = `${window.location.pathname}?${params.toString()}`;
-    router.replace(newURL, { scroll: false });
-  };
+  // Debounced helper function to update URL parameters
+  const updateURLParams = useCallback((newParams) => {
+    // Clear existing timeout
+    if (urlUpdateTimeoutRef.current) {
+      clearTimeout(urlUpdateTimeoutRef.current);
+    }
 
-  const handleSearch = (searchTerm) => {
-    setSearchQuery(searchTerm);
-    updateURLParams({ search: searchTerm });
-  };
+    // Debounce URL updates to prevent rapid changes
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  const handleSortChange = (value) => {
-    setSortValue(value);
-    updateURLParams({ sort: value });
-  };
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value && value !== '') {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      });
 
-  const handleTagChange = (tagValue) => {
-    setSelectedTag(tagValue);
-    // Convert to translated name for URL
-    updateURLParams({ category: tagValue });
-  };
+      const newURL = `${window.location.pathname}?${params.toString()}`;
+      
+      // Use shallow routing to prevent page refresh
+      router.replace(newURL, { scroll: false });
+    }, 100); // 100ms debounce
+  }, [searchParams, router]);
+
+  const handleSearch = useCallback((searchTerm) => {
+    if (searchTerm !== searchQuery) {
+      setSearchQuery(searchTerm);
+      updateURLParams({ search: searchTerm });
+    }
+  }, [searchQuery, updateURLParams]);
+
+  const handleSortChange = useCallback((value) => {
+    if (value !== sortValue) {
+      setSortValue(value);
+      updateURLParams({ sort: value });
+    }
+  }, [sortValue, updateURLParams]);
+
+  const handleTagChange = useCallback((tagValue) => {
+    if (tagValue !== selectedTag) {
+      setSelectedTag(tagValue);
+      updateURLParams({ category: tagValue });
+    }
+  }, [selectedTag, updateURLParams]);
 
   const sortOptions = [
     { value: '', label: t('sort1') },
@@ -109,8 +135,8 @@ export default function NewsListClient() {
     ...categories
   ];
 
-  // Filter articles based on selected category
-  const filterArticlesByCategory = (articlesList) => {
+  // Filter articles based on selected category - memoized for performance
+  const filterArticlesByCategory = useCallback((articlesList) => {
     // Show all articles if no category selected or if "All" is selected (empty string)
     if (!selectedTag || selectedTag === '') return articlesList;
 
@@ -137,23 +163,42 @@ export default function NewsListClient() {
 
       return false;
     }) || [];
-  };
+  }, [selectedTag]);
 
-  // Get articles with images for slider
-  const articlesWithImages = articles?.filter(article => {
-    return article.cover && article.cover.url;
-  }) || [];
+  // Get articles with images for slider - memoized for performance
+  const articlesWithImages = useMemo(() => {
+    return articles?.filter(article => {
+      return article.cover && article.cover.url;
+    }) || [];
+  }, [articles]);
 
-  // Auto-advance is now handled by Swiper's autoplay feature
+  // Memoize banner images to prevent unnecessary re-computations
+  const bannerImages = useMemo(() => {
+    return articlesWithImages.map(article =>
+      article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
+    ).filter(Boolean);
+  }, [articlesWithImages]);
 
-  const currentArticle = articlesWithImages[currentSlide] || articles?.[0];
-  const bannerImages = articlesWithImages.map(article =>
-    article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
-  ).filter(Boolean);
+  // Memoize current article to prevent re-renders during autoplay
+  const currentArticle = useMemo(() => {
+    return articlesWithImages[currentSlide] || articles?.[0];
+  }, [articlesWithImages, currentSlide, articles]);
+
+  // Memoize banner content to prevent re-renders during autoplay
+  const bannerContent = useMemo(() => {
+    if (!currentArticle) return null;
+    
+    return {
+      category: currentArticle.category,
+      publishedAt: currentArticle.publishedAt,
+      title: currentArticle.title,
+      slug: currentArticle.slug
+    };
+  }, [currentArticle]);
 
   // Use search results if searching, otherwise use sorted articles, then apply category filter
   const baseArticles = searchQuery ? searchResults : articles;
-  const displayArticles = filterArticlesByCategory(baseArticles);
+  const displayArticles = useMemo(() => filterArticlesByCategory(baseArticles), [baseArticles, filterArticlesByCategory]);
   const isLoading = searchQuery ? searchLoading : articlesLoading;
 
   // Handle banner explore more click
@@ -185,7 +230,12 @@ export default function NewsListClient() {
               onSwiper={(swiper) => {
                 swiperRef.current = swiper;
               }}
-              onSlideChange={(swiper) => setCurrentSlide(swiper.activeIndex)}
+              onSlideChange={(swiper) => {
+                // Use ref to track slide without triggering re-renders
+                currentSlideRef.current = swiper.activeIndex;
+                // Only update state for navigation buttons and indicators
+                setCurrentSlide(swiper.activeIndex);
+              }}
             >
               {bannerImages.map((image, index) => (
                 <SwiperSlide key={index}>
@@ -208,7 +258,7 @@ export default function NewsListClient() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 // Handle both Strapi v4 and v5 data structures
-                                const articleCategory = currentArticle?.category;
+                                const articleCategory = bannerContent?.category;
                                 const categoryData = articleCategory?.attributes || articleCategory;
                                 const categorySlug = categoryData?.slug || categoryData?.id || '';
                                 router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
@@ -216,7 +266,7 @@ export default function NewsListClient() {
                               className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer">
                               {(() => {
                                 // Handle both Strapi v4 and v5 data structures
-                                const articleCategory = currentArticle?.category;
+                                const articleCategory = bannerContent?.category;
                                 const categoryData = articleCategory?.attributes || articleCategory;
                                 return categoryData?.name || categoryData?.title || 'Sustainability';
                               })()}
@@ -226,8 +276,8 @@ export default function NewsListClient() {
                           {/* Date */}
                           <div className="mb-2 sm:mb-2">
                             <span className="text-white text-[16px] font-[400] sm:text-lg">
-                              {currentArticle?.publishedAt
-                                ? formatDate(currentArticle.publishedAt, locale, 'D MMM YYYY')
+                              {bannerContent?.publishedAt
+                                ? formatDate(bannerContent.publishedAt, locale, 'D MMM YYYY')
                                 : formatDate(new Date(), locale, 'D MMM YYYY')}
                             </span>
                           </div>
@@ -237,7 +287,7 @@ export default function NewsListClient() {
                             onClick={handleBannerExploreClick}
                             className="text-[24px] sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer pt-1 pb-1"
                           >
-                            {currentArticle?.title || 'Pioneering Sustainability Lubricants'}
+                            {bannerContent?.title || 'Pioneering Sustainability Lubricants'}
                           </h1>
 
                           {/* CTA */}
@@ -289,7 +339,7 @@ export default function NewsListClient() {
                     onClick={handleBannerExploreClick}
                     className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
                   >
-                    {currentArticle?.title || ' '}
+                    {bannerContent?.title || ' '}
                   </h1>
 
                   {/* CTA - Only show when there are images */}
@@ -413,7 +463,7 @@ export default function NewsListClient() {
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
                 {sortValue && !searchQuery && (
-                  <span>Sorted by: {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
+                  <span>{t('sortedby')} {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
                 )}
                 {selectedTag && !searchQuery && (
                   <span className="ml-2">
