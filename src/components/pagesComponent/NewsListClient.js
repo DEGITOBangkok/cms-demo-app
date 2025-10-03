@@ -22,6 +22,7 @@ export default function NewsListClient() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const swiperRef = useRef(null);
   const urlUpdateTimeoutRef = useRef(null);
+  const currentSlideRef = useRef(0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('HomePage');
@@ -171,12 +172,29 @@ export default function NewsListClient() {
     }) || [];
   }, [articles]);
 
-  // Auto-advance is now handled by Swiper's autoplay feature
+  // Memoize banner images to prevent unnecessary re-computations
+  const bannerImages = useMemo(() => {
+    return articlesWithImages.map(article =>
+      article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
+    ).filter(Boolean);
+  }, [articlesWithImages]);
 
-  const currentArticle = articlesWithImages[currentSlide] || articles?.[0];
-  const bannerImages = articlesWithImages.map(article =>
-    article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
-  ).filter(Boolean);
+  // Memoize current article to prevent re-renders during autoplay
+  const currentArticle = useMemo(() => {
+    return articlesWithImages[currentSlide] || articles?.[0];
+  }, [articlesWithImages, currentSlide, articles]);
+
+  // Memoize banner content to prevent re-renders during autoplay
+  const bannerContent = useMemo(() => {
+    if (!currentArticle) return null;
+    
+    return {
+      category: currentArticle.category,
+      publishedAt: currentArticle.publishedAt,
+      title: currentArticle.title,
+      slug: currentArticle.slug
+    };
+  }, [currentArticle]);
 
   // Use search results if searching, otherwise use sorted articles, then apply category filter
   const baseArticles = searchQuery ? searchResults : articles;
@@ -212,7 +230,12 @@ export default function NewsListClient() {
               onSwiper={(swiper) => {
                 swiperRef.current = swiper;
               }}
-              onSlideChange={(swiper) => setCurrentSlide(swiper.activeIndex)}
+              onSlideChange={(swiper) => {
+                // Use ref to track slide without triggering re-renders
+                currentSlideRef.current = swiper.activeIndex;
+                // Only update state for navigation buttons and indicators
+                setCurrentSlide(swiper.activeIndex);
+              }}
             >
               {bannerImages.map((image, index) => (
                 <SwiperSlide key={index}>
@@ -235,7 +258,7 @@ export default function NewsListClient() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 // Handle both Strapi v4 and v5 data structures
-                                const articleCategory = currentArticle?.category;
+                                const articleCategory = bannerContent?.category;
                                 const categoryData = articleCategory?.attributes || articleCategory;
                                 const categorySlug = categoryData?.slug || categoryData?.id || '';
                                 router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
@@ -243,7 +266,7 @@ export default function NewsListClient() {
                               className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer">
                               {(() => {
                                 // Handle both Strapi v4 and v5 data structures
-                                const articleCategory = currentArticle?.category;
+                                const articleCategory = bannerContent?.category;
                                 const categoryData = articleCategory?.attributes || articleCategory;
                                 return categoryData?.name || categoryData?.title || 'Sustainability';
                               })()}
@@ -253,8 +276,8 @@ export default function NewsListClient() {
                           {/* Date */}
                           <div className="mb-2 sm:mb-2">
                             <span className="text-white text-[16px] font-[400] sm:text-lg">
-                              {currentArticle?.publishedAt
-                                ? formatDate(currentArticle.publishedAt, locale, 'D MMM YYYY')
+                              {bannerContent?.publishedAt
+                                ? formatDate(bannerContent.publishedAt, locale, 'D MMM YYYY')
                                 : formatDate(new Date(), locale, 'D MMM YYYY')}
                             </span>
                           </div>
@@ -264,7 +287,7 @@ export default function NewsListClient() {
                             onClick={handleBannerExploreClick}
                             className="text-[24px] sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer pt-1 pb-1"
                           >
-                            {currentArticle?.title || 'Pioneering Sustainability Lubricants'}
+                            {bannerContent?.title || 'Pioneering Sustainability Lubricants'}
                           </h1>
 
                           {/* CTA */}
@@ -316,7 +339,7 @@ export default function NewsListClient() {
                     onClick={handleBannerExploreClick}
                     className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
                   >
-                    {currentArticle?.title || ' '}
+                    {bannerContent?.title || ' '}
                   </h1>
 
                   {/* CTA - Only show when there are images */}
