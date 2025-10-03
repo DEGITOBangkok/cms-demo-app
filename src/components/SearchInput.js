@@ -39,6 +39,7 @@ const SearchInput = ({
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && onSearch) {
+      e.preventDefault(); // Prevent form submission and page refresh
       onSearch(searchValue);
     }
   };
