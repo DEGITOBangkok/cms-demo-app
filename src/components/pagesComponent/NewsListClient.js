@@ -249,7 +249,7 @@ export default function NewsListClient() {
                             <ArrowIcon
                               width={16}
                               height={16}
-                              className="text-[#E60000] transition-transform duration-300"
+                              className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
                             />
                           </button>
                         </div>
@@ -301,7 +301,7 @@ export default function NewsListClient() {
                       <ArrowIcon
                         width={14}
                         height={14}
-                        className="text-[#E60000] transition-transform duration-300"
+                        className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
                       />
                       <span className="text-[#E60000] font-semibold text-xs sm:text-xs md:text-sm">{t('readmore')}</span>
                     </button>

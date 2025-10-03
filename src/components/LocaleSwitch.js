@@ -22,7 +22,7 @@ const LocaleSwitch = () => {
     <div className="flex items-center gap-[10px]">
       <button
         onClick={() => handleLocaleSelect("th")}
-        className={`relative px-2 py-1 group  ${
+        className={`relative px-2 py-1 group cursor-pointer ${
           currentLocale === "th" ? "text-red-600" : "text-black"
         }`}
       >
