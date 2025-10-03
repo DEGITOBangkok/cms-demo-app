@@ -321,7 +321,7 @@ export default function HomePageClient({ locale = 'en' }) {
                  <div className="flex justify-start">
                      <button 
                        onClick={handleExploreClick}
-                       className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group"
+                       className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group cursor-pointer"
                      >
                          <span>{homeData?.exploreButton|| 'Explore More'}</span>
                          <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
@@ -385,7 +385,7 @@ export default function HomePageClient({ locale = 'en' }) {
                         <SwiperSlide key={index} className="!w-[74px]">
                           <button
                             onClick={() => handleSlideChange(index)}
-                            className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 ${
+                            className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 cursor-pointer ${
                               isActive 
                                 ? 'ring-2 ring-[#E60000]' 
                                 : 'opacity-100'
@@ -450,7 +450,7 @@ export default function HomePageClient({ locale = 'en' }) {
                       <button
                         key={index}
                         onClick={() => handleSlideChange(index)}
-                        className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 ${
+                        className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 cursor-pointer ${
                           isActive 
                             ? 'ring-2 ring-[#E60000]' 
                             : 'opacity-100'
