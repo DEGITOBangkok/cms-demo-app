@@ -7,9 +7,9 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Handle root path redirect to newslist
+  // Handle root path redirect to homepage
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/en/newslist', request.url));
+    return NextResponse.redirect(new URL('/en/', request.url));
   }
 
   // Check if the first segment is an invalid locale
