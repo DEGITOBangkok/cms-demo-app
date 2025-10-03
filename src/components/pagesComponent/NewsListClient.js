@@ -287,7 +287,7 @@ export default function NewsListClient() {
                   {/* Title */}
                   <h1
                     onClick={handleBannerExploreClick}
-                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#D7A048] transition-all duration-300 cursor-pointer"
+                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
                   >
                     {currentArticle?.title || ' '}
                   </h1>

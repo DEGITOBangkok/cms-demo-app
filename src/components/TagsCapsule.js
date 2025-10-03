@@ -68,7 +68,7 @@ const TagsCapsule = ({
           <button
             key={categorySlug !== '' ? categorySlug : `all-${index}`}
             onClick={() => handleCategoryClick(categorySlug)}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-200 border flex-shrink-0`}
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-200 border flex-shrink-0 cursor-pointer`}
             style={{
               backgroundColor: selectedCategory === categorySlug ? '#FCE5E5' : '#FFFFFF', // เทาอ่อน
               borderColor: selectedCategory === categorySlug ? '#E60000' : '#D1D5DB',
