@@ -15,7 +15,7 @@ export default function Navbar() {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [locale, setLocale] = useState('en');
+  const [locale, setLocale] = useState("en");
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function Navbar() {
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4 cursor-pointer"
           />
         </div>
         <div className="hidden lg:flex flex-row gap-10 items-center text-black">
@@ -88,14 +88,13 @@ export default function Navbar() {
 
   return (
     <>
-     <nav className="flex items-center h-[56px] sm:h-[96px] justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
-
+      <nav className="flex items-center h-[56px] sm:h-[96px] justify-between bg-white/70 backdrop-blur-lg w-full px-4 md:px-8 lg:px-16 py-4 fixed top-0 left-0 z-50">
         {/* Logo */}
         <div>
           <img
             src="/images/nav_logo.png"
             alt="Logo"
-            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4"
+            className="object-contain lg:w-[266px] md:w-[266px] w-[142px] sm:w-[266px] py-4 cursor-pointer"
             onClick={() => isClient && router.push(`/${locale}/`)}
           />
         </div>
@@ -107,6 +106,7 @@ export default function Navbar() {
               key={m.slug}
               title={t(m.titleKey)}
               href={`/${locale}/${m.slug}`}
+              onClick={() => setIsOpen(false)}
               className="px-2 py-1 relative group"
             >
               <span className="relative z-10 group-hover:text-[#E60000] transition-colors">
@@ -120,7 +120,10 @@ export default function Navbar() {
 
         {/* Mobile & Tablet Hamburger */}
         <div className="lg:hidden relative z-50">
-          <button onClick={() => isClient && setIsOpen(!isOpen)} className="relative z-50">
+          <button
+            onClick={() => isClient && setIsOpen(!isOpen)}
+            className="relative z-50"
+          >
             <Hamburger state={isOpen ? "close" : "default"} />
           </button>
         </div>
@@ -136,6 +139,7 @@ export default function Navbar() {
                 key={m.slug}
                 title={t(m.titleKey)}
                 href={`/${locale}/${m.slug}`}
+                onClick={() => setIsOpen(false)}
                 className="w-full py-4 text-[16px] text-black hover:text-[#E60000] border-b-2"
               >
                 {t(m.titleKey)}

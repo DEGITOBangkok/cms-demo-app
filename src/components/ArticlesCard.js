@@ -58,7 +58,7 @@ const ArticlesCard = ({
 
   return (
     <article
-      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
+      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 cursor-pointer ${
         disableAnimation 
           ? '' 
           : 'opacity-0 -translate-y-8 animate-[fadeInSlideUp_0.6s_ease-out_forwards]'
@@ -142,7 +142,7 @@ const ArticlesCard = ({
             <ArrowIcon 
               width={16} 
               height={16} 
-              className="text-[#E60000] group-hover:rotate-180 transition-transform duration-300"
+              className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
             />
         </button>
       </div>

@@ -213,7 +213,7 @@ export default function NewsListClient() {
                                 const categorySlug = categoryData?.slug || categoryData?.id || '';
                                 router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
                               }}
-                              className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer transition-all duration-200">
+                              className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer">
                               {(() => {
                                 // Handle both Strapi v4 and v5 data structures
                                 const articleCategory = currentArticle?.category;
@@ -287,7 +287,7 @@ export default function NewsListClient() {
                   {/* Title */}
                   <h1
                     onClick={handleBannerExploreClick}
-                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#D7A048] transition-all duration-300 cursor-pointer"
+                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
                   >
                     {currentArticle?.title || ' '}
                   </h1>
@@ -450,7 +450,14 @@ export default function NewsListClient() {
               <div className="text-center py-12">
                 <p className="text-gray-500">
                   {selectedTag
-                    ? `${t('noarticleswithtag')} "${selectedTag}"`
+                    ? `${t('noarticleswithtag')} "${(() => {
+                        // Find the category name from the selected slug
+                        const selectedCategory = categories.find(cat => {
+                          const categoryData = cat.attributes || cat;
+                          return categoryData.slug === selectedTag || categoryData.id === selectedTag;
+                        });
+                        return selectedCategory ? (selectedCategory.attributes || selectedCategory).name || selectedTag : selectedTag;
+                      })()}"`
                     : searchQuery
                       ? `${t('noarticlesforsearch')} "${searchQuery}".`
                       : t('noarticlesfound')

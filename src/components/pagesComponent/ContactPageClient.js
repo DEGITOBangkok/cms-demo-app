@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 export default function ContactPageClient({ locale = 'en' }) {
   const [showOverlay, setShowOverlay] = useState(false);
   const t = useTranslations("Contact");
+  const et = useTranslations("formerror")
   const [formData, setFormData] = useState({
     FirstName: "",
     lastname: "",
@@ -52,13 +53,13 @@ export default function ContactPageClient({ locale = 'en' }) {
       phonenumber: "",
       privacy: "",
     };
-    if (!formData.FirstName) errors.FirstName = "First name is required";
-    if (!formData.lastname) errors.lastname = "Last name is required";
-    if (!formData.email) errors.email = "Email is required";
-    if (!formData.phonenumber) errors.phonenumber = "Phone Number is required";
-    if (!formData.message) errors.message = "Message is required";
+    if (!formData.FirstName) errors.FirstName = et("firstname");
+    if (!formData.lastname) errors.lastname = et("lastname");
+    if (!formData.email) errors.email = et("email");
+    if (!formData.phonenumber) errors.phonenumber = et("phonenumber");
+    if (!formData.message) errors.message = et("messages");
     if (!formData.privacy)
-      errors.privacy = "You must accept the Privacy Policy";
+      errors.privacy = et("privacy");
     setFormError(errors);
 
     if (
@@ -330,7 +331,7 @@ export default function ContactPageClient({ locale = 'en' }) {
                   <span className="text-[16px] text-gray-700">
                     {contactFill?.privacy?.label || t("privacypolicyP1")}{" "}
                     <a
-                      href="/privacy-policy"
+                      href={`/${locale}/privacy`}
                       className="text-[#E60000] font-bold underline"
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -348,11 +349,11 @@ export default function ContactPageClient({ locale = 'en' }) {
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#E60000] cursor-pointer py-3.5 rounded-[100px] text-white font-medium hover:bg-[#cc0000]"
+                  className="w-full bg-[#E60000] cursor-pointer py-3.5 rounded-[100px] text-white font-medium hover:bg-[#ff3333] group transition-all duration-300"
                 >
                   <div className="flex flex-row justify-center">
                     <span className="pr-2">{t("labelbutton")}</span>
-                    <ArrowIcon width={24} height={24}></ArrowIcon>
+                    <ArrowIcon className="group-hover:translate-x-1 transition-transform duration-300" width={24} height={24}></ArrowIcon>
                   </div>
                 </button>
               </div>
@@ -402,7 +403,7 @@ export default function ContactPageClient({ locale = 'en' }) {
                 ></img>
                 <div className="flex flex-col pl-[26px]">
                   <span className="block font-bold text-white pl-[2px]">{t("labeltelephone")}</span>
-                  <p className="text-white">{contactDetail?.Phonenumber}</p>
+                  <p className="text-white/70">{contactDetail?.Phonenumber}</p>
                 </div>
               </a>
               <a 
