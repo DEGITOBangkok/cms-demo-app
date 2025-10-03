@@ -349,11 +349,11 @@ export default function ContactPageClient({ locale = 'en' }) {
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#E60000] cursor-pointer py-3.5 rounded-[100px] text-white font-medium hover:bg-[#cc0000]"
+                  className="w-full bg-[#E60000] cursor-pointer py-3.5 rounded-[100px] text-white font-medium hover:bg-[#ff3333] group transition-all duration-300"
                 >
                   <div className="flex flex-row justify-center">
                     <span className="pr-2">{t("labelbutton")}</span>
-                    <ArrowIcon width={24} height={24}></ArrowIcon>
+                    <ArrowIcon className="group-hover:translate-x-1 transition-transform duration-300" width={24} height={24}></ArrowIcon>
                   </div>
                 </button>
               </div>
