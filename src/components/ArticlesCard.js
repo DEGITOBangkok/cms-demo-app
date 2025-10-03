@@ -33,16 +33,6 @@ const ArticlesCard = ({
   
   if (!article) return null;
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
 
   // Get category name (handle both object and string formats)
   const categoryName = typeof article.category === 'object'
@@ -68,7 +58,7 @@ const ArticlesCard = ({
 
   return (
     <article
-      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
+      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 cursor-pointer ${
         disableAnimation 
           ? '' 
           : 'opacity-0 -translate-y-8 animate-[fadeInSlideUp_0.6s_ease-out_forwards]'
@@ -96,7 +86,11 @@ const ArticlesCard = ({
                text-[15px]
                font-extralight
              ">
-              {getTranslatedCategoryName(categoryName)}
+              {(() => {
+                // Handle both Strapi v4 and v5 data structures
+                const categoryData = article.category?.attributes || article.category;
+                return categoryData?.name || categoryData?.title || categoryName;
+              })()}
             </span>
       )}
 
@@ -148,7 +142,7 @@ const ArticlesCard = ({
             <ArrowIcon 
               width={16} 
               height={16} 
-              className="text-[#E60000] group-hover:rotate-180 transition-transform duration-300"
+              className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
             />
         </button>
       </div>

@@ -22,7 +22,7 @@
   },
   "HomePage": {
     "readmore": "Read More",
-    "exploreall": "Explore all",
+    "exploreall": "Explore All",
     "latestnew": "Latest News",
     "newslist": "News & Articles",
     "searchbar": "Search News & Articles",
@@ -43,7 +43,7 @@
     "noarticlesfound": "No articles found",
     "articlesfound": "articles found",
     "articlefound": "article found",
-    "noarticleswithtag": "No articles found with tag",
+    "noarticleswithtag": "No articles found with Category",
     "noarticlesforsearch": "No articles found for",
     "share": "Share:",
     "linkcopied": "Link copied to clipboard!",
@@ -80,5 +80,13 @@
     "title" : "The page cannot be found",
     "subtitle" : "Sorry, the page you were looking for appears to have been moved, deleted or does not exist",
     "button" : "Back to Homepage"
+  },
+  "formerror" : {
+    "firstname" : "First name is required",
+    "lastname" : "Last name is required",
+    "email" : "Email is required",
+    "phonenumber" : "Phone Number is required",
+    "messages" : "Message is required",
+    "privacy" : "You must accept the Privacy Policy"
   }
 }

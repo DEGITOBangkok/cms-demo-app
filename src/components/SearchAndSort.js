@@ -42,10 +42,9 @@ const SearchAndSort = ({
           {...rest}
         >
       {/* Search Input */}
-      <div className="flex-1 max-w-full sm:max-w-2xl">
+      <div className="flex-1 max-w-full sm:max-w-none">
         <SearchInput
           onSearch={onSearch}
-          className="w-full"
         />
       </div>
 

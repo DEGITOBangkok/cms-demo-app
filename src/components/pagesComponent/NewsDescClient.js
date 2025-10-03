@@ -72,17 +72,6 @@ export default function NewsDescClient({ article }) {
   // Helper function to check if content is HTML
   const isHtml = (s) => /<\/?[a-z][\s\S]*>/i.test(s);
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      'Innovation': locale === 'th' ? 'นวัตกรรม' : 'Innovation',
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
 
   // Get category name (handle both object and string formats)
   const categoryName = typeof article.category === 'object' 
@@ -96,9 +85,11 @@ export default function NewsDescClient({ article }) {
     router.push(`/${locale}/newslist`);
   };
 
-  const handleCategoryClick = (categoryName) => {
-    const translatedCategoryName = getTranslatedCategoryName(categoryName);
-    router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+  const handleCategoryClick = (category) => {
+    // Handle both Strapi v4 and v5 data structures
+    const categoryData = category?.attributes || category;
+    const categorySlug = categoryData?.slug || categoryData?.id || '';
+    router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
   };
 
   return (
@@ -128,9 +119,13 @@ export default function NewsDescClient({ article }) {
             {/* Category Tag */}
             <div className="mb-4">
               <span 
-              onClick={() => handleCategoryClick(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
+              onClick={() => handleCategoryClick(article.category)}
               className="inline-block bg-white border border-gray-200 text-[#E60000] px-4 py-2 rounded-full text-[16px] font-normal cursor-pointer hover:bg-[#E60000] hover:text-white hover:border-[#E60000] transition-all duration-200">
-                {getTranslatedCategoryName(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
+                {(() => {
+                  // Handle both Strapi v4 and v5 data structures
+                  const categoryData = article.category?.attributes || article.category;
+                  return categoryData?.name || categoryData?.title || 'Innovation';
+                })()}
               </span>
             </div>
 

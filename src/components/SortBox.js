@@ -77,19 +77,19 @@ const SortBox = ({
     >
       
       {/* Custom Dropdown */}
-      <div className="relative w-full sm:w-auto">
+      <div className="relative w-full sm:w-auto cursor-pointer">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between w-full px-3 py-2 text-sm bg-white border border-[#000000] rounded-md shadow-sm h-12"
+          className="flex items-center w-full sm:w-[120px] h-[40px] px-4 py-2 text-sm bg-white border border-[#000000] rounded-md shadow-sm hover:border-[#E60000] focus:border-[#E60000] transition-colors cursor-pointer"
           aria-haspopup="listbox"
           aria-expanded={isOpen}
         >
-          <span className="text-left text-gray-900">
+          <span className="text-left text-gray-900 text-[16px] flex-1 min-w-0">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <svg 
-            className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 text-gray-400 transition-transform ml-1 ${isOpen ? 'rotate-180' : ''}`}
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -100,14 +100,20 @@ const SortBox = ({
 
         {/* Desktop Dropdown Options */}
         {isOpen && (
-          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg hidden sm:block">
-            <ul className="py-1 text-sm text-gray-900" role="listbox">
-              {options.map((option) => (
+          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg hidden sm:block overflow-hidden">
+            <ul className="text-sm text-gray-900" role="listbox">
+              {options.map((option, index) => (
                 <li
                   key={option.value}
                   onClick={() => handleOptionClick(option.value)}
-                  className={`px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors duration-200 ${
-                    selectedValue === option.value ? 'bg-[#E60000] text-white' : ''
+                  className={`px-3 py-2 cursor-pointer transition-colors duration-200 ${
+                    selectedValue === option.value 
+                      ? 'bg-[#E60000] text-white hover:bg-[#E60000]' 
+                      : 'hover:bg-gray-100'
+                  } ${
+                    index === 0 ? 'rounded-t-md' : ''
+                  } ${
+                    index === options.length - 1 ? 'rounded-b-md' : ''
                   }`}
                   role="option"
                   aria-selected={selectedValue === option.value}
@@ -154,7 +160,7 @@ const SortBox = ({
                     onClick={() => handleOptionClick(option.value)}
                     className={`px-4 py-3 rounded-lg cursor-pointer transition-colors ${
                       selectedValue === option.value 
-                        ? 'bg-[#E60000] text-white' 
+                        ? 'bg-[#E60000] text-white hover:bg-[#E60000]' 
                         : 'hover:bg-gray-100 text-gray-900'
                     }`}
                     role="option"

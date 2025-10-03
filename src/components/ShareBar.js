@@ -68,7 +68,7 @@ const ShareBar = ({
           {/* Copy Link Icon */}
           <button 
             onClick={() => handleShare('copy')}
-            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200"
+            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             title="Copy Link"
           >
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@ const ShareBar = ({
           {/* Facebook Icon */}
           <button 
             onClick={() => handleShare('facebook')}
-            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200"
+            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             title="Share on Facebook"
           >
             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@ const ShareBar = ({
           {/* X (Twitter) Icon */}
           <button 
             onClick={() => handleShare('twitter')}
-            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200"
+            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             title="Share on X (Twitter)"
           >
             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@ const ShareBar = ({
           {/* LINE Icon */}
           <button 
             onClick={() => handleShare('line')}
-            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200"
+            className="w-8 h-8 bg-[#E60000] rounded-full flex items-center justify-center hover:bg-[#E60000] hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             title="Share on LINE"
           >
             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">

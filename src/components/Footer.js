@@ -150,7 +150,7 @@ const Footer = () => {
               <div className="md:hidden flex flex-col items-center gap-1">
                 <button 
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group"
+                  className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group cursor-pointer"
                   aria-label="Scroll to top"
                 >
                   <ArrowWithTailIcon 
@@ -170,7 +170,7 @@ const Footer = () => {
           <div className="hidden md:flex md:flex-col md:items-center gap-1">
               <button 
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group"
+                className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group cursor-pointer"
                 aria-label="Scroll to top"
               >
               <ArrowWithTailIcon 
