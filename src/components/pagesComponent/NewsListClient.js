@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '@/components';
 import { useArticles, useSearch, useArticlesWithSort, useCategories } from '@/hooks/useArticles';
@@ -109,8 +109,8 @@ export default function NewsListClient() {
     ...categories
   ];
 
-  // Filter articles based on selected category
-  const filterArticlesByCategory = (articlesList) => {
+  // Filter articles based on selected category - memoized for performance
+  const filterArticlesByCategory = useCallback((articlesList) => {
     // Show all articles if no category selected or if "All" is selected (empty string)
     if (!selectedTag || selectedTag === '') return articlesList;
 
@@ -137,12 +137,14 @@ export default function NewsListClient() {
 
       return false;
     }) || [];
-  };
+  }, [selectedTag]);
 
-  // Get articles with images for slider
-  const articlesWithImages = articles?.filter(article => {
-    return article.cover && article.cover.url;
-  }) || [];
+  // Get articles with images for slider - memoized for performance
+  const articlesWithImages = useMemo(() => {
+    return articles?.filter(article => {
+      return article.cover && article.cover.url;
+    }) || [];
+  }, [articles]);
 
   // Auto-advance is now handled by Swiper's autoplay feature
 
@@ -153,7 +155,7 @@ export default function NewsListClient() {
 
   // Use search results if searching, otherwise use sorted articles, then apply category filter
   const baseArticles = searchQuery ? searchResults : articles;
-  const displayArticles = filterArticlesByCategory(baseArticles);
+  const displayArticles = useMemo(() => filterArticlesByCategory(baseArticles), [baseArticles, filterArticlesByCategory]);
   const isLoading = searchQuery ? searchLoading : articlesLoading;
 
   // Handle banner explore more click
@@ -413,7 +415,7 @@ export default function NewsListClient() {
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
                 {sortValue && !searchQuery && (
-                  <span>Sorted by: {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
+                  <span>{t('sortedby')} {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
                 )}
                 {selectedTag && !searchQuery && (
                   <span className="ml-2">

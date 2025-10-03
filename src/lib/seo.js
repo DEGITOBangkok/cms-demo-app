@@ -8,7 +8,7 @@ import { getStrapiMediaURL } from './api';
  */
 export function generateArticleSEO(article, options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg'
   } = options;
@@ -104,7 +104,7 @@ export function generateHomeSEO(homeData, options = {}) {
 
 export function generateNewsListSEO(options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg'
   } = options;
@@ -142,7 +142,7 @@ export function generateNewsListSEO(options = {}) {
 
 export function generateContactSEO(options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg',
     seoData = null
@@ -191,7 +191,7 @@ export function generateContactSEO(options = {}) {
 
 export function generateNotFoundSEO(options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg'
   } = options;
@@ -251,7 +251,7 @@ export function generateArticleStructuredData(article) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'News Portal',
+      name: 'Prom Serve',
       logo: {
         '@type': 'ImageObject',
         url: 'http://localhost:3000/logo.png',
