@@ -4,6 +4,12 @@ import "./ck-editor.css";
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000'),
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/favicon.ico', type: 'image/x-icon' }
+    ],
+  },
 };
 
 export function generateStaticParams() {

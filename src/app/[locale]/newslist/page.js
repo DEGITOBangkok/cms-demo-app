@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
     const { locale } = await params;
     
     return generateNewsListSEO({
-      siteName: 'News Portal',
+      siteName: 'Prom Serve',
       siteUrl: process.env.NEXT_PUBLIC_FRONTEND_PATH || 'http://localhost:3000',
       locale: locale
     });
