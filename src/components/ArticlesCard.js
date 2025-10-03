@@ -33,16 +33,6 @@ const ArticlesCard = ({
   
   if (!article) return null;
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
 
   // Get category name (handle both object and string formats)
   const categoryName = typeof article.category === 'object'
@@ -96,7 +86,11 @@ const ArticlesCard = ({
                text-[15px]
                font-extralight
              ">
-              {getTranslatedCategoryName(categoryName)}
+              {(() => {
+                // Handle both Strapi v4 and v5 data structures
+                const categoryData = article.category?.attributes || article.category;
+                return categoryData?.name || categoryData?.title || categoryName;
+              })()}
             </span>
       )}
 
