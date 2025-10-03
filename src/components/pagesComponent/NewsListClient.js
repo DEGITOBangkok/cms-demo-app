@@ -21,6 +21,7 @@ export default function NewsListClient() {
   const [selectedTag, setSelectedTag] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const swiperRef = useRef(null);
+  const urlUpdateTimeoutRef = useRef(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('HomePage');
@@ -62,37 +63,61 @@ export default function NewsListClient() {
     }
   }, [searchParams, t]);
 
-  // Helper function to update URL parameters
-  const updateURLParams = (newParams) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value && value !== '') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (urlUpdateTimeoutRef.current) {
+        clearTimeout(urlUpdateTimeoutRef.current);
       }
-    });
+    };
+  }, []);
 
-    const newURL = `${window.location.pathname}?${params.toString()}`;
-    router.replace(newURL, { scroll: false });
-  };
+  // Debounced helper function to update URL parameters
+  const updateURLParams = useCallback((newParams) => {
+    // Clear existing timeout
+    if (urlUpdateTimeoutRef.current) {
+      clearTimeout(urlUpdateTimeoutRef.current);
+    }
 
-  const handleSearch = (searchTerm) => {
-    setSearchQuery(searchTerm);
-    updateURLParams({ search: searchTerm });
-  };
+    // Debounce URL updates to prevent rapid changes
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  const handleSortChange = (value) => {
-    setSortValue(value);
-    updateURLParams({ sort: value });
-  };
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value && value !== '') {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      });
 
-  const handleTagChange = (tagValue) => {
-    setSelectedTag(tagValue);
-    // Convert to translated name for URL
-    updateURLParams({ category: tagValue });
-  };
+      const newURL = `${window.location.pathname}?${params.toString()}`;
+      
+      // Use shallow routing to prevent page refresh
+      router.replace(newURL, { scroll: false });
+    }, 100); // 100ms debounce
+  }, [searchParams, router]);
+
+  const handleSearch = useCallback((searchTerm) => {
+    if (searchTerm !== searchQuery) {
+      setSearchQuery(searchTerm);
+      updateURLParams({ search: searchTerm });
+    }
+  }, [searchQuery, updateURLParams]);
+
+  const handleSortChange = useCallback((value) => {
+    if (value !== sortValue) {
+      setSortValue(value);
+      updateURLParams({ sort: value });
+    }
+  }, [sortValue, updateURLParams]);
+
+  const handleTagChange = useCallback((tagValue) => {
+    if (tagValue !== selectedTag) {
+      setSelectedTag(tagValue);
+      updateURLParams({ category: tagValue });
+    }
+  }, [selectedTag, updateURLParams]);
 
   const sortOptions = [
     { value: '', label: t('sort1') },
