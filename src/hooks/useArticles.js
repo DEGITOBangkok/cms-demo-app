@@ -123,7 +123,7 @@ export function useSearch(query, locale = 'en') {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!query || query.length < 2) {
+    if (!query || query.trim().length === 0) {
       setArticles([]);
       setLoading(false);
       return;
