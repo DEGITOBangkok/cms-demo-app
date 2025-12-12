@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useHome, useFeaturedArticles } from '../hooks/useArticles';
-import Banner from './Banner';
-import { getStrapiMediaURL } from '../lib/api';
-import ArrowIcon from './icons/ArrowIcon';
-import AppIcon from './icons/AppIcon';
-import ArticlesCard from './ArticlesCard';
+import { useHome } from '../../hooks/useArticles';
+import Banner from '../Banner';
+import { getStrapiMediaURL } from '../../lib/api';
+import ArrowIcon from '../icons/ArrowIcon';
+import AppIcon from '../icons/AppIcon';
+import ArticlesCard from '../ArticlesCard';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding } from '../hooks/useResponsiveContainer';
+import { useResponsiveContainer, useBannerContentPosition, useMobileColumnLayout, useBannerBottomPadding, useMainContentPadding } from '../../hooks/useResponsiveContainer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -17,7 +17,6 @@ import 'swiper/css/pagination';
 
 export default function HomePageClient({ locale = 'en' }) {
   const { homeData, loading, error } = useHome(locale);
-  const { articles: featuredArticles, loading: articlesLoading } = useFeaturedArticles(3, locale);
   const router = useRouter();
   const t = useTranslations('HomePage')
   
@@ -26,22 +25,14 @@ export default function HomePageClient({ locale = 'en' }) {
   const bannerPositionClasses = useBannerContentPosition();
   const layoutClasses = useMobileColumnLayout();
   const bannerPaddingClasses = useBannerBottomPadding();
+  const mainPaddingClasses = useMainContentPadding();
   
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
-
   // Handle category click
-  const handleCategoryClick = (categoryName) => {
-    const translatedCategoryName = getTranslatedCategoryName(categoryName);
-    router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+  const handleCategoryClick = (category) => {
+    // Handle both Strapi v4 and v5 data structures
+    const categoryData = category?.attributes || category;
+    const categorySlug = categoryData?.slug || categoryData?.id || '';
+    router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
   };
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentVideoId, setCurrentVideoId] = useState(null);
@@ -49,25 +40,107 @@ export default function HomePageClient({ locale = 'en' }) {
 
   // Extract banner data (always run, even if loading/error)
   const banners = homeData?.banners || [];
+  const articles = homeData?.articles || [];
   const homeDetails = homeData?.homeDetails || [];
   const homeImg = homeData?.homeImg;
   const bannerImages = banners.map(banner => {
-    // Try different possible image field paths
+    // Check if banner has media dynamic zone with image
+    if (banner?.media) {
+      // Find image in media array
+      const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+      if (imageMedia?.Img?.url) {
+        return getStrapiMediaURL(imageMedia.Img.url);
+      }
+    }
+    
+    // Fallback to old structure for backward compatibility
     const imageUrl = banner?.image?.url || 
-                     banner?.thumbnail?.url || 
                      banner?.url || 
                      banner?.image?.formats?.large?.url ||
                      banner?.image?.formats?.medium?.url;
     return getStrapiMediaURL(imageUrl);
-  }).filter(Boolean);
+  });
   
 
   // Get current banner content for display
   const currentBanner = banners[currentSlide] || banners[0] || {};
-  const currentImage = bannerImages[currentSlide] || bannerImages[0];
+  const currentImage = bannerImages[currentSlide];
   
   // Fallback gradient background if no images
-  const hasImages = bannerImages.length > 0;
+  const hasImages = bannerImages.some(img => img);
+  
+  // Check if current banner has image or video in media dynamic zone
+  const getCurrentBannerMediaType = () => {
+    if (currentBanner?.media) {
+      const imageMedia = currentBanner.media.find(item => item.__component === 'media.img' || item.Img);
+      const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      
+      if (imageMedia?.Img) return 'image';
+      if (videoMedia?.youtubeUrl) return 'video';
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (currentBanner?.image) return 'image';
+    if (currentBanner?.youtubeUrl) return 'video';
+    
+    return 'unknown';
+  };
+  
+  const currentBannerMediaType = getCurrentBannerMediaType();
+  
+  // Check if explore button should be shown
+  const shouldShowExploreButton = () => {
+    // Show if contentUrl is provided and not empty
+    if (currentBanner?.contentUrl && currentBanner.contentUrl.trim() !== '') {
+      return true;
+    }
+    
+    // Show for videos only if they have a YouTube URL
+    if (currentBannerMediaType === 'video') {
+      let youtubeUrl = null;
+      
+      if (currentBanner?.media) {
+        const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+        youtubeUrl = videoMedia?.youtubeUrl;
+      }
+      
+      if (!youtubeUrl) {
+        youtubeUrl = currentBanner?.youtubeUrl;
+      }
+      
+      return !!youtubeUrl;
+    }
+    
+    return false;
+  };
+  
+  // Handle explore button click - navigate to URL
+  const handleExploreClick = () => {
+    // Priority 1: Use contentUrl if available and not empty
+    if (currentBanner?.contentUrl && currentBanner.contentUrl.trim() !== '') {
+      window.open(currentBanner.contentUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    
+    // Priority 2: Use YouTube URL (existing logic)
+    let youtubeUrl = null;
+    
+    if (currentBanner?.media) {
+      // Find video in media array
+      const videoMedia = currentBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      youtubeUrl = videoMedia?.youtubeUrl;
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (!youtubeUrl) {
+      youtubeUrl = currentBanner?.youtubeUrl;
+    }
+    
+    if (youtubeUrl) {
+      // Open YouTube URL in a new tab
+      window.open(youtubeUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
   
   // Extract YouTube video ID from URL
   const extractYouTubeId = (url) => {
@@ -77,12 +150,32 @@ export default function HomePageClient({ locale = 'en' }) {
     return match ? match[1] : null;
   };
 
+  // Generate YouTube thumbnail URL from video ID
+  const generateYouTubeThumbnail = (videoId, quality = 'maxresdefault') => {
+    if (!videoId) return null;
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+  };
+
   // Handle slide change and video playback
   const handleSlideChange = (newSlide) => {
     setCurrentSlide(newSlide);
     const banner = banners[newSlide];
-    if (banner?.youtubeUrl) {
-      const videoId = extractYouTubeId(banner.youtubeUrl);
+    
+    // Check if banner has media dynamic zone with video
+    let youtubeUrl = null;
+    if (banner?.media) {
+      // Find video in media array
+      const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+      youtubeUrl = videoMedia?.youtubeUrl;
+    }
+    
+    // Fallback to old structure for backward compatibility
+    if (!youtubeUrl) {
+      youtubeUrl = banner?.youtubeUrl;
+    }
+    
+    if (youtubeUrl) {
+      const videoId = extractYouTubeId(youtubeUrl);
       setCurrentVideoId(videoId);
     } else {
       setCurrentVideoId(null);
@@ -92,10 +185,27 @@ export default function HomePageClient({ locale = 'en' }) {
   // Initialize video for first slide
   useEffect(() => {
     console.log('Banners useEffect triggered:', { banners, firstBanner: banners[0] });
-    if (banners.length > 0 && banners[0]?.youtubeUrl) {
-      const videoId = extractYouTubeId(banners[0].youtubeUrl);
-      console.log('Extracted video ID:', videoId);
-      setCurrentVideoId(videoId);
+    if (banners.length > 0) {
+      const firstBanner = banners[0];
+      
+      // Check if banner has media dynamic zone with video
+      let youtubeUrl = null;
+      if (firstBanner?.media) {
+        // Find video in media array
+        const videoMedia = firstBanner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+        youtubeUrl = videoMedia?.youtubeUrl;
+      }
+      
+      // Fallback to old structure for backward compatibility
+      if (!youtubeUrl) {
+        youtubeUrl = firstBanner?.youtubeUrl;
+      }
+      
+      if (youtubeUrl) {
+        const videoId = extractYouTubeId(youtubeUrl);
+        console.log('Extracted video ID:', videoId);
+        setCurrentVideoId(videoId);
+      }
     }
   }, [banners]);
 
@@ -153,12 +263,13 @@ export default function HomePageClient({ locale = 'en' }) {
         /* Tablet: very large video to cover entire banner area */
         @media (min-width: 768px) and (max-width: 1024px) {
           .youtube-video-responsive {
-            height: 150vh !important;
-            width: 150vw !important;
-            min-width: 150vw !important;
-            top: -25vh !important;
-            left: -25vw !important;
-            transform: none !important;
+            height: 100vh !important;
+            width: 177.78vh !important;
+            min-width: 100vw !important;
+            min-height: 56.25vw !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
           }
         }
         
@@ -205,12 +316,18 @@ export default function HomePageClient({ locale = 'en' }) {
                   <p>{homeData?.homeDesc || 'Stay updated with the latest news and stories'}</p>
                 )}
               </div>
-               <div className="flex justify-start">
-                   <button className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group">
-                       <span>{homeData?.exploreButton|| 'Explore More'}</span>
-                       <ArrowIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
-                   </button>
-               </div>
+               {/* Show explore button only for video banners */}
+               {shouldShowExploreButton() && (
+                 <div className="flex justify-start">
+                     <button 
+                       onClick={handleExploreClick}
+                       className="bg-[#E60000] banner-button-custom px-[48px] py-[14px] rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group cursor-pointer"
+                     >
+                         <span>{homeData?.exploreButton|| 'Explore More'}</span>
+                         <ArrowIcon className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                     </button>
+                 </div>
+               )}
             </div>
 
             {/* Dynamic Thumbnail Layout */}
@@ -232,20 +349,49 @@ export default function HomePageClient({ locale = 'en' }) {
                     resistanceRatio={0.5}
                   >
                     {banners.map((banner, index) => {
-                      const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                      // Check if banner has media dynamic zone with image for thumbnail
+                      let thumbnailUrl = null;
+                      if (banner?.media) {
+                        const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+                        thumbnailUrl = imageMedia?.Img?.formats?.thumbnail?.url || imageMedia?.Img?.url;
+                      }
+                      
+                      // Fallback to old structure for backward compatibility
+                      if (!thumbnailUrl) {
+                        thumbnailUrl = banner?.image?.formats?.thumbnail?.url;
+                      }
+                      
+                      // Check if banner has video (for aria-label and thumbnail)
+                      let hasVideo = false;
+                      let youtubeUrl = null;
+                      if (banner?.media) {
+                        const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+                        hasVideo = !!videoMedia?.youtubeUrl;
+                        youtubeUrl = videoMedia?.youtubeUrl;
+                      } else {
+                        hasVideo = !!banner?.youtubeUrl;
+                        youtubeUrl = banner?.youtubeUrl;
+                      }
+                      
+                      // If no thumbnail from image, generate from YouTube URL
+                      if (!thumbnailUrl && youtubeUrl) {
+                        const videoId = extractYouTubeId(youtubeUrl);
+                        thumbnailUrl = generateYouTubeThumbnail(videoId);
+                      }
+                      
                       const isActive = index === currentSlide;
                       
                       return (
                         <SwiperSlide key={index} className="!w-[74px]">
                           <button
                             onClick={() => handleSlideChange(index)}
-                            className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 ${
+                            className={`relative w-[74px] h-[74px] rounded-lg overflow-hidden transition-all duration-200 cursor-pointer ${
                               isActive 
                                 ? 'ring-2 ring-[#E60000]' 
                                 : 'opacity-100'
                             }`}
-                            aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                            title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                            aria-label={`Go to slide ${index + 1}${hasVideo ? ' (has video)' : ''}`}
+                            title={hasVideo ? 'This slide has a video' : ''}
                           >
                             {thumbnailUrl ? (
                               <img
@@ -268,20 +414,49 @@ export default function HomePageClient({ locale = 'en' }) {
                 {/* Desktop/Tablet Thumbnail Layout */}
                 <div className="desktop-thumbnails-only thumbnail-container">
                   {banners.map((banner, index) => {
-                    const thumbnailUrl = banner?.thumbnail?.url || banner?.image?.formats?.thumbnail?.url;
+                    // Check if banner has media dynamic zone with image for thumbnail
+                    let thumbnailUrl = null;
+                    if (banner?.media) {
+                      const imageMedia = banner.media.find(item => item.__component === 'media.img' || item.Img);
+                      thumbnailUrl = imageMedia?.Img?.formats?.thumbnail?.url || imageMedia?.Img?.url;
+                    }
+                    
+                    // Fallback to old structure for backward compatibility
+                    if (!thumbnailUrl) {
+                      thumbnailUrl = banner?.image?.formats?.thumbnail?.url;
+                    }
+                    
+                    // Check if banner has video (for aria-label and thumbnail)
+                    let hasVideo = false;
+                    let youtubeUrl = null;
+                    if (banner?.media) {
+                      const videoMedia = banner.media.find(item => item.__component === 'media.video' || item.youtubeUrl);
+                      hasVideo = !!videoMedia?.youtubeUrl;
+                      youtubeUrl = videoMedia?.youtubeUrl;
+                    } else {
+                      hasVideo = !!banner?.youtubeUrl;
+                      youtubeUrl = banner?.youtubeUrl;
+                    }
+                    
+                    // If no thumbnail from image, generate from YouTube URL
+                    if (!thumbnailUrl && youtubeUrl) {
+                      const videoId = extractYouTubeId(youtubeUrl);
+                      thumbnailUrl = generateYouTubeThumbnail(videoId);
+                    }
+                    
                     const isActive = index === currentSlide;
                     
                     return (
                       <button
                         key={index}
                         onClick={() => handleSlideChange(index)}
-                        className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 ${
+                        className={`relative w-[74px] h-[74px] lg:w-[87px] lg:h-[87px] rounded-lg overflow-hidden transition-all duration-200 cursor-pointer ${
                           isActive 
                             ? 'ring-2 ring-[#E60000]' 
                             : 'opacity-100'
                         }`}
-                        aria-label={`Go to slide ${index + 1}${banner.youtubeUrl ? ' (has video)' : ''}`}
-                        title={banner.youtubeUrl ? 'This slide has a video' : ''}
+                        aria-label={`Go to slide ${index + 1}${hasVideo ? ' (has video)' : ''}`}
+                        title={hasVideo ? 'This slide has a video' : ''}
                       >
                         {thumbnailUrl ? (
                           <img
@@ -322,14 +497,14 @@ export default function HomePageClient({ locale = 'en' }) {
       </div>
 
       {/* Main Content */}
-       <main className="w-full px-4 md:px-8 lg:px-44 lg:pt-30 lg:pb-10 py-10 pt-30 relative">
-         {/* Background AppIcon - Right Side - Fixed & Responsive */}
-         <div className="fixed top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+       <main className={`w-full ${mainPaddingClasses} xl:pt-30 xl:pb-10 py-10 pt-30 relative overflow-x-hidden`}>
+         {/* Background AppIcon - Right Side - Absolute & Responsive */}
+         <div className="absolute top-[200px] right-[-120px] sm:right-[-150px] md:right-[-180px] lg:right-[-200px] lg:top-[-200px] w-60 h-60 sm:w-70 sm:h-70 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          
-         {/* Left AppIcon - Fixed & Responsive */}
-         <div className="fixed bottom-[100px] left-[-120px] sm:left-[-170px] md:left-[-300px] lg:left-[-380px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1">
+         {/* Left AppIcon - Absolute & Responsive */}
+         <div className="absolute bottom-[100px] left-[-120px] sm:left-[-170px] md:left-[-300px] lg:left-[-380px] w-60 h-60 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] opacity-40 pointer-events-none z-1 overflow-x-hidden">
            <AppIcon className="w-full h-full text-[#E60000]" />
          </div>
          <div className="max-w-7xl mx-auto text-left sm:text-center relative z-10">
@@ -348,7 +523,7 @@ export default function HomePageClient({ locale = 'en' }) {
           {/* Services Section - Flex Layout */}
           {homeDetails.length > 0 && (
             <div className="mt-10">
-              <div className=" flex flex-col lg:flex-row items-center gap-8 self-stretch">
+              <div className=" flex flex-col xl:flex-row items-center gap-8 xl:gap-8 self-stretch">
                 {/* Left Column - Home Image */}
                 <div className="flex-shrink-0">
                   {homeImg && (
@@ -365,10 +540,10 @@ export default function HomePageClient({ locale = 'en' }) {
                 {/* Right Column - Services List */}
                 <div className="flex-1">
                   {homeDetails.map((service, index) => (
-                    <div key={service.id || index} className="flex flex-col lg:flex-row items-start lg:items-start lg:space-x-4 lg:pb-14 pb-8">
+                    <div key={service.id || index} className={`flex flex-col xl:flex-row items-start xl:items-start xl:gap-6 pb-8 ${index === homeDetails.length - 1 ? 'xl:pb-0' : 'xl:pb-14'}`}>
                       {/* Service Icon */}
                       {service.image && (
-                        <div className="mb-4 lg:mb-0 lg:flex-shrink-0">
+                        <div className="mb-4 xl:mb-0 xl:flex-shrink-0">
                           <img 
                             src={getStrapiMediaURL(service.image.url)} 
                             alt={service.title || 'Service Icon'}
@@ -378,13 +553,13 @@ export default function HomePageClient({ locale = 'en' }) {
                       )}
                       
                       {/* Service Content */}
-                      <div className="text-left lg:max-w-sm md:max-w-none sm:max-w-sm lg:flex-1">
-                        <h3 className="text-2xl font-regular mb-3 text-red-600">
+                      <div className="text-left md:max-w-none sm:max-w-sm xl:flex-1">
+                        <h3 className="text-[20px] font-[400] mb-3 text-[#E60000]">
                           {service.title}
                         </h3>
                         {service.description && (
                           <div 
-                            className="text-gray-800 leading-relaxed prose prose-sm max-w-none"
+                            className="text-[#17191F] leading-relaxed prose prose-sm max-w-none text-[20px]"
                             dangerouslySetInnerHTML={{ 
                               __html: service.description 
                             }}
@@ -419,8 +594,8 @@ export default function HomePageClient({ locale = 'en' }) {
 
       {/* Article Cards Section - Outside Main Content Container */}
       <section className="py-16 mt-[-120px] lg:mt-[-60px]">
-        {!articlesLoading && featuredArticles.length > 0 && (
-          <div className="w-full px-4 md:px-8 lg:px-16">
+        {articles.length > 0 && (
+          <div className="w-full px-4 md:px-14 lg:px-16">
             {/* Mobile: Swiper */}
             <div className="block md:hidden">
               <Swiper
@@ -436,7 +611,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 }}
                 className="!h-auto"
               >
-                {featuredArticles.map((article, index) => (
+                {articles.map((article, index) => (
                   <SwiperSlide key={article.id || index} className="h-full">
                     <ArticlesCard
                       article={article}
@@ -471,7 +646,7 @@ export default function HomePageClient({ locale = 'en' }) {
                 }}
                 className="!h-auto"
               >
-                {featuredArticles.map((article, index) => (
+                {articles.map((article, index) => (
                   <SwiperSlide key={article.id || index} className="h-full">
                     <ArticlesCard
                       article={article}
@@ -487,7 +662,7 @@ export default function HomePageClient({ locale = 'en' }) {
 
             {/* Desktop: Grid */}
             <div className="hidden xl:grid grid-cols-1 xl:grid-cols-3 gap-10">
-              {featuredArticles.map((article, index) => (
+              {articles.map((article, index) => (
                 <ArticlesCard
                   key={article.id || index}
                   article={article}
@@ -501,31 +676,14 @@ export default function HomePageClient({ locale = 'en' }) {
           </div>
         )}
         
-        {articlesLoading && (
-          <div className="w-full px-4 md:px-8 lg:px-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((index) => (
-                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                  <div className="h-48 bg-gray-300"></div>
-                  <div className="p-6">
-                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded mb-4"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
         {/* View More Articles Button */}
         <div className="flex justify-center mt-12">
           <button 
             onClick={() => router.push(`/${locale}/newslist`)}
-            className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group"
+            className="bg-[#E60000] text-white font-bold text-[14px] px-9 py-3 rounded-full flex items-center gap-2 hover:bg-[#FF3333] transition-all duration-300 group cursor-pointer"
           >
             <span>{t('exploreall')}</span>
-            <ArrowIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+            <ArrowIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </div>
       </section>

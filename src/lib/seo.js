@@ -8,7 +8,7 @@ import { getStrapiMediaURL } from './api';
  */
 export function generateArticleSEO(article, options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg'
   } = options;
@@ -26,6 +26,7 @@ export function generateArticleSEO(article, options = {}) {
       : defaultImage;
 
   const url = `${siteUrl}/newsdesc/${article?.slug}`;
+  const canonicalUrl = seo.canonicalUrl || url;
 
   return {
     title: `${title} | ${siteName}`,
@@ -53,7 +54,7 @@ export function generateArticleSEO(article, options = {}) {
       images: [image],
     },
     alternates: {
-      canonical: url,
+      canonical: canonicalUrl,
     },
     other: {
       'article:published_time': article?.publishedAt,
@@ -74,6 +75,10 @@ export function generateHomeSEO(homeData, options = {}) {
   // SEO is an array, get the first item
   const seo = Array.isArray(homeData?.SEO) ? homeData.SEO[0] : homeData?.SEO;
   
+  const siteUrl = options.siteUrl || 'http://localhost:3000';
+  const defaultCanonical = `${siteUrl}/`;
+  const canonicalUrl = seo?.canonicalUrl || defaultCanonical;
+  
   return {
     title: seo?.metaTitle || homeData?.homeTitle || 'Home',
     description: seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
@@ -90,13 +95,16 @@ export function generateHomeSEO(homeData, options = {}) {
       description: seo?.twitterDescription || seo?.metaDescription || homeData?.homeDesc || 'Welcome to our website',
       images: seo?.twitterImage ? [seo.twitterImage.url] : [],
     },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     ...options,
   };
 }
 
 export function generateNewsListSEO(options = {}) {
   const {
-    siteName = 'News Portal',
+    siteName = 'Prom Serve',
     siteUrl = 'http://localhost:3000',
     defaultImage = '/default-og-image.jpg'
   } = options;
@@ -132,6 +140,93 @@ export function generateNewsListSEO(options = {}) {
   };
 }
 
+export function generateContactSEO(options = {}) {
+  const {
+    siteName = 'Prom Serve',
+    siteUrl = 'http://localhost:3000',
+    defaultImage = '/default-og-image.jpg',
+    seoData = null
+  } = options;
+
+  // Use Strapi SEO data if available
+  const seo = seoData || {};
+  const title = seo.metaTitle || `Contact Us | ${siteName}`;
+  const description = seo.metaDescription || 'Get in touch with us. Send us a message or contact us directly for any inquiries or support.';
+  const image = seo.shareImage?.url 
+    ? getStrapiMediaURL(seo.shareImage.url)
+    : defaultImage;
+  const defaultCanonical = `${siteUrl}/contact`;
+  const canonicalUrl = seo.canonicalUrl || defaultCanonical;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      url: `${siteUrl}/contact`,
+      siteName: siteName,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: title,
+      description: description,
+      images: [image],
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+  };
+}
+
+export function generateNotFoundSEO(options = {}) {
+  const {
+    siteName = 'Prom Serve',
+    siteUrl = 'http://localhost:3000',
+    defaultImage = '/default-og-image.jpg'
+  } = options;
+
+  return {
+    title: `Page Not Found | ${siteName}`,
+    description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+    openGraph: {
+      title: `Page Not Found | ${siteName}`,
+      description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+      url: `${siteUrl}/404`,
+      siteName: siteName,
+      images: [
+        {
+          url: defaultImage,
+          width: 1200,
+          height: 630,
+          alt: 'Page Not Found',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Page Not Found | ${siteName}`,
+      description: 'The page you are looking for could not be found. Please check the URL or return to the homepage.',
+      images: [defaultImage],
+    },
+    alternates: {
+      canonical: `${siteUrl}/404`,
+    },
+  };
+}
+
 /**
  * Generate structured data (JSON-LD) for articles
  * @param {Object} article - Article data from Strapi
@@ -156,7 +251,7 @@ export function generateArticleStructuredData(article) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'News Portal',
+      name: 'Prom Serve',
       logo: {
         '@type': 'ImageObject',
         url: 'http://localhost:3000/logo.png',

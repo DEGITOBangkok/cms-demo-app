@@ -92,12 +92,12 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --breakpoint-laptop: 1024px;
-  --breakpoint-tablet: 820px;
+  --breakpoint-tablet: 768px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffffff;
     --foreground: #ededed;
   }
 }
@@ -165,6 +165,7 @@ body {
   }
   .banner-description-custom {
     font-size: 20px !important;
+    font-weight: 400 !important;
   }
   .banner-button-custom {
     font-size: 14px !important;
@@ -173,16 +174,16 @@ body {
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .banner-title-custom {
-    font-size: 36px !important;
+    font-size: 30px !important;
   }
   .banner-description-custom {
-    font-size: 18px !important;
+    font-size: 16px !important;
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
   .banner-title-custom {
-    font-size: 44px !important;
+    font-size:36px !important;
   }
   .banner-description-custom {
     font-size: 18px !important;

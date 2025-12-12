@@ -69,7 +69,9 @@ const Banner = ({
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      {displayImage && <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0" />}
+      {displayImage && (
+        <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 to-[#20394C]/0 tablet:from-[#000000]/30 tablet:to-[#20394C]/0" />
+      )}
       <div className="relative z-10 w-full h-full overflow-visible">{children}</div>
     </div>
   );

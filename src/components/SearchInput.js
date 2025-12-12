@@ -39,6 +39,7 @@ const SearchInput = ({
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && onSearch) {
+      e.preventDefault(); // Prevent form submission and page refresh
       onSearch(searchValue);
     }
   };
@@ -51,7 +52,7 @@ const SearchInput = ({
 
   return (
     <div 
-        className={`flex w-[528px] px-4 py-3 items-center gap-1 rounded border border-black bg-white focus-within:border-[#D7A048] transition-colors h-12 animate-[fadeInSlideRight_0.6s_ease-out_forwards] ${className}`}
+        className={`flex w-full sm:w-[528px] px-4 py-3 items-center gap-1 rounded border border-black bg-white focus-within:border-[#E60000] transition-colors h-[40px] animate-[fadeInSlideRight_0.6s_ease-out_forwards] ${className}`}
       {...props}
     >
       <input
@@ -63,7 +64,7 @@ const SearchInput = ({
         onBlur={() => setIsFocused(false)}
         placeholder={displayPlaceholder}
         aria-label="Search input"
-        className="flex-1 border-none outline-none bg-transparent text-base text-gray-900 placeholder-gray-400"
+        className="flex-1 border-none outline-none bg-transparent text-base text-gray-900 placeholder-gray-400 text-[16px]"
       />
       <button 
         type="button"

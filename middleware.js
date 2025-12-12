@@ -7,9 +7,21 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Handle root path redirect to newslist
+  // Handle root path redirect to homepage
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/en/newslist', request.url));
+    return NextResponse.redirect(new URL('/en/', request.url));
+  }
+
+  // Check if the first segment is an invalid locale
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length > 0) {
+    const firstSegment = segments[0];
+    const validLocales = routing.locales;
+    
+    // If first segment is not a valid locale, redirect to not-found
+    if (!validLocales.includes(firstSegment)) {
+      return NextResponse.redirect(new URL('/not-found', request.url));
+    }
   }
 
   return intlMiddleware(request);

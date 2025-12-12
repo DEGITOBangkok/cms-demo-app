@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchInput, Banner, SearchAndSort, TagsCapsule, ArticlesCard, LocaleSwitcher, ArrowIcon, ArrowWithTailIcon, IconCircle } from '@/components';
 import { useArticles, useSearch, useArticlesWithSort, useCategories } from '@/hooks/useArticles';
@@ -21,6 +21,8 @@ export default function NewsListClient() {
   const [selectedTag, setSelectedTag] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const swiperRef = useRef(null);
+  const urlUpdateTimeoutRef = useRef(null);
+  const currentSlideRef = useRef(0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('HomePage');
@@ -32,18 +34,6 @@ export default function NewsListClient() {
   // Locale management
   const locale = useLocale();
 
-  // Function to get translated category name (reverse mapping)
-  const getOriginalCategoryName = (translatedName) => {
-    const categoryMap = {
-      [t('healthbt')]: 'Health',
-      [t('geographybt')]: 'Geography',
-      [t('eventbt')]: 'Events & Updates',
-      'นวัตกรรม': 'Innovation',
-      'Innovation': 'Innovation',
-      // Add more mappings as needed
-    };
-    return categoryMap[translatedName] || translatedName;
-  };
 
   // Fetch articles with sorting functionality
   const { articles, loading: articlesLoading, error: articlesError } = useArticlesWithSort(sortValue, searchQuery, locale);
@@ -61,9 +51,8 @@ export default function NewsListClient() {
     const sortParam = searchParams.get('sort');
 
     if (categoryParam) {
-      // Convert translated category name back to original name for filtering
-      const originalCategoryName = getOriginalCategoryName(categoryParam);
-      setSelectedTag(originalCategoryName);
+      // Use category slug directly from URL
+      setSelectedTag(categoryParam);
     }
 
     if (searchParam) {
@@ -75,38 +64,61 @@ export default function NewsListClient() {
     }
   }, [searchParams, t]);
 
-  // Helper function to update URL parameters
-  const updateURLParams = (newParams) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value && value !== '') {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (urlUpdateTimeoutRef.current) {
+        clearTimeout(urlUpdateTimeoutRef.current);
       }
-    });
+    };
+  }, []);
 
-    const newURL = `${window.location.pathname}?${params.toString()}`;
-    router.replace(newURL, { scroll: false });
-  };
+  // Debounced helper function to update URL parameters
+  const updateURLParams = useCallback((newParams) => {
+    // Clear existing timeout
+    if (urlUpdateTimeoutRef.current) {
+      clearTimeout(urlUpdateTimeoutRef.current);
+    }
 
-  const handleSearch = (searchTerm) => {
-    setSearchQuery(searchTerm);
-    updateURLParams({ search: searchTerm });
-  };
+    // Debounce URL updates to prevent rapid changes
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  const handleSortChange = (value) => {
-    setSortValue(value);
-    updateURLParams({ sort: value });
-  };
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value && value !== '') {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      });
 
-  const handleTagChange = (tagValue) => {
-    setSelectedTag(tagValue);
-    // Convert to translated name for URL
-    const translatedTag = tagValue ? getTranslatedCategoryName(tagValue) : '';
-    updateURLParams({ category: translatedTag });
-  };
+      const newURL = `${window.location.pathname}?${params.toString()}`;
+      
+      // Use shallow routing to prevent page refresh
+      router.replace(newURL, { scroll: false });
+    }, 100); // 100ms debounce
+  }, [searchParams, router]);
+
+  const handleSearch = useCallback((searchTerm) => {
+    if (searchTerm !== searchQuery) {
+      setSearchQuery(searchTerm);
+      updateURLParams({ search: searchTerm });
+    }
+  }, [searchQuery, updateURLParams]);
+
+  const handleSortChange = useCallback((value) => {
+    if (value !== sortValue) {
+      setSortValue(value);
+      updateURLParams({ sort: value });
+    }
+  }, [sortValue, updateURLParams]);
+
+  const handleTagChange = useCallback((tagValue) => {
+    if (tagValue !== selectedTag) {
+      setSelectedTag(tagValue);
+      updateURLParams({ category: tagValue });
+    }
+  }, [selectedTag, updateURLParams]);
 
   const sortOptions = [
     { value: '', label: t('sort1') },
@@ -117,29 +129,16 @@ export default function NewsListClient() {
     { value: 'popular', label: t('mostpop') }
   ];
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
-
-  // Create tag options from categories, with "All" as the first option
-  const tagOptions = [
-    { value: '', label: t('allbt') },
-    ...categories.map(category => ({
-      value: category.name || category.title || category.id,
-      label: getTranslatedCategoryName(category.name || category.title) || `Category ${category.id}`
-    }))
+  // Create category options with "All" as the first option
+  const categoryOptions = [
+    { id: '', attributes: { name: t('allbt'), slug: '' } },
+    ...categories
   ];
 
-  // Filter articles based on selected category
-  const filterArticlesByTag = (articlesList) => {
-    if (!selectedTag) return articlesList; // Show all articles if no tag selected
+  // Filter articles based on selected category - memoized for performance
+  const filterArticlesByCategory = useCallback((articlesList) => {
+    // Show all articles if no category selected or if "All" is selected (empty string)
+    if (!selectedTag || selectedTag === '') return articlesList;
 
     return articlesList?.filter(article => {
       // Check if article category matches the selected category
@@ -150,10 +149,13 @@ export default function NewsListClient() {
       if (articleCategory) {
         // Handle category relation object
         if (typeof articleCategory === 'object') {
-          // Check if the category name, title, or id matches the selected category
-          return articleCategory.name === selectedCategory ||
-            articleCategory.title === selectedCategory ||
-            articleCategory.id === selectedCategory;
+          // Handle both Strapi v4 and v5 data structures
+          const categoryData = articleCategory.attributes || articleCategory;
+          // Check if the category slug, name, title, or id matches the selected category
+          return categoryData.slug === selectedCategory ||
+            categoryData.name === selectedCategory ||
+            categoryData.title === selectedCategory ||
+            categoryData.id === selectedCategory;
         }
         // Handle string category format (fallback)
         return articleCategory === selectedCategory;
@@ -161,23 +163,42 @@ export default function NewsListClient() {
 
       return false;
     }) || [];
-  };
+  }, [selectedTag]);
 
-  // Get articles with images for slider
-  const articlesWithImages = articles?.filter(article => {
-    return article.cover && article.cover.url;
-  }) || [];
+  // Get articles with images for slider - memoized for performance
+  const articlesWithImages = useMemo(() => {
+    return articles?.filter(article => {
+      return article.cover && article.cover.url;
+    }) || [];
+  }, [articles]);
 
-  // Auto-advance is now handled by Swiper's autoplay feature
+  // Memoize banner images to prevent unnecessary re-computations
+  const bannerImages = useMemo(() => {
+    return articlesWithImages.map(article =>
+      article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
+    ).filter(Boolean);
+  }, [articlesWithImages]);
 
-  const currentArticle = articlesWithImages[currentSlide] || articles?.[0];
-  const bannerImages = articlesWithImages.map(article =>
-    article.cover?.url ? getStrapiMediaURL(article.cover.url) : null
-  ).filter(Boolean);
+  // Memoize current article to prevent re-renders during autoplay
+  const currentArticle = useMemo(() => {
+    return articlesWithImages[currentSlide] || articles?.[0];
+  }, [articlesWithImages, currentSlide, articles]);
 
-  // Use search results if searching, otherwise use sorted articles, then apply tag filter
+  // Memoize banner content to prevent re-renders during autoplay
+  const bannerContent = useMemo(() => {
+    if (!currentArticle) return null;
+    
+    return {
+      category: currentArticle.category,
+      publishedAt: currentArticle.publishedAt,
+      title: currentArticle.title,
+      slug: currentArticle.slug
+    };
+  }, [currentArticle]);
+
+  // Use search results if searching, otherwise use sorted articles, then apply category filter
   const baseArticles = searchQuery ? searchResults : articles;
-  const displayArticles = filterArticlesByTag(baseArticles);
+  const displayArticles = useMemo(() => filterArticlesByCategory(baseArticles), [baseArticles, filterArticlesByCategory]);
   const isLoading = searchQuery ? searchLoading : articlesLoading;
 
   // Handle banner explore more click
@@ -209,7 +230,12 @@ export default function NewsListClient() {
               onSwiper={(swiper) => {
                 swiperRef.current = swiper;
               }}
-              onSlideChange={(swiper) => setCurrentSlide(swiper.activeIndex)}
+              onSlideChange={(swiper) => {
+                // Use ref to track slide without triggering re-renders
+                currentSlideRef.current = swiper.activeIndex;
+                // Only update state for navigation buttons and indicators
+                setCurrentSlide(swiper.activeIndex);
+              }}
             >
               {bannerImages.map((image, index) => (
                 <SwiperSlide key={index}>
@@ -225,26 +251,33 @@ export default function NewsListClient() {
                       {/* container กลาง + ระยะซ้ายขวาแบบเดียวกับ main */}
                       <div className={containerClasses}>
                         {/* (ถ้าต้องการจำกัดความกว้างข้อความ) */}
-                        <div className="max-w-8xl">
+                        <div className="max-w-8xl lg:px-10">
                           {/* Category tag */}
-                          <div className="mb-1 sm:mb-2">
+                          <div className="mb-2 sm:mb-2">
                             <span
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const categoryName = currentArticle?.category?.name || 'Sustainability';
-                                const translatedCategoryName = getTranslatedCategoryName(categoryName);
-                                router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+                                // Handle both Strapi v4 and v5 data structures
+                                const articleCategory = bannerContent?.category;
+                                const categoryData = articleCategory?.attributes || articleCategory;
+                                const categorySlug = categoryData?.slug || categoryData?.id || '';
+                                router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
                               }}
-                              className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer transition-all duration-200">
-                              {getTranslatedCategoryName(currentArticle?.category?.name || 'Sustainability')}
+                              className="inline-block text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-normal tracking-wide bg-slate-900/30 backdrop-blur-md hover:bg-[#FCE5E5] hover:text-[#E60000] hover:border-2 hover:border-[#E60000] cursor-pointer">
+                              {(() => {
+                                // Handle both Strapi v4 and v5 data structures
+                                const articleCategory = bannerContent?.category;
+                                const categoryData = articleCategory?.attributes || articleCategory;
+                                return categoryData?.name || categoryData?.title || 'Sustainability';
+                              })()}
                             </span>
                           </div>
 
                           {/* Date */}
-                          <div className="mb-1 sm:mb-2">
-                            <span className="text-gray-200 text-lg sm:text-lg">
-                              {currentArticle?.publishedAt
-                                ? formatDate(currentArticle.publishedAt, locale, 'D MMM YYYY')
+                          <div className="mb-2 sm:mb-2">
+                            <span className="text-white text-[16px] font-[400] sm:text-lg">
+                              {bannerContent?.publishedAt
+                                ? formatDate(bannerContent.publishedAt, locale, 'D MMM YYYY')
                                 : formatDate(new Date(), locale, 'D MMM YYYY')}
                             </span>
                           </div>
@@ -252,21 +285,21 @@ export default function NewsListClient() {
                           {/* Title */}
                           <h1
                             onClick={handleBannerExploreClick}
-                            className="text-2xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
+                            className="text-[24px] sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer pt-1 pb-1"
                           >
-                            {currentArticle?.title || 'Pioneering Sustainability Lubricants'}
+                            {bannerContent?.title || 'Pioneering Sustainability Lubricants'}
                           </h1>
 
                           {/* CTA */}
                           <button
                             onClick={handleBannerExploreClick}
-                            className="inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap cursor-pointer group"
+                            className="inline-flex items-center gap-1 sm:gap-2 whitespace-nowrap cursor-pointer group pb-8 sm:pb-0"
                           >
-                            <span className="text-[#E60000] font-semibold text-sm sm:text-xs md:text-sm">{t('readmore')}</span>
+                            <span className="text-[#E60000] font-semibold text-[14px] sm:text-xs md:text-sm">{t('readmore')}</span>
                             <ArrowIcon
                               width={16}
                               height={16}
-                              className="text-[#E60000] transition-transform duration-300"
+                              className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
                             />
                           </button>
                         </div>
@@ -304,9 +337,9 @@ export default function NewsListClient() {
                   {/* Title */}
                   <h1
                     onClick={handleBannerExploreClick}
-                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#D7A048] transition-all duration-300 cursor-pointer"
+                    className="text-lg sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight text-white hover:text-[#E60000] transition-all duration-300 cursor-pointer"
                   >
-                    {currentArticle?.title || ' '}
+                    {bannerContent?.title || ' '}
                   </h1>
 
                   {/* CTA - Only show when there are images */}
@@ -318,7 +351,7 @@ export default function NewsListClient() {
                       <ArrowIcon
                         width={14}
                         height={14}
-                        className="text-[#E60000] transition-transform duration-300"
+                        className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
                       />
                       <span className="text-[#E60000] font-semibold text-xs sm:text-xs md:text-sm">{t('readmore')}</span>
                     </button>
@@ -418,9 +451,9 @@ export default function NewsListClient() {
           {/* Tags */}
           <div className="col-span-12">
             <TagsCapsule
-              tags={tagOptions}
-              selectedTag={selectedTag}
-              onTagChange={handleTagChange}
+              categories={categoryOptions}
+              selectedCategory={selectedTag}
+              onCategoryChange={handleTagChange}
               articles={articles}
             />
           </div>
@@ -430,7 +463,7 @@ export default function NewsListClient() {
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
                 {sortValue && !searchQuery && (
-                  <span>Sorted by: {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
+                  <span>{t('sortedby')} {sortOptions.find(opt => opt.value === sortValue)?.label}</span>
                 )}
                 {selectedTag && !searchQuery && (
                   <span className="ml-2">
@@ -467,7 +500,14 @@ export default function NewsListClient() {
               <div className="text-center py-12">
                 <p className="text-gray-500">
                   {selectedTag
-                    ? `${t('noarticleswithtag')} "${getTranslatedCategoryName(selectedTag)}"`
+                    ? `${t('noarticleswithtag')} "${(() => {
+                        // Find the category name from the selected slug
+                        const selectedCategory = categories.find(cat => {
+                          const categoryData = cat.attributes || cat;
+                          return categoryData.slug === selectedTag || categoryData.id === selectedTag;
+                        });
+                        return selectedCategory ? (selectedCategory.attributes || selectedCategory).name || selectedTag : selectedTag;
+                      })()}"`
                     : searchQuery
                       ? `${t('noarticlesforsearch')} "${searchQuery}".`
                       : t('noarticlesfound')

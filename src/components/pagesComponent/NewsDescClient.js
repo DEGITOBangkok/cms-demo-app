@@ -16,6 +16,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 
 export default function NewsDescClient({ article }) {
@@ -30,6 +32,7 @@ export default function NewsDescClient({ article }) {
   
   // Mobile gallery navigation state
   const [currentMobileImageIndex, setCurrentMobileImageIndex] = useState(0);
+  const [gallerySwiper, setGallerySwiper] = useState(null);
   
   // Mobile related articles navigation state
   const [currentRelatedArticleIndex, setCurrentRelatedArticleIndex] = useState(0);
@@ -69,17 +72,6 @@ export default function NewsDescClient({ article }) {
   // Helper function to check if content is HTML
   const isHtml = (s) => /<\/?[a-z][\s\S]*>/i.test(s);
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      'Innovation': locale === 'th' ? 'นวัตกรรม' : 'Innovation',
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
 
   // Get category name (handle both object and string formats)
   const categoryName = typeof article.category === 'object' 
@@ -93,9 +85,11 @@ export default function NewsDescClient({ article }) {
     router.push(`/${locale}/newslist`);
   };
 
-  const handleCategoryClick = (categoryName) => {
-    const translatedCategoryName = getTranslatedCategoryName(categoryName);
-    router.push(`/${locale}/newslist?category=${encodeURIComponent(translatedCategoryName)}`);
+  const handleCategoryClick = (category) => {
+    // Handle both Strapi v4 and v5 data structures
+    const categoryData = category?.attributes || category;
+    const categorySlug = categoryData?.slug || categoryData?.id || '';
+    router.push(`/${locale}/newslist?category=${encodeURIComponent(categorySlug)}`);
   };
 
   return (
@@ -125,9 +119,13 @@ export default function NewsDescClient({ article }) {
             {/* Category Tag */}
             <div className="mb-4">
               <span 
-              onClick={() => handleCategoryClick(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
+              onClick={() => handleCategoryClick(article.category)}
               className="inline-block bg-white border border-gray-200 text-[#E60000] px-4 py-2 rounded-full text-[16px] font-normal cursor-pointer hover:bg-[#E60000] hover:text-white hover:border-[#E60000] transition-all duration-200">
-                {getTranslatedCategoryName(typeof article.category === 'object' ? article.category.name : article.category || 'Innovation')}
+                {(() => {
+                  // Handle both Strapi v4 and v5 data structures
+                  const categoryData = article.category?.attributes || article.category;
+                  return categoryData?.name || categoryData?.title || 'Innovation';
+                })()}
               </span>
             </div>
 
@@ -161,7 +159,7 @@ export default function NewsDescClient({ article }) {
           {/* Hero Image */}
           <div className="mb-8">
             {articleImage ? (
-              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-lg shadow-lg">
+              <div className="relative w-full aspect-[3/2] overflow-hidden rounded-lg">
                 <img 
                   src={articleImage}
                   alt={article.title || (locale === 'th' ? 'รูปภาพบทความ' : 'Article image')}
@@ -206,60 +204,80 @@ export default function NewsDescClient({ article }) {
          {/* Article Gallery */}
          {article.gallery && article.gallery.length > 0 && (
            <section className="mt-12">
-             {/* Mobile: Show current image */}
+             {/* Mobile: Show Swiper gallery */}
              <div className="block sm:hidden">
-               {article.gallery.length > 0 && (() => {
-                 const currentFile = article.gallery[currentMobileImageIndex];
-                 const fileUrl = currentFile?.url || currentFile?.attributes?.url;
-                 const fileName = currentFile?.name || currentFile?.attributes?.name || `Gallery image ${currentMobileImageIndex + 1}`;
-                 const altText = currentFile?.alternativeText || currentFile?.attributes?.alternativeText || fileName;
+               {article.gallery.length > 0 && (
+                 <Swiper
+                   spaceBetween={16}
+                   slidesPerView={1}
+                   navigation={false}
+                   pagination={{
+                     clickable: true,
+                     renderBullet: function (index, className) {
+                       return '<span class="' + className + '" style="background-color: #E60000;"></span>';
+                     },
+                   }}
+                   onSlideChange={(swiper) => {
+                     setCurrentMobileImageIndex(swiper.activeIndex);
+                   }}
+                   onSwiper={setGallerySwiper}
+                   initialSlide={currentMobileImageIndex}
+                   className="gallery-swiper"
+                 >
+                   {article.gallery.map((file, index) => {
+                     const fileUrl = file?.url || file?.attributes?.url;
+                     const fileName = file?.name || file?.attributes?.name || `Gallery image ${index + 1}`;
+                     const altText = file?.alternativeText || file?.attributes?.alternativeText || fileName;
 
-                 if (!fileUrl) return null;
+                     if (!fileUrl) return null;
 
-                 return (
-                   <div className="relative">
-                     <div
-                       className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
-                       onClick={() => {
-                         setSelectedImage({
-                           url: getStrapiMediaURL(fileUrl),
-                           alt: altText,
-                           name: fileName
-                         });
-                         setCurrentImageIndex(currentMobileImageIndex);
-                       }}
-                     >
-                       <img
-                         src={getStrapiMediaURL(fileUrl)}
-                         alt={altText}
-                         className="block w-full aspect-[4/3] object-cover transition-all duration-300 group-hover:brightness-110 group-hover:scale-110"
-                         onError={(e) => {
-                           console.error('Gallery image failed to load:', fileUrl);
-                           e.target.style.display = 'none';
-                         }}
-                       />
-                       {/* Hover overlay */}
-                       <div 
-                         className="absolute inset-0 transition-all duration-300 flex items-center justify-center"
-                         style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
-                         onMouseEnter={(e) => {
-                           e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                         }}
-                         onMouseLeave={(e) => {
-                           e.target.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-                         }}
-                       >
-                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                           <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                           </svg>
+                     return (
+                       <SwiperSlide key={index}>
+                         <div className="relative">
+                           <div
+                             className="rounded-2xl overflow-hidden cursor-pointer group"
+                             onClick={() => {
+                               setSelectedImage({
+                                 url: getStrapiMediaURL(fileUrl),
+                                 alt: altText,
+                                 name: fileName
+                               });
+                               setCurrentImageIndex(index);
+                             }}
+                           >
+                             <img
+                               src={getStrapiMediaURL(fileUrl)}
+                               alt={altText}
+                               className="block w-full aspect-[4/3] object-cover transition-all duration-300 group-hover:brightness-110 group-hover:scale-110"
+                               onError={(e) => {
+                                 console.error('Gallery image failed to load:', fileUrl);
+                                 e.target.style.display = 'none';
+                               }}
+                             />
+                             {/* Hover overlay */}
+                             <div 
+                               className="absolute inset-0 transition-all duration-300 flex items-center justify-center"
+                               style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
+                               onMouseEnter={(e) => {
+                                 e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                               }}
+                               onMouseLeave={(e) => {
+                                 e.target.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                               }}
+                             >
+                               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                 </svg>
+                               </div>
+                             </div>
+                           </div>
                          </div>
-                       </div>
-                     </div>
-
-                        </div>
-                      );
-               })()}
+                       </SwiperSlide>
+                     );
+                   }).filter(Boolean)}
+                 </Swiper>
+               )}
              </div>
 
              {/* Desktop: Show grid */}
@@ -278,7 +296,7 @@ export default function NewsDescClient({ article }) {
                             return (
                   <div
                     key={index}
-                    className="rounded-2xl overflow-hidden shadow-lg cursor-pointer group"
+                    className="rounded-2xl overflow-hidden cursor-pointer group"
                      onClick={() => {
                        setSelectedImage({
                          url: getStrapiMediaURL(fileUrl),
@@ -358,8 +376,8 @@ export default function NewsDescClient({ article }) {
                  {/* Left arrow */}
                  <button
                    onClick={() => {
-                     if (currentMobileImageIndex > 0) {
-                       setCurrentMobileImageIndex(currentMobileImageIndex - 1);
+                     if (gallerySwiper && currentMobileImageIndex > 0) {
+                       gallerySwiper.slidePrev();
                      }
                    }}
                    className={`w-14 h-14 bg-transparent border-2 rounded-full flex items-center justify-center text-gray-400 transition-all ${
@@ -376,8 +394,8 @@ export default function NewsDescClient({ article }) {
                  {/* Right arrow */}
                  <button
                    onClick={() => {
-                     if (currentMobileImageIndex < article.gallery.length - 1) {
-                       setCurrentMobileImageIndex(currentMobileImageIndex + 1);
+                     if (gallerySwiper && currentMobileImageIndex < article.gallery.length - 1) {
+                       gallerySwiper.slideNext();
                      }
                    }}
                    className={`w-14 h-14 bg-transparent border-2 rounded-full flex items-center justify-center text-gray-400 transition-all ${
@@ -428,7 +446,7 @@ export default function NewsDescClient({ article }) {
             {articlesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+                  <div key={i} className="bg-white rounded-lg overflow-hidden animate-pulse">
                     <div className="h-48 bg-gray-300"></div>
                     <div className="p-6">
                       <div className="h-6 bg-gray-300 rounded mb-2"></div>

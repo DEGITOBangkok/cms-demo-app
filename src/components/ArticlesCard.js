@@ -33,16 +33,6 @@ const ArticlesCard = ({
   
   if (!article) return null;
 
-  // Function to get translated category name
-  const getTranslatedCategoryName = (categoryName) => {
-    const categoryMap = {
-      'Health': t('healthbt'),
-      'Geography': t('geographybt'),
-      'Events & Updates': t('eventbt'),
-      // Add more category mappings as needed
-    };
-    return categoryMap[categoryName] || categoryName;
-  };
 
   // Get category name (handle both object and string formats)
   const categoryName = typeof article.category === 'object'
@@ -60,15 +50,17 @@ const ArticlesCard = ({
 
   const handleCategoryClick = (e) => {
     e.stopPropagation(); // Prevent the article click from firing
-    if (categoryName && onCategoryClick) {
-      // Use the onCategoryClick prop instead of router.push to avoid page scroll
-      onCategoryClick(categoryName);
+    if (article.category && onCategoryClick) {
+      // Get the category slug for proper syncing with TagsCapsule
+      const categoryData = article.category?.attributes || article.category;
+      const categorySlug = categoryData?.slug || categoryData?.id || '';
+      onCategoryClick(categorySlug);
     }
   };
 
   return (
     <article
-      className={`bg-white rounded-lg relative h-full flex flex-col group border-b border-gray-200 mt-5 ${
+      className={`bg-white rounded-t-2xl relative h-full flex flex-col group border-b border-gray-200 mt-5 cursor-pointer ${
         disableAnimation 
           ? '' 
           : 'opacity-0 -translate-y-8 animate-[fadeInSlideUp_0.6s_ease-out_forwards]'
@@ -96,12 +88,16 @@ const ArticlesCard = ({
                text-[15px]
                font-extralight
              ">
-              {getTranslatedCategoryName(categoryName)}
+              {(() => {
+                // Handle both Strapi v4 and v5 data structures
+                const categoryData = article.category?.attributes || article.category;
+                return categoryData?.name || categoryData?.title || categoryName;
+              })()}
             </span>
       )}
 
       {articleImage ? (
-        <div className="relative overflow-hidden aspect-[4/3] w-full rounded-t-lg">
+        <div className="relative overflow-hidden aspect-[4/3] w-full rounded-t-2xl">
           <img
             src={articleImage}
             alt={article.title || 'Article image'}
@@ -111,7 +107,7 @@ const ArticlesCard = ({
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
       ) : (
-        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-lg bg-gradient-to-r from-blue-400 to-purple-600 cursor-pointer">
+        <div className="relative overflow-hidden aspect-[3/4] w-full rounded-t-2xl bg-gradient-to-r from-blue-400 to-purple-600 cursor-pointer">
           {/* Gradient overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
@@ -148,7 +144,7 @@ const ArticlesCard = ({
             <ArrowIcon 
               width={16} 
               height={16} 
-              className="text-[#E60000] group-hover:rotate-180 transition-transform duration-300"
+              className="text-[#E60000] group-hover:translate-x-1 transition-transform duration-300"
             />
         </button>
       </div>

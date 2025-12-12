@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "../../../i18n/routing";
 import { Footer} from "../../components";
 import  Navbar  from "@/components/NavBar/Navbar";
-import CMSStatus from "../../mockdata/CMSStatus";
 import { getHome } from "../../lib/api";
 import { generateHomeSEO } from "../../lib/seo";
 import "../../app/globals.css";
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }) {
     
     if (homeData) {
       return generateHomeSEO(homeData, {
-        siteName: 'News Portal',
+        siteName: 'Prom Serve',
         siteUrl: 'http://localhost:3000'
       });
     }
@@ -39,7 +38,7 @@ export async function generateMetadata({ params }) {
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_PATH),
     title: t("home"),
-    description: 'Welcome to our news portal',
+    description: 'Welcome to our Prom Serve',
   };
 }
 
@@ -54,13 +53,12 @@ export default async function LocaleLayout({ children, params }) {
 
   return (
     <NextIntlClientProvider>
-      <Navbar></Navbar>
-      <div className="font-fciconic min-h-screen flex flex-col">
-        <CMSStatus />
+      <Navbar />
+      <div className="min-h-screen flex flex-col">
         <main className="flex-grow">
           {children}
         </main>
-        <Footer key={locale} />
+        <Footer />
       </div>
     </NextIntlClientProvider>
   );

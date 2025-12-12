@@ -28,13 +28,13 @@ const Footer = () => {
   }, [locale]);
 
   return (
-    <footer className="bg-[#17191F] text-white relative z-2 px-4 py-10 lg:px-[64px] lg:py-[40px]">
+    <footer className="bg-[#17191F] text-white relative z-2 px-4 py-10 md:px-8 lg:px-[64px] md:py-[40px]">
       {/* Main Footer Content */}
        <div className=" max-w-full mx-auto ">
-        <div className="flex flex-col lg:flex-row justify-between items-start self-stretch pb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start self-stretch pb-8">
           
           {/* Company Information - Mobile: Full width, Desktop: Left */}
-          <div className="w-full lg:w-auto space-y-2 lg:flex-shrink-0">
+          <div className="w-full md:w-auto space-y-2 md:flex-shrink-0">
             {/* Logo */}
             <div className="flex items-center">
               <img 
@@ -51,53 +51,53 @@ const Footer = () => {
             </div>
             
             {/* Contact Information */}
-            <div className="space-y-6 lg:space-y-0 lg:flex lg:flex-row lg:space-x-6 lg:space-y-0">
+            <div className="space-y-6 md:space-y-0 md:flex md:flex-row md:space-x-6 md:space-y-0">
               {/* Phone */}
-              <div className="flex items-center space-x-2">
+              <a href="tel:+6623233232" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                 <img 
                   src="/images/Phone.png" 
                   alt="Phone icon" 
                   className="w-[24px] h-[24px]"
                 />
                 <span className="text-[14px] font-[400] text-gray-300">+662 323 3232</span>
-              </div>
+              </a>
               
               {/* Email */}
-              <div className="flex items-center space-x-2">
+              <a href="mailto:contact@digiproxima.com" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                 <img 
                   src="/images/Email.png" 
                   alt="Email icon" 
                   className="w-[24px] h-[24px]"
                 />
-                <span className="text-[14px] font-[400] text-gray-300">contact@digiproxima.com</span>
-              </div>
+                <span className="text-[14px] font-[400] text-gray-300">contact@promserve.com</span>
+              </a>
             </div>
           </div>
 
           {/*Mobile Separator Line*/}
-          <div className="w-full lg:hidden lg:mb-6"></div>
+          <div className="w-full md:hidden md:mb-6"></div>
 
           {/* Navigation Links */}
-          <div className="w-full my-10 lg:my-0 lg:w-auto lg:space-y-6">
-            <div className="lg:space-y-10">
-              <a href={isClient ? `/${locale}/newslist` : '/en/newslist'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 lg:pt-0 lg:border-b-0 lg:pb-0">
+          <div className="w-full my-10 md:my-0 md:w-auto md:space-y-6">
+            <div className="md:space-y-10">
+              <a href={isClient ? `/${locale}/newslist` : '/en/newslist'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 md:pt-0 md:border-b-0 md:pb-0">
                 {t('newsArticle')}
               </a>
-              <a href={isClient ? `/${locale}/contact` : '/en/contact'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:pt-0 lg:pb-0 lg:border-b-0 lg:pb-0">
+              <a href={isClient ? `/${locale}/contact` : '/en/contact'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 md:pt-0 md:pb-0 md:border-b-0 md:pb-0">
                 {t('contactUs')}
               </a>
-              <a href={isClient ? `/${locale}/privacy` : '/en/privacy'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 lg:pt-0 lg:pb-0 lg:border-b-0 lg:pb-0">
+              <a href={isClient ? `/${locale}/privacy` : '/en/privacy'} className="block text-[14px] font-[400] text-white hover:text-white transition-colors border-b border-white pb-4 pt-4 md:pt-0 md:pb-0 md:border-b-0 md:pb-0">
                 {t('privacyPolicy')}
               </a>
             </div>
           </div>
 
           {/* Mobile Separator Line */}
-          <div className="w-full lg:hidden bg-none"></div>
+          <div className="w-full md:hidden bg-none"></div>
 
           {/* Social Media Section */}
-          <div className="w-full lg:w-auto">
-            <div className="flex justify-between items-center lg:flex-col">
+          <div className="w-full md:w-auto">
+            <div className="flex justify-between items-center md:flex-col">
               <div className="flex flex-col space-y-4">
                 <h3 className="text-[16px] font-[400] text-white">{t('followUs')}</h3>
                 
@@ -111,9 +111,9 @@ const Footer = () => {
               ) : (
                 <>
                   {/* Facebook */}
-                  {socialMedia.facebook?.URL && (
+                  {socialMedia.facebook?.attributes?.url && (
                     <a 
-                      href={socialMedia.facebook.URL} 
+                      href={socialMedia.facebook.attributes.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-6 h-6 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"
@@ -127,9 +127,9 @@ const Footer = () => {
                   )}
                   
                   {/* Instagram */}
-                  {socialMedia.instagram?.URL && (
+                  {socialMedia.instagram?.attributes?.url && (
                     <a 
-                      href={socialMedia.instagram.URL} 
+                      href={socialMedia.instagram.attributes.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-6 h-6 flex items-center justify-center rounded-full hover:opacity-80 transition-opacity"
@@ -147,10 +147,10 @@ const Footer = () => {
               </div>
               
               {/* Top Button - Mobile */}
-              <div className="lg:hidden flex flex-col items-center gap-1">
+              <div className="md:hidden flex flex-col items-center gap-1">
                 <button 
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group"
+                  className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group cursor-pointer"
                   aria-label="Scroll to top"
                 >
                   <ArrowWithTailIcon 
@@ -167,10 +167,10 @@ const Footer = () => {
           </div>
 
           {/* Top Button - Desktop Only */}
-          <div className="hidden lg:flex lg:flex-col lg:items-center gap-1">
+          <div className="hidden md:flex md:flex-col md:items-center gap-1">
               <button 
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group"
+                className="w-10 h-10 bg-[#E60000] border-2 border-white flex items-center justify-center rounded-full hover:bg-white transition-colors group cursor-pointer"
                 aria-label="Scroll to top"
               >
               <ArrowWithTailIcon 
@@ -192,7 +192,7 @@ const Footer = () => {
 
        {/* Copyright Section */}
        <div className="max-w-full mx-auto pt-8">
-         <div className="lg:text-left text-center">
+         <div className="md:text-left text-center">
            <p className="text-[14px] font-[400] text-white">
              {t('license')}
            </p>
